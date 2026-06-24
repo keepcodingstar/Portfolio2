@@ -50,6 +50,9 @@ export default function SideNav() {
               >
                 <span className="stop-dot" aria-hidden />
                 <span className="stop-label">{s.label}</span>
+                {/* plain-word meaning, revealed on hover — orients first-timers
+                    on what each altitude actually is */}
+                <span className="stop-sub" aria-hidden>{s.sub}</span>
               </button>
             ))}
           </nav>
@@ -58,6 +61,7 @@ export default function SideNav() {
           <a className="stop sidenav-route" href="/black-hole" aria-label="Black hole — WebGL experiment">
             <span className="stop-dot" aria-hidden />
             <span className="stop-label">Void</span>
+            <span className="stop-sub" aria-hidden>Shader</span>
           </a>
 
           <a className="sidenav-cta" href="mailto:sameerkapildesigns@gmail.com" aria-label="Available for work — email Sameer">

@@ -19,8 +19,7 @@ export default function UIGallery() {
   return (
     <section className="zone band band-ground" aria-labelledby="ui-title">
       <div className="panel wide">
-        <div className="band-head">
-          <p className="eyebrow">Closer to the ground · the screens</p>
+        <div className="band-head" data-reveal>
           <h2 id="ui-title" className="display band-title">
             What the numbers actually looked like.
           </h2>

@@ -20,7 +20,7 @@ export default function CreativeGallery() {
   return (
     <section className="zone band band-space" aria-labelledby="creative-title">
       <div className="panel wide">
-        <div className="band-head">
+        <div className="band-head" data-reveal>
           <p className="eyebrow">In orbit · visual work</p>
           <h2 id="creative-title" className="display band-title">
             Built to be <em>felt</em>.

@@ -38,8 +38,8 @@ typography:
     lineHeight: 1.2
     letterSpacing: "0.22em"
 rounded:
-  sm: "2px"
-  md: "11px"
+  sm: "11px"
+  md: "16px"
   lg: "18px"
   xl: "20px"
 spacing:

@@ -50,7 +50,7 @@ export default function Gallery({
 }) {
   const tones = PALETTES[palette];
   return (
-    <ul className="gallery">
+    <ul className="gallery" data-reveal>
       {items.map((it, i) => (
         <li
           key={it.title}

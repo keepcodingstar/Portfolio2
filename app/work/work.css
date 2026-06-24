@@ -326,6 +326,7 @@ a.proj { cursor: pointer; }
   --w-green: #1d9e75;
   --w-red: #e24b4a;
   --w-red-light: #fff0f0;
+  --w-amber: #e2a23a;
 }
 
 .cs-eyebrow {
@@ -488,8 +489,10 @@ a.proj { cursor: pointer; }
 .cs-quote {
   margin: clamp(2.5rem, 6vw, 4rem) 0;
   padding: clamp(2rem, 5vw, 3rem) clamp(1.8rem, 4vw, 2.6rem);
-  border-radius: 20px;
-  border-left: 3px solid var(--ion);
+  border-radius: var(--r-xl);
+  /* full ion hairline instead of the old 3px side-stripe (a banned tell) —
+     keeps the frosted-glass language, frames the quote without shouting */
+  border: 1px solid rgba(43, 182, 214, 0.32);
 }
 .cs-quote blockquote {
   margin: 0;
@@ -823,7 +826,7 @@ a.proj { cursor: pointer; }
   font-size: 0.64rem; line-height: 1.45; color: var(--w-ink2);
   background: var(--w-off); border-radius: 8px; padding: 0.5rem 0.6rem;
 }
-.ck-flag .dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; background: #e2a23a; }
+.ck-flag .dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; background: var(--w-amber); }
 .ck-pay {
   display: flex; align-items: center; gap: 0.6rem;
   border: 1.5px solid var(--w-border); border-radius: 10px; padding: 0.6rem 0.75rem;

@@ -111,12 +111,16 @@ function Row({ c, i }: { c: Case; i: number }) {
         )}
       </div>
       <div className="measure-wrap">
-        <span className="metric tnum">
-          <span ref={numRef}>{`${c.metric.prefix ?? ''}0`}</span>
-          <span className="unit">{c.metric.suffix}</span>
+        <span className="readout">
+          <span className="metric tnum">
+            <span ref={numRef}>{`${c.metric.prefix ?? ''}0`}</span>
+            <span className="unit">{c.metric.suffix}</span>
+          </span>
+        </span>
+        <span className="gauge" aria-hidden>
+          <span className="gauge-fill" />
         </span>
         <span className="mlabel">{c.label}</span>
-        <span className="measure" aria-hidden />
       </div>
       {c.href && (
         <Link

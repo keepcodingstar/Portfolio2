@@ -57,6 +57,12 @@
 
   --gutter: clamp(1.25rem, 5vw, 5rem);
   --maxw: 72rem;
+
+  /* radius scale (mirrors DESIGN.md `rounded`) — use these, not one-off px */
+  --r-sm: 11px;  /* brand marks, small chrome */
+  --r-md: 16px;  /* cards, tiles, cells */
+  --r-lg: 18px;  /* glass canopy panels */
+  --r-xl: 20px;  /* large feature panels, quotes, impact */
 }
 
 * { box-sizing: border-box; }
@@ -231,6 +237,21 @@ body.preloading .sidenav-wrap { opacity: 0; pointer-events: none; transition: no
   transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
 }
 .stop-label { opacity: 0.85; }
+/* plain-word meaning, flown out to the right of the rail on hover/focus —
+   orients first-timers without making the compact altimeter taller. The glass
+   pill is overflow:visible so this can escape it. Paint-only (opacity/transform). */
+.stop-sub {
+  position: absolute; left: calc(100% + 0.85rem); top: 50%;
+  transform: translateY(-50%) translateX(-4px);
+  white-space: nowrap; pointer-events: none; opacity: 0;
+  font-family: var(--mono); font-size: 0.5rem; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.stop:hover .stop-sub,
+.stop:focus-visible .stop-sub,
+.stop.is-active:hover .stop-sub { opacity: 0.9; transform: translateY(-50%) translateX(0); }
+@media (prefers-reduced-motion: reduce) { .stop-sub { transition: none; } }
 .stop:hover { color: var(--ink-soft); }
 .stop.is-active { color: var(--ink); }
 .stop.is-active .stop-dot {
@@ -564,7 +585,20 @@ body.preloading .sidenav-wrap { opacity: 0; pointer-events: none; transition: no
 }
 .case .ctx { margin: 0.7rem 0 0; font-size: 0.92rem; color: var(--ink-soft); max-width: 46ch; }
 
-.case .measure-wrap { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
+.case .measure-wrap {
+  display: flex; flex-direction: column; align-items: flex-end; text-align: right;
+  gap: 0.5rem;
+}
+/* the readout — the count-up figure framed like an instrument display
+   (viewfinder corner brackets), not a ledger number in a ruled row */
+.case .readout { position: relative; display: inline-block; padding: 0.15rem 0.7rem 0.05rem; }
+.case .readout::before,
+.case .readout::after {
+  content: ""; position: absolute; width: 13px; height: 13px;
+  border: 1.5px solid var(--ion-700); opacity: 0.55; pointer-events: none;
+}
+.case .readout::before { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+.case .readout::after { bottom: 0; right: 0; border-left: 0; border-top: 0; }
 .case .metric {
   font-family: var(--display); font-weight: 400;
   font-size: clamp(2.8rem, 8vw, 5.5rem); line-height: 0.85; letter-spacing: -0.03em;
@@ -573,21 +607,36 @@ body.preloading .sidenav-wrap { opacity: 0; pointer-events: none; transition: no
   text-shadow: 0 0 22px rgba(43, 182, 214, 0.32);
 }
 .case .metric .unit { color: var(--aurora-teal); }
+/* graduated gauge — a tick scale with a glowing needle that sweeps to full on
+   reveal. Decorative readout-activation (robust across heterogeneous metrics),
+   not a literal magnitude bar. The dim ticks are the bezel; the ion ticks fill. */
+.case .gauge {
+  position: relative; width: clamp(7rem, 18vw, 12rem); height: 13px;
+  background: repeating-linear-gradient(90deg, var(--rule) 0 1px, transparent 1px 8px);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+/* paint-only wipe (clip-path, not width — no layout thrash): the ion ticks
+   sweep in left→right like a gauge needle tracking up to the reading */
+.case .gauge-fill {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, var(--ion) 0 1.5px, transparent 1.5px 8px);
+  filter: drop-shadow(0 0 6px rgba(90, 209, 238, 0.55));
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 1s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
+}
+.case.in .gauge-fill { clip-path: inset(0 0 0 0); }
 .case .mlabel {
-  margin-top: 0.6rem; font-family: var(--mono);
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  font-family: var(--mono);
   font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim);
 }
-.case .measure {
-  margin-top: 0.7rem; width: clamp(7rem, 18vw, 12rem); height: 2px;
-  background: var(--rule); position: relative; overflow: hidden; border-radius: 2px;
+.case .mlabel::before {
+  content: ""; width: 5px; height: 5px; background: var(--ion-700); /* HUD marker */
 }
-.case .measure::after {
-  content: ""; position: absolute; inset: 0; background: var(--auroral);
-  box-shadow: 0 0 10px rgba(43, 182, 214, 0.7);
-  transform: scaleX(0); transform-origin: right;
-  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
+@media (prefers-reduced-motion: reduce) {
+  .case .gauge-fill { transition: none; }
 }
-.case.in .measure::after { transform: scaleX(1); }
 @media (hover: hover) { .case:hover h3 { color: var(--ion-700); } }
 
 /* whole metric card → its full study (stretched-link pattern, so the
@@ -807,7 +856,7 @@ body.preloading .sidenav-wrap { opacity: 0; pointer-events: none; transition: no
   grid-auto-rows: clamp(8rem, 15vw, 13rem);
 }
 .tile {
-  position: relative; overflow: hidden; border-radius: 16px;
+  position: relative; overflow: hidden; border-radius: var(--r-md);
   border: 1px solid var(--rule); background: var(--rule-soft);
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease;
 }
@@ -819,13 +868,18 @@ body.preloading .sidenav-wrap { opacity: 0; pointer-events: none; transition: no
    continuous space field (the fixed gradient + starfield). The deep cosmos
    shows straight through; only the hover frame + lift mark them out. */
 .tile-ph-seamless { background: transparent; }
-/* drop the boxed look in the space band: the .tile base border/fill would
-   otherwise read as separate panels against the unified cosmos */
+/* SPACE band tiles = framed portholes onto the cosmos: the deep field still
+   shows through, but a faint ion sheen + hairline frame (and a large display
+   numeral) make each a deliberate aperture, not an empty placeholder box. */
 .band-space .tile {
-  background: transparent;
-  border-color: transparent;
+  background: radial-gradient(125% 125% at 50% 0%, rgba(43, 182, 214, 0.07), transparent 62%);
+  border-color: rgba(90, 209, 238, 0.18);
+}
+@media (hover: hover) {
+  .band-space .tile:hover { border-color: var(--ion-glow); }
 }
 .tile-num { font-family: var(--display); font-size: clamp(1.6rem, 3vw, 2.6rem); color: rgba(255, 255, 255, 0.28); padding: 0.5rem 0.8rem; }
+.band-space .tile-num { font-size: clamp(2.4rem, 5vw, 4rem); color: rgba(150, 220, 245, 0.24); }
 .tile-img { object-fit: cover; }
 .tile-cap {
   position: absolute; left: 0; right: 0; bottom: 0; z-index: 1;
@@ -861,28 +915,64 @@ body.preloading .sidenav-wrap { opacity: 0; pointer-events: none; transition: no
 .about-body strong { color: var(--ink); font-weight: 600; }
 @media (min-width: 820px) { .about-grid { grid-template-columns: 1.05fr 1fr; align-items: start; } }
 
-.process {
+/* PROCESS RAIL — a vertical instrument spine with glowing nodes (echoes the
+   space orbit + altimeter motif); the working method as a readout, not four
+   identical glass cards. */
+.rail {
+  --lane: clamp(1.8rem, 4vw, 2.6rem);
   list-style: none; margin: clamp(3rem, 7vw, 5rem) 0 0; padding: 0;
-  display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  position: relative;
+  display: flex; flex-direction: column; gap: clamp(1.3rem, 3vw, 2rem);
 }
-.step {
-  padding: 1.5rem; border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  background: rgba(255, 255, 255, 0.5);
-  -webkit-backdrop-filter: blur(16px) saturate(1.5);
-  backdrop-filter: blur(16px) saturate(1.5);
-  box-shadow: 0 14px 40px -26px rgba(14, 29, 49, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+.rail::before {
+  content: ""; position: absolute; top: 0.7rem; bottom: 0.7rem;
+  left: calc(var(--lane) / 2); width: 1.5px; transform: translateX(-50%);
+  background: linear-gradient(var(--ion-glow), rgba(43, 182, 214, 0.08));
 }
-@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-  .step { background: rgba(243, 249, 254, 0.92); }
+.rail-step {
+  display: grid; grid-template-columns: var(--lane) 1fr;
+  align-items: start; gap: 0 clamp(0.9rem, 2.2vw, 1.4rem);
 }
-.step-n { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.16em; color: var(--ion-700); font-weight: 500; }
-.step-t { font-size: 1.4rem; margin: 0.4rem 0 0; line-height: 1.1; }
-.step-d { font-size: 0.9rem; color: var(--ink-dim); margin: 0.5rem 0 0; line-height: 1.55; }
-.tools { list-style: none; margin: clamp(2rem, 5vw, 3rem) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.6rem; }
-.tools li {
-  font-size: 0.8rem; letter-spacing: 0.04em; color: var(--ink-soft);
-  border: 1px solid var(--rule); border-radius: 999px; padding: 0.4rem 0.9rem;
+.rail-marker { display: flex; justify-content: center; padding-top: 0.45rem; }
+.rail-node {
+  width: 10px; height: 10px; border-radius: 50%; position: relative; z-index: 1;
+  background: var(--ion-glow);
+  box-shadow: 0 0 0 4px rgba(43, 182, 214, 0.14), 0 0 11px 1px rgba(90, 209, 238, 0.5);
+}
+.rail-head { display: flex; align-items: baseline; gap: 0.7rem; }
+.rail-n {
+  font-family: var(--display); font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  color: var(--ion-700); line-height: 1; font-variant-numeric: tabular-nums; opacity: 0.85;
+}
+.rail-t {
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(1.3rem, 2.6vw, 1.7rem); margin: 0; line-height: 1.1;
+}
+.rail-d { font-size: 0.92rem; color: var(--ink-dim); margin: 0.35rem 0 0; line-height: 1.55; max-width: 52ch; }
+
+/* TOOLKIT — grouped by discipline, typographic, not a wall of identical pills */
+.toolkit {
+  display: flex; flex-wrap: wrap; gap: clamp(1.6rem, 5vw, 3.5rem);
+  margin: clamp(2.5rem, 6vw, 4rem) 0 0;
+}
+.toolkit-h {
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ion-700); margin: 0 0 0.7rem; font-weight: 500;
+}
+.toolkit-group ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+.toolkit-group li { font-size: 0.95rem; color: var(--ink-soft); }
+
+/* SCROLL REVEALS for the server-rendered bands — hidden only once JS has taken
+   over (body.altitude-ready), so the no-JS / headless default stays fully
+   visible and a section never ships blank. Reduced motion reveals instantly. */
+body.altitude-ready [data-reveal] {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+body.altitude-ready [data-reveal].in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  body.altitude-ready [data-reveal] { opacity: 1; transform: none; transition: none; }
 }
 
 /* =================================================================
