@@ -1,0 +1,926 @@
+@import "tailwindcss";
+
+/* =================================================================
+   SAMEER KAPIL — the altitude journey
+   One continuous atmosphere: SPACE (up · creative) · SKY (land · you) ·
+   WORK (down · shipped) · GROUND (footer · roots). Only the light changes.
+   All sky & space: a single cool ION / AURORA accent carries structure and
+   the numbers alike — serif numerals glow like an altimeter readout. The page
+   is read through frosted cockpit-canopy glass.
+   ================================================================= */
+:root {
+  /* neutral ramp (exact, from the brand system) */
+  --n-1111: #111111;
+  --n-900: #1c1c1c;
+  --n-700: #3e3d3c;
+  --n-600: #545352;
+  --n-400: #80807d;
+  --n-200: #adaca8;
+  --n-50: #dad8d3;
+  --n-25: #e5e3de;
+  --n-00: #f0eee9;
+
+  /* ink — DARK by default (most of the page is bright sky / sunset / ground);
+     the SPACE band flips these to light. */
+  --ink: #122031;
+  --ink-soft: #38485b;
+  --ink-dim: #5f7184;
+  --rule: rgba(18, 32, 49, 0.16);
+  --rule-soft: rgba(18, 32, 49, 0.08);
+
+  /* surface cards adapt to the band: frosted-white on bright sky,
+     white-tint on black space (overridden in the space context) */
+  --card-bg: rgba(255, 255, 255, 0.5);
+  --card-border: rgba(18, 32, 49, 0.12);
+
+  /* accents — one cool ion / aurora family, structure + numbers alike.
+     -700 is the deep ion-teal that holds AA on the bright sky; -glow is the
+     bright cyan reserved for the dark space band and halos. */
+  --ion: #2bb6d6;
+  --ion-700: #0f6e8e;
+  --ion-glow: #5ad1ee;
+  --aurora-teal: #1fc6a6;
+  --auroral: linear-gradient(105deg, var(--aurora-teal) 0%, var(--ion) 55%, #2f86d6 100%);
+
+  /* type */
+  --display: var(--font-awesome-serif), 'Times New Roman', Georgia, serif;
+  --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* HUD / data utility face — instrument labels only (eyebrows, designations,
+     altimeter labels), never body. */
+  --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Cascadia Code', 'Roboto Mono', monospace;
+
+  /* altitude layer opacities — driven by AltitudeProvider (0..1).
+     Defaults = the SKY keyframe, so first paint already reads as sky. */
+  --space-o: 0.25;
+  --sky-o: 1;
+  --ground-o: 0;
+
+  --gutter: clamp(1.25rem, 5vw, 5rem);
+  --maxw: 72rem;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  /* always reserve the scrollbar's space so it can't shift the layout */
+  scrollbar-gutter: stable;
+}
+
+body {
+  margin: 0;
+  background: #000004; /* black-space base — atmosphere layers sit on top */
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 18px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  /* reveal once the page has anchored at the sky (no mid-page flash) */
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+body.altitude-ready { opacity: 1; }
+
+::selection { background: var(--ion); color: #04121b; }
+a { color: inherit; text-decoration: none; }
+
+:focus-visible {
+  outline: 2px solid var(--ion);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.serif { font-family: var(--display); font-weight: 400; }
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* =================================================================
+   FROSTED GLASS — the cockpit-canopy material, reused across panels.
+   Sits over the live atmosphere; frost stays opaque enough to clear AA.
+   The dark space band re-tints it via .band-space / .zone-space below.
+   ================================================================= */
+.glass {
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  backdrop-filter: blur(16px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 18px;
+  box-shadow:
+    0 18px 48px -22px rgba(14, 29, 49, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 0 0 1px rgba(43, 182, 214, 0.06);
+}
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .glass { background: rgba(243, 249, 254, 0.92); }
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin: 0 0 1.25rem;
+}
+
+.display {
+  font-family: var(--display);
+  font-weight: 400;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+/* =================================================================
+   PRELOADER — a white field with a counting number, then lifts
+   ================================================================= */
+/* The clouds no longer live in the intro — they belong to the page
+   (<CloudField/>), which fades + rises them in on the `preloader:done` signal.
+   The white loading field holds while the number counts, then fades PROMPTLY to
+   reveal the hero underneath as the clouds well up. */
+.pl-sky {
+  position: fixed; inset: 0; z-index: 95;
+  background: linear-gradient(180deg, #ffffff 0%, #ffffff 62%, #f4f9ff 100%);
+  transition: opacity 0.65s ease;
+}
+.pl-sky.hide { opacity: 0; }
+
+.loader-core {
+  position: fixed; inset: 0; z-index: 97;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity 0.5s ease, transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.loader-core.hide { opacity: 0; transform: translateY(-10px) scale(0.97); }
+.loader-num {
+  display: flex; align-items: flex-end; justify-content: center;
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(4rem, 16vw, 11rem); line-height: 1; letter-spacing: -0.03em;
+  color: #16140f;
+}
+.odo { display: inline-flex; align-items: flex-end; font-variant-numeric: tabular-nums; }
+.odo-digit { display: inline-block; width: 1ch; height: 1em; line-height: 1; overflow: hidden; }
+.odo-strip { display: flex; flex-direction: column; will-change: transform, filter; }
+.odo-strip > span { display: block; height: 1em; line-height: 1; text-align: center; }
+.loader-num i {
+  font-style: normal; font-family: var(--sans); font-size: 0.5em;
+  color: #0f6e8e; margin-left: 0.08em;
+}
+
+/* =================================================================
+   GLASS SIDE-NAV — the navigation, moved to the left edge, built from
+   <GlassSurface>. Doubles as an altimeter for the four worlds.
+   ================================================================= */
+.sidenav-wrap {
+  position: fixed;
+  left: clamp(0.6rem, 1.6vw, 1.3rem);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 120; /* above every cloud layer, incl. the preloader frame (96) */
+  transition: opacity 0.6s ease 0.2s; /* fade IN once the preloader has cleared */
+}
+/* the nav stays out of sight for the whole intro. The hide is INSTANT (no
+   transition) so it's already gone on the first painted frame; only the reveal
+   at the end fades in. */
+body.preloading .sidenav-wrap { opacity: 0; pointer-events: none; transition: none; }
+/* GlassSurface owns the frost; we only lay out its contents */
+.sidenav-glass { overflow: visible; }
+.sidenav-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 0.7rem 0.4rem;
+}
+
+.sidenav-brand {
+  display: block; line-height: 0;
+  border-radius: 11px; overflow: hidden;
+  box-shadow: 0 6px 18px -6px rgba(8, 6, 26, 0.6);
+  transition: transform 0.25s ease;
+}
+.sidenav-brand:hover { transform: translateY(-2px); }
+.sidenav-brand img { width: 34px; height: 34px; display: block; border-radius: 11px; }
+
+.sidenav-stops {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0.85rem;
+  position: relative;
+}
+/* a faint altimeter spine behind the dots */
+.sidenav-stops::before {
+  content: ""; position: absolute; top: 6px; bottom: 6px; left: 50%;
+  width: 1.5px; transform: translateX(-50%);
+  background: linear-gradient(var(--rule), transparent, var(--rule));
+}
+.stop {
+  appearance: none; background: none; border: none; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 0.28rem;
+  padding: 0.1rem 0.2rem;
+  color: var(--ink-dim);
+  font-family: var(--mono); font-size: 0.5rem; font-weight: 500;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  transition: color 0.25s ease;
+  position: relative; z-index: 1;
+}
+.stop-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 4px rgba(7, 6, 26, 0.18);
+  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+.stop-label { opacity: 0.85; }
+.stop:hover { color: var(--ink-soft); }
+.stop.is-active { color: var(--ink); }
+.stop.is-active .stop-dot {
+  background: var(--ion-glow);
+  transform: scale(1.35);
+  box-shadow: 0 0 0 4px rgba(90, 209, 238, 0.22), 0 0 12px 1px rgba(90, 209, 238, 0.6);
+}
+
+.sidenav-cta {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(7, 22, 38, 0.25);
+  border: 1px solid var(--rule);
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+.sidenav-cta:hover { background: var(--ion-700); transform: translateY(-1px); }
+.sidenav-pulse {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--ion-glow);
+  box-shadow: 0 0 0 0 rgba(90, 209, 238, 0.55);
+  animation: pulse 2.6s ease-out infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(90, 209, 238, 0.55); }
+  70%, 100% { box-shadow: 0 0 0 9px rgba(90, 209, 238, 0); }
+}
+
+/* =================================================================
+   SEAMLESS ALTITUDE BACKGROUND — three fixed gradient layers
+   cross-fade by scroll altitude (vars set by AltitudeProvider).
+   ================================================================= */
+.altitude-bg { position: fixed; inset: 0; z-index: -3; pointer-events: none; }
+.altitude-bg .layer { position: absolute; inset: 0; will-change: opacity; }
+/* SPACE — literal black space at the apex (hosts the black hole). ONE
+   continuous deep-cosmos gradient that holds its darkness the whole way down;
+   it only bluens a touch at the very base, where the atmosphere begins. Kept
+   intentionally dark so the creative band reads as space, not washed-out sky. */
+.altitude-bg .space {
+  opacity: var(--space-o);
+  background:
+    radial-gradient(64% 40% at 50% 8%, rgba(70, 58, 150, 0.12) 0%, transparent 62%),
+    linear-gradient(180deg,
+      #000003 0%, #01030c 32%, #03091e 58%, #061128 80%, #07142f 100%);
+}
+/* SKY — a believable clear daytime sky-blue: azure up high, pale toward the
+   horizon. This is the brightest point — where you land. */
+.altitude-bg .sky {
+  opacity: var(--sky-o);
+  background:
+    linear-gradient(180deg, #2f86d6 0%, #57a6e6 26%, #8ec8f1 54%, #c2e2f7 80%, #e9f5fd 100%);
+}
+/* GROUND — a cool pale horizon you descend toward: clear azure settling into a
+   pale, ice-bright horizon with a faint high-altitude airglow. No warmth. */
+.altitude-bg .ground {
+  opacity: var(--ground-o);
+  background:
+    radial-gradient(110% 70% at 50% 120%, rgba(150, 210, 240, 0.5) 0%, rgba(120, 185, 225, 0.28) 40%, transparent 74%),
+    linear-gradient(180deg, #bcdcf0 0%, #a9d2ee 44%, #cfe6f4 74%, #e9f5fd 100%);
+}
+
+/* fixed atmospheric canvases */
+.starfield, .cloudfield {
+  position: fixed; inset: 0; pointer-events: none; will-change: opacity;
+}
+/* cosmos sits above the gradient. A radial mask clears stars out of the
+   top-centre, where the black hole's ring + glow sit at the apex — its light
+   and gravity would swallow anything that close, so no stars survive there.
+   Fully transparent over the hole, fading back to a full field lower down. */
+.starfield {
+  z-index: -2;
+  -webkit-mask-image: radial-gradient(96% 58% at 50% 5%, transparent 0%, transparent 47%, #000 74%);
+  mask-image: radial-gradient(96% 58% at 50% 5%, transparent 0%, transparent 47%, #000 74%);
+}
+/* clouds ride in FRONT of the content (a few drift past as you descend),
+   above the page but below the nav (120) and preloader (95+); click-through. */
+.cloudfield {
+  z-index: 40; opacity: var(--sky-o);
+  /* Reading lens: clouds sit IN FRONT of the page, so to keep them framing the
+     centred hero headline (and any centred copy) rather than covering it, mask a
+     soft clear ellipse down the middle. Same technique the starfield uses for the
+     black hole. Edges/top/bottom keep full cloud; the centre column stays legible. */
+  -webkit-mask-image: radial-gradient(74% 42% at 50% 47%, transparent 0%, transparent 30%, #000 66%);
+  mask-image: radial-gradient(74% 42% at 50% 47%, transparent 0%, transparent 30%, #000 66%);
+}
+
+/* =================================================================
+   ZONE SCAFFOLD — natural top→bottom order
+   [space] · [sky/centre] · [work] · [ground/footer]
+   ================================================================= */
+.zone {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(4.5rem, 13vh, 9rem) clamp(1.25rem, 5vw, 3rem);
+  text-align: center;
+}
+.panel { width: 100%; max-width: 46rem; }
+.panel.wide { max-width: var(--maxw); }
+.panel-lede {
+  margin: 1.5rem auto 0; max-width: 34rem;
+  font-size: clamp(1rem, 1.7vw, 1.18rem); line-height: 1.6; color: var(--ink-soft);
+}
+
+/* =================================================================
+   SPACE ZONE — the creative side, out in the cosmos
+   LIGHT-INK CONTEXT: black space + the creative gallery above the sky.
+   ================================================================= */
+.zone-space, .band-space {
+  color: #f3f6ff;
+  --ink: #f4f7ff;
+  --ink-soft: #c9d2e8;
+  --ink-dim: #98a4c4;
+  --rule: rgba(244, 247, 255, 0.16);
+  --rule-soft: rgba(244, 247, 255, 0.08);
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --card-border: rgba(244, 247, 255, 0.16);
+}
+/* keep light heads legible while the gallery brightens toward the sky */
+.band-space .band-head { text-shadow: 0 2px 20px rgba(0, 0, 8, 0.45); }
+
+/* the apex is its own layout — escape the centred .zone scaffold, set left,
+   let the hero stage own the first screen and the orbit flow beneath it */
+.zone-space {
+  justify-content: flex-start;
+  align-items: stretch;        /* children own their centring */
+  text-align: left;
+  /* left pad clears the fixed glass side-nav; hole stays full-bleed behind */
+  padding: 0 clamp(1.25rem, 5vw, 3rem) clamp(5rem, 14vh, 10rem) clamp(4.25rem, 8vw, 8.5rem);
+  overflow: hidden;            /* contain the weightless drift */
+}
+
+/* EVENT HORIZON — the manifesto, composed against the black hole's ring */
+.space-stage {
+  width: 100%; max-width: var(--maxw); margin-inline: auto;
+  min-height: 100vh; min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding-bottom: clamp(3rem, 9vh, 7rem);
+}
+.space-hero { max-width: 46rem; }
+.zone-space .space-title {
+  font-size: clamp(2.7rem, 8.5vw, 6.1rem);
+  line-height: 0.98; letter-spacing: -0.022em;
+  text-shadow: 0 2px 44px rgba(0, 0, 7, 0.65);
+}
+.zone-space .space-title em {
+  font-style: italic;
+  color: var(--ion-glow);
+  text-shadow: 0 0 28px rgba(90, 209, 238, 0.45);
+}
+.space-lede {
+  margin: clamp(1.4rem, 3vw, 2rem) 0 0; max-width: 36rem;
+  font-size: clamp(1rem, 1.6vw, 1.18rem); line-height: 1.6; color: var(--ink-soft);
+}
+
+/* IN ORBIT — three bodies hung off one hairline spine, each at its own reach */
+.orbit {
+  --spine: clamp(0.4rem, 2vw, 1.4rem);
+  position: relative; width: 100%; max-width: var(--maxw); margin-inline: auto;
+  list-style: none; padding: clamp(1rem, 4vh, 2.5rem) 0 0;
+  display: flex; flex-direction: column; gap: clamp(2.4rem, 6vh, 4.6rem);
+}
+.orbit-line {
+  position: absolute; left: var(--spine);
+  top: clamp(1.6rem, 4.5vh, 3rem); bottom: 0.6rem;
+  width: 2px; transform-origin: top; border-radius: 2px;
+  background: linear-gradient(to bottom,
+    transparent 0%, rgba(90, 209, 238, 0.85) 12%,
+    rgba(90, 209, 238, 0.85) 88%, transparent 100%);
+  box-shadow: 0 0 12px rgba(43, 182, 214, 0.55);
+}
+.body {
+  position: relative;
+  display: flex; align-items: baseline; justify-content: space-between; gap: 1.5rem;
+  padding-left: calc(var(--spine) + var(--reach, 2.6rem));
+  will-change: transform;
+}
+.body:nth-child(2) { --reach: clamp(1.5rem, 4vw, 3rem); }
+.body:nth-child(3) { --reach: clamp(2.8rem, 7.5vw, 5.6rem); }
+.body:nth-child(4) { --reach: clamp(1.9rem, 5vw, 3.9rem); }
+/* the node sits on the spine; a hairline tether reaches out to the body */
+.body::before {
+  content: ""; position: absolute; left: var(--spine); top: 0.6em;
+  width: var(--reach, 2.6rem); height: 1.5px; transform: translateY(-50%);
+  background: linear-gradient(to right, rgba(90, 209, 238, 0.7), rgba(90, 209, 238, 0.16));
+}
+.node {
+  position: absolute; left: var(--spine); top: 0.6em;
+  width: 13px; height: 13px; margin: -6.5px 0 0 -6.5px;  /* centre w/o transform */
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 34%, #fff 0%, var(--ion-glow) 42%, var(--ion-700) 100%);
+  box-shadow: 0 0 0 5px rgba(90, 209, 238, 0.16), 0 0 24px 5px rgba(43, 182, 214, 0.7);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+.body-main { min-width: 0; }
+.body-title {
+  margin: 0; font-size: clamp(1.55rem, 3.6vw, 2.5rem);
+  line-height: 1.04; letter-spacing: -0.015em;
+  text-shadow: 0 1px 18px rgba(0, 0, 6, 0.5);
+  transition: color 0.25s ease;
+}
+.body-note {
+  margin: 0.5rem 0 0; max-width: 46ch;
+  font-size: clamp(0.92rem, 1.4vw, 1rem); line-height: 1.55; color: var(--ink-dim);
+}
+.designation {
+  flex: none; padding-top: 0.5em;
+  font-family: var(--mono); font-weight: 500;
+  font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ion-glow); white-space: nowrap;
+}
+@media (hover: hover) {
+  .body:hover .node { transform: scale(1.35); box-shadow: 0 0 0 5px rgba(90, 209, 238, 0.2), 0 0 30px 6px rgba(43, 182, 214, 0.85); }
+  .body:hover .body-title { color: var(--ion-glow); }
+}
+@media (max-width: 720px) {
+  .body {
+    flex-direction: column; align-items: flex-start; gap: 0.5rem;
+    --reach: clamp(1.2rem, 5vw, 2rem) !important;
+  }
+  .designation { padding-top: 0; order: -1; }
+}
+
+/* =================================================================
+   SKY HERO — the hinge: you land here
+   ================================================================= */
+.sky-hero { overflow: hidden; }
+/* full-bleed hero image — fills the whole sky zone, headline rides on top. */
+.sky-bg { position: absolute; inset: 0; z-index: 0; }
+.sky-bg img { object-fit: cover; }
+/* soft cool reading lens: lifts the dark-ink headline off the busy hero photo
+   (bright cloud + the darker figure) without a hard scrim box. Sits above the
+   photo (z0), below the copy (z2). Cool ice tint, never warm. */
+.sky-hero::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(56% 44% at 50% 49%, rgba(231, 244, 252, 0.62), rgba(231, 244, 252, 0) 72%);
+}
+.sky-hero .inner { position: relative; z-index: 2; max-width: 54rem; }
+.sky-hero .name {
+  font-family: var(--sans); font-weight: 600;
+  font-size: 0.78rem; letter-spacing: 0.26em; text-transform: uppercase;
+  color: var(--ink-soft); margin: 0 0 1.4rem;
+}
+.sky-hero .tagline {
+  font-size: clamp(2.4rem, 7vw, 5.4rem);
+  text-shadow: 0 1px 30px rgba(255, 255, 255, 0.35);
+}
+.sky-hero .tagline em {
+  font-style: italic;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--ion);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.12em;
+}
+.sky-hero .one-liner {
+  margin: clamp(1.6rem, 3.5vw, 2.2rem) auto 0; max-width: 36rem;
+  font-size: clamp(1rem, 1.7vw, 1.2rem); line-height: 1.6; color: var(--ink-soft);
+}
+
+/* dual scroll cues — up is unintuitive, so cue it explicitly */
+.scroll-cues {
+  position: absolute; left: 50%; transform: translateX(-50%); z-index: 2;
+  display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+  font-size: 0.66rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-dim);
+}
+.scroll-cues.up { top: 1.6rem; }
+.scroll-cues.down { bottom: 1.6rem; }
+.scroll-cues .arrow { font-size: 1rem; animation: bob 2.2s ease-in-out infinite; }
+.scroll-cues.up .arrow { animation-direction: alternate; }
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+/* =================================================================
+   WORK ZONE — descending sky, the shipped work (count-up signature)
+   ================================================================= */
+.zone-work { justify-content: center; }
+.section-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+  padding-bottom: 1.2rem; border-bottom: 1px solid var(--ink);
+  text-align: left;
+}
+.section-head h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); }
+.section-head .count {
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-dim);
+}
+
+.case {
+  display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 1rem 2rem;
+  padding: clamp(1.5rem, 3.2vw, 2.3rem) clamp(1.4rem, 3vw, 2.4rem);
+  margin-bottom: clamp(0.8rem, 1.6vw, 1.1rem);
+  text-align: left;
+  /* frosted instrument card */
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  backdrop-filter: blur(16px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 18px;
+  box-shadow:
+    0 18px 48px -24px rgba(14, 29, 49, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  opacity: 0; transform: translateY(22px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+}
+.case.in { opacity: 1; transform: none; }
+@media (hover: hover) {
+  .case:hover {
+    box-shadow:
+      0 26px 60px -24px rgba(14, 29, 49, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8),
+      inset 0 0 0 1px rgba(43, 182, 214, 0.18);
+  }
+}
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .case { background: rgba(243, 249, 254, 0.92); }
+}
+.case .info { min-width: 0; }
+.case .idx {
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em;
+  color: var(--ion-700); font-weight: 500;
+}
+.case h3 {
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(1.6rem, 4vw, 2.6rem); line-height: 1.05; letter-spacing: -0.015em;
+  margin: 0.5rem 0 0; transition: color 0.25s ease;
+}
+.case .ctx { margin: 0.7rem 0 0; font-size: 0.92rem; color: var(--ink-soft); max-width: 46ch; }
+
+.case .measure-wrap { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
+.case .metric {
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(2.8rem, 8vw, 5.5rem); line-height: 0.85; letter-spacing: -0.03em;
+  color: var(--ion-700); font-variant-numeric: tabular-nums; white-space: nowrap;
+  /* altimeter readout: a soft cyan halo, never the contrast source */
+  text-shadow: 0 0 22px rgba(43, 182, 214, 0.32);
+}
+.case .metric .unit { color: var(--aurora-teal); }
+.case .mlabel {
+  margin-top: 0.6rem; font-family: var(--mono);
+  font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim);
+}
+.case .measure {
+  margin-top: 0.7rem; width: clamp(7rem, 18vw, 12rem); height: 2px;
+  background: var(--rule); position: relative; overflow: hidden; border-radius: 2px;
+}
+.case .measure::after {
+  content: ""; position: absolute; inset: 0; background: var(--auroral);
+  box-shadow: 0 0 10px rgba(43, 182, 214, 0.7);
+  transform: scaleX(0); transform-origin: right;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
+}
+.case.in .measure::after { transform: scaleX(1); }
+@media (hover: hover) { .case:hover h3 { color: var(--ion-700); } }
+
+/* whole metric card → its full study (stretched-link pattern, so the
+   count-up + reveal article structure is untouched) */
+.case.linked { position: relative; }
+.case-stretch { position: absolute; inset: 0; z-index: 3; border-radius: inherit; }
+.case-stretch:focus-visible { outline: 2px solid var(--ion); outline-offset: 4px; }
+.case-cta {
+  display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 1.1rem;
+  font-family: var(--mono); font-size: 0.66rem; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ion-700);
+}
+.case-go { display: inline-block; transition: transform 0.25s ease; }
+.case-soon {
+  display: inline-block; margin-top: 1.1rem;
+  font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.13em;
+  text-transform: uppercase; color: var(--ink-dim);
+}
+@media (hover: hover) {
+  .case.linked { cursor: pointer; }
+  .case.linked:hover .case-go { transform: translateX(4px); }
+}
+/* "All case studies →" link in the section head */
+.count.work-all { transition: color 0.2s ease; }
+.count.work-all:hover { color: var(--ion-700); }
+
+/* =================================================================
+   GROUND — the footer: the grassland you land on, dark ink, roots & contact
+   ================================================================= */
+.zone-ground {
+  color: #13283f;
+  --ink-soft: #34495f;
+  --ink-dim: rgba(19, 40, 63, 0.6);
+  --rule: rgba(19, 40, 63, 0.22);
+  overflow: hidden; /* clip the grassland to the zone */
+  padding-bottom: clamp(3rem, 9vh, 7rem); /* let the field run on below the colophon */
+}
+/* keep the footer content above the grassland scene */
+.zone-ground .ground-inner { position: relative; z-index: 1; }
+/* the colophon now rests on the dark grass — relight it so it stays legible */
+.zone-ground .colophon {
+  color: rgba(228, 244, 247, 0.74);
+  border-top-color: rgba(228, 244, 247, 0.24);
+}
+.zone-ground .to-top { color: rgba(233, 247, 250, 0.92); }
+.zone-ground .to-top:hover { color: var(--ion-glow); }
+
+/* ---- the grassland --------------------------------------------------
+   A cool emerald field rising from the bottom of the descent — kept on the
+   site's cold ion/aurora axis (no warm spring-green). The light sky stays at
+   the top of the footer so the CTA + glass card keep their contrast. */
+.ground-scape {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.ground-scape > * { position: absolute; left: 0; right: 0; }
+/* a faint ion airglow hugging the grass line */
+.gs-haze {
+  bottom: clamp(150px, 26vh, 300px);
+  height: 220px;
+  background: radial-gradient(120% 100% at 50% 100%, rgba(90, 209, 238, 0.22), transparent 68%);
+  filter: blur(4px);
+}
+/* the green plane — depth via stacked cool greens, a cool sun bloom up top */
+.gs-field {
+  bottom: 0;
+  height: clamp(190px, 34vh, 360px);
+  background:
+    radial-gradient(80% 120% at 50% 100%, rgba(46, 168, 148, 0.35), transparent 60%),
+    linear-gradient(180deg,
+      rgba(22, 88, 75, 0) 0%,
+      rgba(29, 107, 90, 0.85) 26%,
+      #1a5e51 56%,
+      #123f3a 100%);
+}
+/* the blade silhouette sitting on the field's top edge */
+.gs-grass {
+  bottom: 0;
+  width: 100%;
+  height: clamp(150px, 26vh, 280px);
+  display: block;
+}
+.gs-grass .gs-far  { fill: #2f8f7d; opacity: 0.7; }
+.gs-grass .gs-mid  { fill: #1f7a6a; }
+.gs-grass .gs-near { fill: #134f47; }
+.gs-grass .gs-blade { fill: #103f3a; }
+/* foreground blades catch a gentle breeze; each sways on its own offset */
+.gs-tufts .gs-blade {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  animation: gs-sway 4.8s ease-in-out infinite;
+}
+.gs-tufts .gs-blade:nth-child(2) { animation-duration: 5.9s; animation-delay: -1.4s; }
+.gs-tufts .gs-blade:nth-child(3) { animation-duration: 4.2s; animation-delay: -0.7s; }
+.gs-tufts .gs-blade:nth-child(4) { animation-duration: 6.4s; animation-delay: -2.1s; }
+@keyframes gs-sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50%      { transform: rotate(2deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gs-tufts .gs-blade { animation: none; }
+}
+.zone-ground .eyebrow { color: rgba(19, 40, 63, 0.6); }
+.ground-title {
+  font-size: clamp(2.4rem, 7.5vw, 5.4rem); max-width: 15ch; margin-inline: auto;
+}
+.ground-title em {
+  font-style: italic; color: var(--ink);
+  text-decoration: underline; text-decoration-color: var(--ion);
+  text-decoration-thickness: 2px; text-underline-offset: 0.1em;
+}
+.ground-inner { text-align: left; }
+.ground-cta { text-align: center; margin-bottom: clamp(2.5rem, 6vw, 4rem); }
+.ground-cta .eyebrow { text-align: center; }
+
+.ground-cols {
+  display: grid; gap: clamp(1.8rem, 4vw, 3rem); grid-template-columns: 1fr;
+  padding: clamp(1.8rem, 4vw, 2.8rem);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.42);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 18px 48px -26px rgba(14, 29, 49, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .ground-cols { background: rgba(243, 249, 254, 0.9); }
+}
+.ground-mark { border-radius: 11px; display: block; box-shadow: 0 6px 18px -6px rgba(36, 26, 15, 0.4); }
+.ground-name { font-size: 1.3rem; margin: 0.7rem 0 0; }
+.ground-blurb { font-size: 0.92rem; color: var(--ink-soft); margin: 0.5rem 0 0; max-width: 32ch; line-height: 1.55; }
+.ground-status { display: flex; align-items: center; gap: 0.5rem; margin: 1.1rem 0 0; font-size: 0.85rem; font-weight: 600; }
+.ground-status .dot {
+  width: 8px; height: 8px; border-radius: 50%; background: #1f7a4d;
+  box-shadow: 0 0 0 4px rgba(31, 122, 77, 0.18);
+}
+.ground-h {
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-dim); margin: 0 0 1rem; font-weight: 500;
+}
+.ground-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+.ground-col a, .ground-col button {
+  font-size: 0.95rem; color: #13283f; background: none; border: none; padding: 0;
+  cursor: pointer; font-family: inherit; text-align: left;
+  transition: color 0.2s ease;
+}
+.ground-col a:hover, .ground-col button:hover { color: var(--ion-700); }
+.ground-col a .arrow { color: rgba(19, 40, 63, 0.55); margin-left: 0.3rem; display: inline-block; transition: transform 0.25s ease; }
+.ground-col a:hover .arrow { transform: translate(2px, -2px); color: var(--ion-700); }
+.colophon {
+  margin: clamp(2.5rem, 6vw, 4rem) 0 0; padding-top: clamp(1.5rem, 3vw, 2rem);
+  border-top: 1px solid var(--rule);
+  display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; align-items: center;
+  justify-content: space-between;
+  font-family: var(--mono); font-size: 0.7rem; color: rgba(19, 40, 63, 0.6); letter-spacing: 0.02em;
+}
+.to-top {
+  background: none; border: none; cursor: pointer; font-family: var(--mono);
+  font-size: 0.7rem; color: #13283f; letter-spacing: 0.02em; transition: color 0.2s ease;
+}
+.to-top:hover { color: var(--ion-700); }
+.to-top .arrow { display: inline-block; transition: transform 0.25s ease; }
+.to-top:hover .arrow { transform: translateY(-2px); }
+@media (min-width: 740px) {
+  .ground-cols { grid-template-columns: 1.5fr 1fr 1.3fr; }
+}
+
+/* =================================================================
+   CONTENT BANDS — galleries + about (relaxed sections between zones)
+   ================================================================= */
+.band {
+  min-height: auto;
+  justify-content: flex-start;
+  text-align: left;
+  padding-block: clamp(5rem, 13vh, 9rem);
+}
+.band-head { text-align: center; max-width: 48rem; margin: 0 auto clamp(2.5rem, 6vw, 4rem); }
+.band-title { font-size: clamp(1.9rem, 5vw, 3.6rem); max-width: 18ch; margin: 0.6rem auto 0; }
+.band-lede {
+  margin: 1.2rem auto 0; max-width: 38rem;
+  font-size: clamp(1rem, 1.7vw, 1.18rem); line-height: 1.6; color: var(--ink-soft);
+}
+
+/* SPACE band (creative gallery) — adopt the apex's left-set, off-grid voice so
+   scrolling from the black-hole manifesto into the gallery reads as ONE
+   continuous creative world, not a centered section pasted under a left-aligned
+   one. Headline scale + cyan italic accent mirror .zone-space .space-title. */
+/* same left inset as the apex (.zone-space) so the content clears the fixed
+   glass side-nav and the two headlines start at the identical x. */
+.band-space { padding-inline-start: clamp(4.25rem, 8vw, 8.5rem); }
+.band-space .band-head {
+  text-align: left;
+  max-width: var(--maxw);
+  margin-inline: 0 auto;
+}
+.band-space .band-title {
+  max-width: 20ch;
+  margin-inline: 0;
+  font-size: clamp(2.2rem, 6.5vw, 4.6rem);
+  letter-spacing: -0.02em;
+  line-height: 1.0;
+}
+.band-space .band-title em {
+  font-style: italic;
+  color: var(--ion-glow);
+  text-shadow: 0 0 28px rgba(90, 209, 238, 0.45);
+}
+.band-space .band-lede { margin-inline: 0; }
+
+/* gallery grid — placeholder tiles, ready to swap real images */
+.gallery {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: clamp(0.7rem, 1.4vw, 1.1rem);
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: clamp(8rem, 15vw, 13rem);
+}
+.tile {
+  position: relative; overflow: hidden; border-radius: 16px;
+  border: 1px solid var(--rule); background: var(--rule-soft);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease;
+}
+.tile.wide { grid-column: span 2; }
+.tile.tall { grid-row: span 2; }
+.tile.big { grid-column: span 2; grid-row: span 2; }
+.tile-ph { position: absolute; inset: 0; display: flex; align-items: flex-start; justify-content: flex-end; }
+/* SPACE gallery: NO fill — the tiles are true open windows onto the one
+   continuous space field (the fixed gradient + starfield). The deep cosmos
+   shows straight through; only the hover frame + lift mark them out. */
+.tile-ph-seamless { background: transparent; }
+/* drop the boxed look in the space band: the .tile base border/fill would
+   otherwise read as separate panels against the unified cosmos */
+.band-space .tile {
+  background: transparent;
+  border-color: transparent;
+}
+.tile-num { font-family: var(--display); font-size: clamp(1.6rem, 3vw, 2.6rem); color: rgba(255, 255, 255, 0.28); padding: 0.5rem 0.8rem; }
+.tile-img { object-fit: cover; }
+.tile-cap {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 1;
+  padding: 0.9rem 1rem; display: flex; flex-direction: column; gap: 0.1rem;
+  background: linear-gradient(transparent, rgba(6, 15, 36, 0.78));
+}
+.tile-title { font-weight: 600; font-size: 0.95rem; color: #fff; line-height: 1.2; }
+.tile-meta { font-family: var(--mono); font-size: 0.66rem; color: rgba(220, 238, 252, 0.82); letter-spacing: 0.02em; }
+@media (hover: hover) {
+  .tile:hover { transform: translateY(-4px); border-color: var(--ion); }
+}
+.tile:focus-visible { outline: 2px solid var(--ion); outline-offset: 3px; }
+
+/* clickable gallery tiles → a case study */
+.tile-link { cursor: pointer; }
+.tile-stretch { position: absolute; inset: 0; z-index: 2; }
+.tile-stretch:focus-visible { outline: 2px solid var(--ion); outline-offset: 3px; }
+.tile-go {
+  align-self: flex-end; margin-top: 0.15rem;
+  font-family: var(--mono); font-size: 0.9rem; line-height: 1;
+  color: var(--ion-glow); opacity: 0; transform: translateX(-3px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+@media (hover: hover) {
+  .tile-link:hover .tile-go { opacity: 1; transform: none; }
+}
+.tile-link:focus-within .tile-go { opacity: 1; transform: none; }
+
+/* about + process + tools */
+.about-grid { display: grid; gap: clamp(1.5rem, 4vw, 3rem); grid-template-columns: 1fr; }
+.about-title { font-size: clamp(1.8rem, 4.5vw, 3rem); line-height: 1.1; max-width: 18ch; margin: 0.6rem 0 0; }
+.about-body { font-size: clamp(1rem, 1.6vw, 1.18rem); line-height: 1.7; color: var(--ink-soft); max-width: 54ch; }
+.about-body strong { color: var(--ink); font-weight: 600; }
+@media (min-width: 820px) { .about-grid { grid-template-columns: 1.05fr 1fr; align-items: start; } }
+
+.process {
+  list-style: none; margin: clamp(3rem, 7vw, 5rem) 0 0; padding: 0;
+  display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+.step {
+  padding: 1.5rem; border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  backdrop-filter: blur(16px) saturate(1.5);
+  box-shadow: 0 14px 40px -26px rgba(14, 29, 49, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .step { background: rgba(243, 249, 254, 0.92); }
+}
+.step-n { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.16em; color: var(--ion-700); font-weight: 500; }
+.step-t { font-size: 1.4rem; margin: 0.4rem 0 0; line-height: 1.1; }
+.step-d { font-size: 0.9rem; color: var(--ink-dim); margin: 0.5rem 0 0; line-height: 1.55; }
+.tools { list-style: none; margin: clamp(2rem, 5vw, 3rem) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.tools li {
+  font-size: 0.8rem; letter-spacing: 0.04em; color: var(--ink-soft);
+  border: 1px solid var(--rule); border-radius: 999px; padding: 0.4rem 0.9rem;
+}
+
+/* =================================================================
+   RESPONSIVE
+   ================================================================= */
+@media (max-width: 680px) {
+  body { font-size: 17px; }
+  .case { grid-template-columns: 1fr; align-items: start; }
+  .case .measure-wrap { align-items: flex-start; text-align: left; }
+  .case .metric { font-size: clamp(2.6rem, 16vw, 4rem); }
+  .section-head { flex-direction: column; gap: 0.3rem; }
+  .gallery { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 9rem; }
+  .tile.big { grid-column: span 2; grid-row: span 2; }
+  .tile.wide { grid-column: span 2; }
+  .tile.tall { grid-row: span 1; }
+}
+@media (max-width: 380px) {
+  .gallery { grid-template-columns: 1fr; }
+  .tile.big, .tile.wide { grid-column: span 1; }
+}
+@media (max-width: 740px) {
+  /* The floating altimeter rail is fixed at the left edge with no clear margin on
+     phones, so it overlaps the centred hero headline and the work metrics. Hide it
+     below tablet: the journey scrolls naturally and the footer's "Navigate" block
+     carries the zone jumps. (A compact mobile nav could return here later.) */
+  .sidenav-wrap { display: none; }
+  /* reclaim the left pad the space zone only needed to clear that rail */
+  .zone-space { padding-left: clamp(1.25rem, 5vw, 2rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.001ms !important;
+  }
+  body { opacity: 1; }
+  .case { opacity: 1; transform: none; }
+  .case .measure::after { transform: scaleX(1); }
+  .scroll-cues .arrow { animation: none; }
+}

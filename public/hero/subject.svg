@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 420" width="400" height="420" role="img" aria-label="Placeholder: person sitting on a cloud reading a book">
+  <defs>
+    <filter id="cloudSoft" x="-15%" y="-15%" width="130%" height="130%">
+      <feGaussianBlur stdDeviation="6" />
+    </filter>
+    <radialGradient id="cloudFill" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e3e9f6" />
+    </radialGradient>
+    <linearGradient id="bodyFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5b6bd6" />
+      <stop offset="100%" stop-color="#3a47a3" />
+    </linearGradient>
+  </defs>
+
+  <!-- the cloud being sat on -->
+  <g filter="url(#cloudSoft)" fill="url(#cloudFill)">
+    <ellipse cx="120" cy="330" rx="92" ry="52" />
+    <ellipse cx="220" cy="312" rx="104" ry="62" />
+    <ellipse cx="300" cy="334" rx="84" ry="48" />
+    <rect x="80" y="318" width="252" height="70" rx="35" />
+  </g>
+
+  <!-- seated figure (simple silhouette placeholder) -->
+  <g fill="url(#bodyFill)">
+    <!-- legs / lap -->
+    <path d="M150 300 q50 -26 110 0 q6 26 -14 34 q-44 14 -88 0 q-16 -10 -8 -34 z" />
+    <!-- torso -->
+    <path d="M168 214 q34 -20 70 0 l8 78 q-44 16 -86 0 z" />
+    <!-- head -->
+    <circle cx="203" cy="178" r="30" />
+    <!-- arms holding book -->
+    <path d="M168 232 q-22 18 -8 44 l24 -6 q-8 -22 6 -34 z" />
+    <path d="M238 232 q22 18 8 44 l-24 -6 q8 -22 -6 -34 z" />
+  </g>
+
+  <!-- open book -->
+  <g>
+    <path d="M158 276 l45 -10 v40 l-45 8 z" fill="#f4f6fc" stroke="#c3cbe6" stroke-width="2" />
+    <path d="M248 276 l-45 -10 v40 l45 8 z" fill="#e8ecf8" stroke="#c3cbe6" stroke-width="2" />
+    <line x1="168" y1="280" x2="196" y2="274" stroke="#c3cbe6" stroke-width="2" />
+    <line x1="168" y1="290" x2="196" y2="284" stroke="#c3cbe6" stroke-width="2" />
+    <line x1="238" y1="280" x2="210" y2="274" stroke="#c3cbe6" stroke-width="2" />
+    <line x1="238" y1="290" x2="210" y2="284" stroke="#c3cbe6" stroke-width="2" />
+  </g>
+</svg>

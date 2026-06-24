@@ -1,0 +1,866 @@
+/* =================================================================
+   /work — THE HANGAR
+   A quieter altitude. The journey homepage is weather; this is the
+   hangar where the work is parked and inspected. Same ion atmosphere,
+   but the drama is gone: one calm static sky, and every surface is
+   glass. No black hole, no cross-fade, no count-ups racing — just
+   frosted panels you can read through, lit by a single ion horizon.
+
+   Reuses the global tokens (--ink, --ion*, --display, --sans, --mono,
+   --maxw) and the global .glass / .eyebrow / .serif primitives. Every
+   rule here is scoped under .work so it can't leak into the homepage.
+   ================================================================= */
+
+/* ---- the plain sky: one static gradient + two faint ion washes ---- */
+.work-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 78% at 84% -12%, rgba(90, 209, 238, 0.20) 0%, transparent 54%),
+    radial-gradient(96% 64% at 8% 112%, rgba(31, 198, 166, 0.16) 0%, transparent 60%),
+    linear-gradient(180deg, #5ea6e3 0%, #84bde9 26%, #abd2ef 52%, #cae3f5 76%, #e2eef8 100%);
+}
+/* a single hairline horizon where the ion wash meets the pale base —
+   the one piece of "weather" left, and the page's quiet signature */
+.work-bg::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 62%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(90, 209, 238, 0.5) 22%, rgba(90, 209, 238, 0.5) 78%, transparent);
+  box-shadow: 0 0 22px 1px rgba(43, 182, 214, 0.28);
+}
+
+.work {
+  position: relative;
+  min-height: 100vh;
+  color: var(--ink);
+}
+
+/* ---- floating glass top bar ---- */
+.work-top {
+  position: fixed;
+  top: clamp(0.7rem, 1.8vw, 1.2rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  width: min(100% - 1.6rem, var(--maxw));
+}
+.work-top-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0.6rem 0.55rem 1rem;
+  border-radius: 999px;
+}
+.work-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  transition: color 0.2s ease;
+}
+.work-back .ar {
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+.work-back:hover { color: var(--ink); }
+.work-back:hover .ar { transform: translateX(-3px); }
+.work-top-links {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.work-top-links a {
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 0.5rem 0.85rem;
+  border-radius: 999px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.work-top-links a:hover { color: var(--ink); background: rgba(255, 255, 255, 0.4); }
+.work-top-links a.cta {
+  color: #062430;
+  background: var(--ion);
+  box-shadow: 0 6px 18px -8px rgba(43, 182, 214, 0.9);
+}
+.work-top-links a.cta:hover { background: var(--ion-glow); }
+
+/* ---- shared page shell ---- */
+.work-main {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: clamp(6.5rem, 13vh, 9rem) var(--gutter) clamp(4rem, 9vh, 7rem);
+}
+
+/* reveal — sections lift in on scroll; killed under reduced motion below */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.in { opacity: 1; transform: none; }
+
+/* =================================================================
+   HUB — the index of projects
+   ================================================================= */
+.hub-hero { max-width: 44rem; margin-bottom: clamp(3rem, 7vw, 5rem); }
+.hub-hero h1 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 7vw, 5rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.hub-hero h1 em {
+  font-style: italic;
+  color: var(--ion-700);
+}
+.hub-lede {
+  margin: clamp(1.3rem, 3vw, 1.9rem) 0 0;
+  max-width: 34rem;
+  font-size: clamp(1rem, 1.7vw, 1.18rem);
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.hub-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.8rem, 1.8vw, 1.15rem);
+}
+
+/* each project = a glass slab. Anchor when live, div when not. */
+.proj {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2.4rem);
+  padding: clamp(1.5rem, 3.4vw, 2.4rem) clamp(1.4rem, 3.2vw, 2.4rem);
+  border-radius: 20px;
+  color: var(--ink);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+}
+a.proj { cursor: pointer; }
+.proj-idx {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--ion-700);
+  align-self: start;
+  padding-top: 0.5rem;
+}
+.proj-main { min-width: 0; }
+.proj-name {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.55rem, 4vw, 2.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  margin: 0;
+  transition: color 0.25s ease;
+}
+.proj-ctx {
+  margin: 0.6rem 0 0;
+  font-size: clamp(0.92rem, 1.5vw, 1rem);
+  line-height: 1.55;
+  color: var(--ink-soft);
+  max-width: 50ch;
+}
+.proj-tags {
+  list-style: none;
+  margin: 0.95rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.proj-tags li {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 0.32rem 0.7rem;
+}
+
+.proj-aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  gap: 0.3rem;
+  flex: none;
+}
+.proj-metric {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.3rem, 6vw, 3.6rem);
+  line-height: 0.85;
+  letter-spacing: -0.03em;
+  color: var(--ion-700);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-shadow: 0 0 22px rgba(43, 182, 214, 0.28);
+}
+.proj-metric .u { color: var(--aurora-teal); }
+.proj-mlabel {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.proj-go {
+  margin-top: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ion-700);
+}
+.proj-go .ar { display: inline-block; transition: transform 0.25s ease; }
+.proj-soon {
+  margin-top: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  opacity: 0.8;
+}
+
+@media (hover: hover) {
+  a.proj:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 28px 64px -26px rgba(14, 29, 49, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8),
+      inset 0 0 0 1px rgba(43, 182, 214, 0.22);
+  }
+  a.proj:hover .proj-name { color: var(--ion-700); }
+  a.proj:hover .proj-go .ar { transform: translateX(4px); }
+}
+
+/* ---- hub footer ---- */
+.work-foot {
+  max-width: var(--maxw);
+  margin: clamp(3.5rem, 8vw, 6rem) auto 0;
+  padding: clamp(2rem, 4vw, 3rem) clamp(1.6rem, 4vw, 2.6rem);
+  border-radius: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+}
+.work-foot-l { max-width: 30rem; }
+.work-foot h3 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  line-height: 1.05;
+  margin: 0;
+}
+.work-foot p { margin: 0.6rem 0 0; font-size: 0.95rem; color: var(--ink-soft); }
+.work-foot a.mail {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.3rem;
+  border-radius: 999px;
+  background: var(--ion);
+  color: #062430;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 10px 26px -12px rgba(43, 182, 214, 0.9);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.work-foot a.mail:hover { background: var(--ion-glow); transform: translateY(-2px); }
+.work-colophon {
+  max-width: var(--maxw);
+  margin: clamp(2rem, 4vw, 3rem) auto 0;
+  padding: 0 var(--gutter);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.4rem;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--ink-dim);
+  letter-spacing: 0.02em;
+}
+
+/* =================================================================
+   CASE STUDY — the reskinned study, every panel in glass
+   ================================================================= */
+.cs {
+  /* the widget mockups keep their own real palette — these are scoped
+     to .widget only, never the page chrome */
+  --w-white: #ffffff;
+  --w-off: #f7f6f3;
+  --w-ink: #1a1a18;
+  --w-ink2: #6b6b67;
+  --w-ink3: #a8a89f;
+  --w-border: #e8e7e2;
+  --w-green: #1d9e75;
+  --w-red: #e24b4a;
+  --w-red-light: #fff0f0;
+}
+
+.cs-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ion-700);
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0 0 1.4rem;
+}
+.cs-eyebrow::before {
+  content: "";
+  width: 26px;
+  height: 1px;
+  background: var(--ion);
+}
+
+/* hero */
+.cs-hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(2rem, 5vw, 3.5rem);
+  align-items: end;
+  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+.cs-hero h1 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 6.4vw, 4.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.cs-hero h1 em { font-style: italic; color: var(--ion-700); }
+.cs-hero-desc {
+  margin: clamp(1.3rem, 3vw, 1.8rem) 0 0;
+  max-width: 36rem;
+  font-size: clamp(1rem, 1.7vw, 1.18rem);
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+.cs-meta {
+  padding: clamp(1.4rem, 3vw, 1.8rem);
+  border-radius: 18px;
+  display: grid;
+  gap: 1.1rem;
+}
+.cs-meta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid var(--rule);
+}
+.cs-meta-row:last-child { border-bottom: none; padding-bottom: 0; }
+.cs-meta-label {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.cs-meta-value { font-size: 0.95rem; color: var(--ink); }
+.cs-meta-value .live {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--aurora-teal);
+  box-shadow: 0 0 0 3px rgba(31, 198, 166, 0.2);
+  margin-right: 0.45rem;
+}
+@media (min-width: 880px) {
+  .cs-hero { grid-template-columns: 1fr 320px; }
+}
+
+/* impact strip — three glass cells */
+.cs-impact {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.7rem, 1.6vw, 1rem);
+  margin-bottom: clamp(3rem, 7vw, 5rem);
+}
+.cs-impact-cell {
+  padding: clamp(1.6rem, 3.4vw, 2.3rem);
+  border-radius: 18px;
+}
+.cs-impact-num {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 5vw, 3.1rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ion-700);
+  margin-bottom: 0.6rem;
+  text-shadow: 0 0 22px rgba(43, 182, 214, 0.26);
+}
+.cs-impact-label {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 18ch;
+}
+
+/* numbered section heads — these ARE a real 01→04 sequence */
+.cs-sec-head {
+  display: flex;
+  align-items: baseline;
+  gap: 1.1rem;
+  margin: 0 0 clamp(2rem, 5vw, 3rem);
+}
+.cs-sec-num {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--ion-700);
+  min-width: 1.8rem;
+}
+.cs-sec-title {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.7rem, 4vw, 2.6rem);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+.cs-section { margin-bottom: clamp(3.5rem, 8vw, 6rem); }
+
+/* problem grid + insight grid share the glass-cell look */
+.cs-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(0.7rem, 1.6vw, 1rem);
+}
+@media (min-width: 720px) { .cs-grid.two { grid-template-columns: 1fr 1fr; } }
+.cs-cell {
+  padding: clamp(1.5rem, 3vw, 2rem);
+  border-radius: 16px;
+}
+.cs-cell-label {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin: 0 0 0.9rem;
+}
+.cs-cell p {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+.cs-cell p strong { color: var(--ink); font-weight: 600; }
+
+/* pull quote */
+.cs-quote {
+  margin: clamp(2.5rem, 6vw, 4rem) 0;
+  padding: clamp(2rem, 5vw, 3rem) clamp(1.8rem, 4vw, 2.6rem);
+  border-radius: 20px;
+  border-left: 3px solid var(--ion);
+}
+.cs-quote blockquote {
+  margin: 0;
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.4rem, 3.2vw, 2.1rem);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  max-width: 38ch;
+}
+
+/* iterations */
+.cs-iters {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.2rem, 2.6vw, 1.8rem);
+}
+@media (min-width: 860px) { .cs-iters { grid-template-columns: repeat(3, 1fr); align-items: start; } }
+.cs-iter { padding: clamp(1.3rem, 2.6vw, 1.7rem); border-radius: 20px; }
+.cs-iter-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  padding: 0.36rem 0.75rem;
+  border-radius: 999px;
+  color: var(--ink-soft);
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid var(--rule);
+}
+.cs-iter-tag .d { width: 6px; height: 6px; border-radius: 50%; }
+.cs-iter-tag.v1 .d { background: #1d9e75; }
+.cs-iter-tag.v2 .d { background: #2f86d6; }
+.cs-iter-tag.v3 .d { background: #6a5cc0; }
+
+/* the screen frame the widget sits on — a light frosted inset so the
+   mockup reads like a real screenshot regardless of the sky behind */
+.iter-screen {
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 14px;
+  padding: 1.1rem;
+  margin-bottom: 1.2rem;
+  min-height: 400px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.cs-iter-name {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.4rem;
+  color: var(--ink);
+}
+.cs-iter-desc {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin: 0;
+}
+.cs-iter-changes { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.45rem; }
+.cs-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid var(--rule);
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  width: fit-content;
+  line-height: 1.3;
+}
+.cs-pill::before { content: "→"; color: var(--ion-700); font-size: 0.85rem; }
+
+/* outcomes */
+.cs-outcomes {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(0.7rem, 1.6vw, 1rem);
+}
+@media (min-width: 720px) { .cs-outcomes { grid-template-columns: repeat(3, 1fr); } }
+.cs-outcome { padding: clamp(1.5rem, 3vw, 2rem); border-radius: 16px; }
+.cs-outcome-num {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  line-height: 1;
+  color: var(--ion-700);
+  margin-bottom: 0.7rem;
+}
+.cs-outcome-title { font-size: 0.98rem; font-weight: 600; margin: 0 0 0.4rem; color: var(--ink); }
+.cs-outcome-desc { font-size: 0.9rem; color: var(--ink-soft); line-height: 1.6; margin: 0; }
+
+/* reflection */
+.cs-reflect {
+  margin-top: clamp(3rem, 7vw, 5rem);
+  padding: clamp(2.2rem, 5vw, 3.4rem) clamp(1.8rem, 4vw, 2.8rem);
+  border-radius: 22px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.2rem, 3vw, 2.5rem);
+}
+@media (min-width: 760px) { .cs-reflect { grid-template-columns: 180px 1fr; } }
+.cs-reflect-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  padding-top: 0.4rem;
+}
+.cs-reflect-text {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.3rem, 2.8vw, 1.8rem);
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0;
+}
+
+/* next / prev project nav at the foot of a study */
+.cs-next {
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.cs-next a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 0.7rem 1.1rem;
+  border-radius: 999px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.cs-next a:hover { color: var(--ink); background: rgba(255, 255, 255, 0.4); }
+
+/* =================================================================
+   THE WIDGET MOCKUPS — faithful to the shipped product. Their own
+   palette (green / red / cream) lives entirely inside .widget; the
+   altitude theme never touches them.
+   ================================================================= */
+.widget {
+  background: var(--w-white);
+  border-radius: 12px;
+  padding: 1.5rem 1.25rem;
+  width: 100%;
+  font-family: var(--sans);
+  color: var(--w-ink);
+  box-shadow: 0 10px 30px -18px rgba(20, 22, 30, 0.4);
+}
+.w-headline {
+  font-family: var(--display);
+  font-size: 1.4rem;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.25rem;
+  line-height: 1.1;
+  color: var(--w-ink);
+}
+.w-sub { font-size: 0.7rem; color: var(--w-ink2); margin-bottom: 1.1rem; font-style: italic; }
+.w-cols {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1.25rem;
+  font-size: 0.62rem;
+  color: var(--w-ink3);
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.03em;
+  text-align: right;
+}
+.w-bar { height: 7px; border-radius: 4px; display: flex; overflow: hidden; margin-bottom: 1.1rem; }
+.w-bar-s1 { background: #1d9e75; }
+.w-bar-s2 { background: #5dcaa5; }
+.w-bar-s3 { background: #9fe1cb; }
+.w-bar-s4 { background: #85b7eb; }
+.w-bar-s5 { background: #2c2c2a; }
+.w-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3rem 0;
+  font-size: 0.75rem;
+  color: var(--w-ink2);
+}
+.w-row-label { display: flex; align-items: center; gap: 0.45rem; }
+.w-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.w-divider { height: 1px; background: var(--w-border); margin: 0.4rem 0; }
+.w-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3rem 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.w-total.green { color: var(--w-green); }
+.w-total.red { color: var(--w-red); }
+.w-footer {
+  margin-top: 0.9rem;
+  font-size: 0.62rem;
+  color: var(--w-ink3);
+  line-height: 1.6;
+  font-style: italic;
+  border-top: 1px solid var(--w-border);
+  padding-top: 0.75rem;
+}
+.w2-section {
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  color: var(--w-ink);
+  border-bottom: 1px solid var(--w-border);
+  padding-bottom: 0.6rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.w2-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 0.45rem 0; }
+.w2-label { display: flex; align-items: flex-start; gap: 0.5rem; }
+.w2-label-text { display: flex; flex-direction: column; gap: 0.12rem; }
+.w2-label-main { font-size: 0.8rem; color: var(--w-ink); }
+.w2-label-sub { font-size: 0.62rem; color: var(--w-ink3); }
+.w2-amount { font-size: 0.75rem; color: var(--w-ink2); }
+.w3-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 0.45rem 0; }
+.w3-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.85rem;
+  border-radius: 10px;
+  margin: 0.4rem 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.w3-total.virgio { background: var(--w-off); color: var(--w-ink); }
+.w3-total.trad { background: var(--w-red-light); color: var(--w-red); }
+
+/* =================================================================
+   CHECKOUT MOCKUPS — clean neutral product screens, Virgio green
+   accent, scoped under .cs like the widgets. Rebuilt from divs, not
+   screenshots, so they stay crisp at any size.
+   ================================================================= */
+.ck {
+  background: var(--w-white);
+  border-radius: 14px;
+  padding: 1.15rem;
+  width: 100%;
+  font-family: var(--sans);
+  color: var(--w-ink);
+  box-shadow: 0 10px 30px -18px rgba(20, 22, 30, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.ck-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--w-ink);
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--w-border);
+}
+.ck-step { font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--w-ink3); font-weight: 500; }
+.ck-addr {
+  border: 1.5px solid var(--w-border);
+  border-radius: 10px;
+  padding: 0.7rem 0.8rem;
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  transition: border-color 0.2s ease;
+}
+.ck-addr.sel { border-color: var(--w-green); background: #f4fbf8; }
+.ck-radio {
+  width: 15px; height: 15px; border-radius: 50%;
+  border: 1.5px solid var(--w-ink3); flex-shrink: 0; margin-top: 2px;
+  display: grid; place-items: center;
+}
+.ck-addr.sel .ck-radio { border-color: var(--w-green); }
+.ck-addr.sel .ck-radio::after {
+  content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--w-green);
+}
+.ck-addr-main { min-width: 0; }
+.ck-addr-name { font-size: 0.78rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; }
+.ck-tag { font-size: 0.54rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--w-green); border: 1px solid #bfe6d6; border-radius: 999px; padding: 0.1rem 0.4rem; }
+.ck-addr-line { font-size: 0.7rem; color: var(--w-ink2); margin-top: 0.2rem; line-height: 1.45; }
+.ck-eta {
+  display: flex; align-items: center; gap: 0.45rem;
+  font-size: 0.68rem; color: var(--w-green); font-weight: 500; margin-top: 0.4rem;
+}
+.ck-eta .ck-spark { width: 6px; height: 6px; border-radius: 50%; background: var(--w-green); box-shadow: 0 0 0 3px rgba(29,158,117,0.16); }
+.ck-map {
+  position: relative; height: 84px; border-radius: 10px; overflow: hidden;
+  background:
+    linear-gradient(0deg, rgba(29,158,117,0.06), rgba(29,158,117,0.06)),
+    repeating-linear-gradient(0deg, #eef1ee 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(90deg, #eef1ee 0 1px, transparent 1px 26px),
+    #f7faf8;
+  border: 1px solid var(--w-border);
+}
+.ck-pin {
+  position: absolute; left: 50%; top: 46%; transform: translate(-50%, -100%);
+  width: 16px; height: 16px; border-radius: 50% 50% 50% 0;
+  background: var(--w-green); rotate: -45deg;
+  box-shadow: 0 4px 10px -3px rgba(29,158,117,0.7);
+}
+.ck-pin::after { content: ""; position: absolute; inset: 4px; background: #fff; border-radius: 50%; }
+.ck-flag {
+  display: flex; gap: 0.5rem; align-items: flex-start;
+  font-size: 0.64rem; line-height: 1.45; color: var(--w-ink2);
+  background: var(--w-off); border-radius: 8px; padding: 0.5rem 0.6rem;
+}
+.ck-flag .dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; background: #e2a23a; }
+.ck-pay {
+  display: flex; align-items: center; gap: 0.6rem;
+  border: 1.5px solid var(--w-border); border-radius: 10px; padding: 0.6rem 0.75rem;
+  font-size: 0.76rem;
+}
+.ck-pay.first { border-color: var(--w-green); background: #f4fbf8; }
+.ck-pay .ck-pay-ic { width: 22px; height: 22px; border-radius: 6px; background: var(--w-off); display: grid; place-items: center; font-size: 0.7rem; flex-shrink: 0; }
+.ck-pay-main { flex: 1; min-width: 0; }
+.ck-pay-t { font-weight: 500; color: var(--w-ink); }
+.ck-pay-s { font-size: 0.62rem; color: var(--w-ink3); margin-top: 0.1rem; }
+.ck-pay-amt { font-size: 0.74rem; font-weight: 600; color: var(--w-green); }
+.ck-cta {
+  margin-top: 0.3rem; text-align: center;
+  background: var(--w-ink); color: #fff;
+  border-radius: 10px; padding: 0.7rem; font-size: 0.78rem; font-weight: 600;
+}
+.ck-cta.off { background: #e3e3df; color: var(--w-ink3); }
+.ck-explore { display: flex; gap: 0.45rem; margin-bottom: 0.2rem; }
+.ck-chip {
+  font-size: 0.56rem; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--w-ink3); border: 1px solid var(--w-border); border-radius: 999px;
+  padding: 0.22rem 0.5rem;
+}
+.ck-chip.on { color: var(--w-green); border-color: #bfe6d6; background: #f4fbf8; }
+
+/* =================================================================
+   RESPONSIVE
+   ================================================================= */
+@media (max-width: 680px) {
+  .proj { grid-template-columns: auto 1fr; }
+  .proj-aside { grid-column: 2; align-items: flex-start; text-align: left; margin-top: 0.4rem; }
+  .cs-impact { grid-template-columns: 1fr; }
+  .cs-outcomes { grid-template-columns: 1fr; }
+  .work-top-links a:not(.cta) { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .work-back .ar, .proj-go .ar { transition: none; }
+}

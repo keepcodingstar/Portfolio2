@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-24T05:50:00Z",
+  "title": "Design System: Sameer Kapil — The Altitude Journey",
+  "extensions": {
+    "colorMeta": {
+      "airglow-cyan":   { "role": "primary",  "displayName": "Airglow Cyan",   "canonical": "#2bb6d6", "tonalRamp": ["#06222a", "#0a3a46", "#0f5666", "#14768c", "#1c9bb8", "#2bb6d6", "#5ad1ee", "#b3ecf7"] },
+      "horizon-teal":   { "role": "primary",  "displayName": "Horizon Teal",   "canonical": "#0f6e8e", "tonalRamp": ["#04161d", "#072833", "#0a3d4d", "#0f6e8e", "#1789ad", "#3aa6c7", "#79c9de", "#c5e8f1"] },
+      "ion-halo":       { "role": "primary",  "displayName": "Ion Halo",       "canonical": "#5ad1ee", "tonalRamp": ["#08323d", "#0d4d5c", "#14758c", "#1fa3c0", "#34c2e0", "#5ad1ee", "#95e3f4", "#d3f4fb"] },
+      "aurora":         { "role": "primary",  "displayName": "Aurora",         "canonical": "#1fc6a6", "tonalRamp": ["#04231d", "#073d33", "#0a5b4c", "#0f7d68", "#169f86", "#1fc6a6", "#57dcc2", "#b3f0e4"] },
+      "field-emerald":  { "role": "tertiary", "displayName": "Field Emerald",  "canonical": "#1a5e51", "tonalRamp": ["#04140f", "#0a2a22", "#103f3a", "#134f47", "#1a5e51", "#2a7d6c", "#4f9f8c", "#a9d8cc"] },
+      "midnight-slate": { "role": "neutral",  "displayName": "Midnight Slate", "canonical": "#122031", "tonalRamp": ["#070d15", "#0c1623", "#122031", "#1b2c40", "#2a4258", "#3f5a73", "#7488a0", "#c2cdda"] },
+      "ink-soft":       { "role": "neutral",  "displayName": "Ink Soft",       "canonical": "#38485b", "tonalRamp": ["#0d141c", "#1a2733", "#28384a", "#38485b", "#516379", "#73849a", "#a3b1c2", "#d8dfe8"] },
+      "ink-dim":        { "role": "neutral",  "displayName": "Ink Dim",        "canonical": "#5f7184", "tonalRamp": ["#16202a", "#26333f", "#3a4a59", "#4f6173", "#5f7184", "#8493a3", "#b0bcc8", "#e2e8ed"] },
+      "ink-light":      { "role": "neutral",  "displayName": "Sky Ink Light",  "canonical": "#f4f7ff", "tonalRamp": ["#3a4356", "#525d72", "#6f7c91", "#98a4c4", "#c9d2e8", "#e3e9f6", "#f4f7ff", "#ffffff"] },
+      "space-base":     { "role": "neutral",  "displayName": "Space Base",     "canonical": "#000004", "tonalRamp": ["#000004", "#04060c", "#0a0e18", "#141a28", "#26304a", "#46557a", "#7e8cb0", "#c4cce0"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display Serif", "purpose": "Zone headlines; the glowing serif voice. Italic accent word lit in ion." },
+      "title":   { "displayName": "Title Serif",   "purpose": "Case-study and orbit-experiment titles." },
+      "body":    { "displayName": "Body Grotesque", "purpose": "All reading copy in Helvetica Neue, 65–75ch measure." },
+      "label":   { "displayName": "HUD Label",     "purpose": "Mono instrument labels only — eyebrows, designations, nav, colophon." }
+    },
+    "shadows": [
+      { "name": "canopy-lift", "value": "0 18px 48px -22px rgba(14,29,49,0.45), inset 0 1px 0 rgba(255,255,255,0.7), inset 0 0 0 1px rgba(43,182,214,0.06)", "purpose": "The single elevation primitive: long diffuse drop + inner top highlight + faint ion inner edge on frosted glass panels." },
+      { "name": "mark-lift", "value": "0 6px 18px -6px rgba(36,26,15,0.4)", "purpose": "Small lift under brand/logo marks." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default state/opacity transitions and the preloader lift." },
+      { "name": "ease-out-quint", "value": "cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "Reveal/settle transitions (glass panels, case-row stretch) — exponential ease-out, no bounce." },
+      { "name": "gsap-power3-out", "value": "power3.out", "purpose": "GSAP timeline default for zone reveals (hero lines, orbit, count-ups)." }
+    ],
+    "breakpoints": [
+      { "name": "ground-cols", "value": "740px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Glass Panel",
+      "kind": "card",
+      "refersTo": "glass-panel",
+      "description": "The recurring frosted cockpit-canopy surface; sits over the live atmosphere.",
+      "html": "<div class=\"ds-glass-panel\"><p class=\"ds-glass-eyebrow\">On the ground · roots</p><p>Frosted canopy panel over a live sky.</p></div>",
+      "css": ".ds-glass-panel { background: rgba(255,255,255,0.55); -webkit-backdrop-filter: blur(16px) saturate(1.5); backdrop-filter: blur(16px) saturate(1.5); border: 1px solid rgba(255,255,255,0.55); border-radius: 18px; box-shadow: 0 18px 48px -22px rgba(14,29,49,0.45), inset 0 1px 0 rgba(255,255,255,0.7), inset 0 0 0 1px rgba(43,182,214,0.06); padding: 1.8rem 2rem; color: #122031; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 30rem; } .ds-glass-eyebrow { font-family: ui-monospace,'SF Mono','JetBrains Mono',monospace; font-size: 0.66rem; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: #5f7184; margin: 0 0 0.8rem; }"
+    },
+    {
+      "name": "Eyebrow / HUD Label",
+      "kind": "custom",
+      "refersTo": "eyebrow-label",
+      "description": "Mono instrument label — altitude-narrative copy, never generic per-section scaffolding.",
+      "html": "<p class=\"ds-eyebrow\">Out past the funnel</p>",
+      "css": ".ds-eyebrow { font-family: ui-monospace,'SF Mono','JetBrains Mono','Cascadia Code',monospace; font-size: 0.66rem; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: #5f7184; margin: 0; }"
+    },
+    {
+      "name": "Emphasis CTA Headline",
+      "kind": "custom",
+      "refersTo": "link-connect",
+      "description": "Display serif headline; emphasis carried by an italic word underlined in ion, not a filled button.",
+      "html": "<h2 class=\"ds-cta\">Design for outcomes,<br>numbers that <em>move</em>.</h2>",
+      "css": ".ds-cta { font-family: 'Awesome Serif','Times New Roman',Georgia,serif; font-weight: 400; font-size: clamp(2rem, 5vw, 3.6rem); line-height: 1; letter-spacing: -0.02em; color: #122031; margin: 0; text-wrap: balance; } .ds-cta em { font-style: italic; text-decoration: underline; text-decoration-color: #2bb6d6; text-decoration-thickness: 2px; text-underline-offset: 0.1em; }"
+    },
+    {
+      "name": "Work Case Row",
+      "kind": "custom",
+      "refersTo": "metric-readout",
+      "description": "Ruled full-width row: serif title left, right-aligned tabular ion metric (altimeter readout). The whole row links to the case study.",
+      "html": "<a class=\"ds-case-row\" href=\"#\"><span class=\"ds-case-title\">Checkout migration</span><span class=\"ds-metric\">+2.68%</span></a>",
+      "css": ".ds-case-row { display: flex; align-items: baseline; justify-content: space-between; gap: 2rem; padding: 1.4rem 0; border-top: 1px solid rgba(18,32,49,0.16); color: #122031; text-decoration: none; transition: color 0.25s ease; } .ds-case-row:hover, .ds-case-row:focus-visible { color: #0f6e8e; outline: none; } .ds-case-title { font-family: 'Awesome Serif',Georgia,serif; font-size: clamp(1.4rem, 3vw, 2.2rem); } .ds-metric { font-family: 'Awesome Serif',Georgia,serif; font-variant-numeric: tabular-nums; color: #2bb6d6; font-size: clamp(1.6rem, 3vw, 2.6rem); }"
+    },
+    {
+      "name": "Side-Nav HUD Label",
+      "kind": "nav",
+      "refersTo": "eyebrow-label",
+      "description": "Glass side-rail zone label with an ion active dot.",
+      "html": "<span class=\"ds-nav-label ds-nav-active\">Sky</span>",
+      "css": ".ds-nav-label { font-family: ui-monospace,monospace; font-size: 0.5rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #5f7184; display: inline-flex; align-items: center; gap: 7px; } .ds-nav-label::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #adaca8; transition: background 0.3s, box-shadow 0.3s; } .ds-nav-active { color: #122031; } .ds-nav-active::before { background: #2bb6d6; box-shadow: 0 0 0 4px rgba(43,182,214,0.18); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Atmosphere",
+    "overview": "One continuous sky. The whole site is a single descent through altitude — rise into space (the creative, off-grid, 0→1 side), land on the sky (who Sameer is now), descend through the work (shipped, measured proof) to the ground (a grassland footer). Nothing changes between zones except the light. The page is read through frosted cockpit-canopy glass, and a single cool ion/aurora accent carries both structure and numbers — serif numerals glow like an altimeter readout. The system holds two registers in deliberate tension: cinematic atmosphere and instrument-grade precision. Atmosphere sets the mood; the instrumentation makes it credible.",
+    "keyCharacteristics": [
+      "One cool ion/aurora accent for both structure and data — no second hue competing.",
+      "Ink inverts by altitude: dark on the bright sky/ground, light in the black space band.",
+      "Frosted 'cockpit-canopy' glass as the recurring surface material.",
+      "A mono face used strictly as instrument labelling, never body or display.",
+      "Custom serif display + system Helvetica Neue body; warmth banished from neutrals.",
+      "Every animation has a prefers-reduced-motion resolve."
+    ],
+    "rules": [
+      { "name": "The One Voice Rule", "body": "A single ion/aurora family carries both structure and the numbers. There is no second accent hue; its consistency is what makes the readouts read as instrumentation.", "section": "colors" },
+      { "name": "The Light-Flips Rule", "body": "Ink is dark by default; the space band re-declares the ink ramp light. Never hardcode text colour — use --ink/--ink-soft/--ink-dim so a section inherits the right polarity for its altitude.", "section": "colors" },
+      { "name": "The AA-By-Altitude Rule", "body": "On bright bands, accent text uses Horizon Teal (#0f6e8e), never Airglow Cyan; the bright cyan only clears contrast on the dark space band. Large metric numerals on bright backgrounds must verify ≥3:1.", "section": "colors" },
+      { "name": "The Instrument-Label Rule", "body": "The mono face is for readouts and labels only — never body copy, never a display headline.", "section": "typography" },
+      { "name": "The Glowing-Numeral Rule", "body": "Metrics are set in the serif with tabular-nums, right-aligned, lit in the ion accent — a gauge reading, not a hero-metric SaaS card.", "section": "typography" },
+      { "name": "The Canopy Rule", "body": "If a surface needs separation it gets frost (blur + translucency + the canopy-lift shadow) over the live atmosphere — never an opaque card with a hard 2014-style drop shadow.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do carry both structure and data on the single ion/aurora family. One voice.",
+      "Do drive all text colour through --ink/--ink-soft/--ink-dim so each band inherits the correct polarity.",
+      "Do use Horizon Teal (#0f6e8e) for accent text on bright bands and reserve Airglow Cyan / Ion Halo for the dark space band and glows.",
+      "Do set metrics in the serif with tabular-nums, right-aligned, lit in ion — an altimeter readout.",
+      "Do keep the mono face to instrument labels only.",
+      "Do give every animation a prefers-reduced-motion resolve.",
+      "Do let immersion serve reading: atmosphere and motion must pull the eye toward the work, never cover it."
+    ],
+    "donts": [
+      "Don't ship the templated portfolio look — Framer/Webflow template grids, dribbble-clone card walls, 'available for work' badge clichés.",
+      "Don't drift toward a corporate SaaS dashboard — cold gridded enterprise surfaces.",
+      "Don't mistake sparse minimalism for restraint; whitespace is not a point of view.",
+      "Don't let motion become a loud over-animated agency reel; no scroll-jacking, no effect that obstructs the work.",
+      "Don't use border-left/border-right greater than 1px as a colored accent stripe (the side-tab tell, currently at app/work/work.css:492).",
+      "Don't introduce warm-default neutrals (cream/sand/paper); the neutrals are cool deep-sea ink and the black of space.",
+      "Don't put mono on body copy, or set a display headline in mono.",
+      "Don't place an opaque card with a hard 2014-style drop shadow; surfaces are frosted glass over live atmosphere.",
+      "Don't repeat the uppercase mono eyebrow as reflexive per-section scaffolding; it earns its place only as altitude-narrative HUD labelling."
+    ]
+  }
+}
