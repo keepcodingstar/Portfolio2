@@ -151,7 +151,7 @@
   align-items: center;
   gap: clamp(1rem, 3vw, 2.4rem);
   padding: clamp(1.5rem, 3.4vw, 2.4rem) clamp(1.4rem, 3.2vw, 2.4rem);
-  border-radius: 20px;
+  border-radius: var(--r-xl);
   color: var(--ink);
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
 }
@@ -267,7 +267,7 @@ a.proj { cursor: pointer; }
   max-width: var(--maxw);
   margin: clamp(3.5rem, 8vw, 6rem) auto 0;
   padding: clamp(2rem, 4vw, 3rem) clamp(1.6rem, 4vw, 2.6rem);
-  border-radius: 22px;
+  border-radius: var(--r-xl);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -374,7 +374,7 @@ a.proj { cursor: pointer; }
 }
 .cs-meta {
   padding: clamp(1.4rem, 3vw, 1.8rem);
-  border-radius: 18px;
+  border-radius: var(--r-lg);
   display: grid;
   gap: 1.1rem;
 }
@@ -415,7 +415,7 @@ a.proj { cursor: pointer; }
 }
 .cs-impact-cell {
   padding: clamp(1.6rem, 3.4vw, 2.3rem);
-  border-radius: 18px;
+  border-radius: var(--r-lg);
 }
 .cs-impact-num {
   font-family: var(--display);
@@ -467,7 +467,7 @@ a.proj { cursor: pointer; }
 @media (min-width: 720px) { .cs-grid.two { grid-template-columns: 1fr 1fr; } }
 .cs-cell {
   padding: clamp(1.5rem, 3vw, 2rem);
-  border-radius: 16px;
+  border-radius: var(--r-md);
 }
 .cs-cell-label {
   font-family: var(--mono);
@@ -513,7 +513,7 @@ a.proj { cursor: pointer; }
   gap: clamp(1.2rem, 2.6vw, 1.8rem);
 }
 @media (min-width: 860px) { .cs-iters { grid-template-columns: repeat(3, 1fr); align-items: start; } }
-.cs-iter { padding: clamp(1.3rem, 2.6vw, 1.7rem); border-radius: 20px; }
+.cs-iter { padding: clamp(1.3rem, 2.6vw, 1.7rem); border-radius: var(--r-xl); }
 .cs-iter-tag {
   display: inline-flex;
   align-items: center;
@@ -583,7 +583,7 @@ a.proj { cursor: pointer; }
   gap: clamp(0.7rem, 1.6vw, 1rem);
 }
 @media (min-width: 720px) { .cs-outcomes { grid-template-columns: repeat(3, 1fr); } }
-.cs-outcome { padding: clamp(1.5rem, 3vw, 2rem); border-radius: 16px; }
+.cs-outcome { padding: clamp(1.5rem, 3vw, 2rem); border-radius: var(--r-md); }
 .cs-outcome-num {
   font-family: var(--display);
   font-weight: 400;
@@ -599,7 +599,7 @@ a.proj { cursor: pointer; }
 .cs-reflect {
   margin-top: clamp(3rem, 7vw, 5rem);
   padding: clamp(2.2rem, 5vw, 3.4rem) clamp(1.8rem, 4vw, 2.8rem);
-  border-radius: 22px;
+  border-radius: var(--r-xl);
   display: grid;
   grid-template-columns: 1fr;
   gap: clamp(1.2rem, 3vw, 2.5rem);

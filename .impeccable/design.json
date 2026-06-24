@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-06-24T05:50:00Z",
+  "generatedAt": "2026-06-24T07:33:00Z",
   "title": "Design System: Sameer Kapil — The Altitude Journey",
   "extensions": {
     "colorMeta": {
@@ -61,12 +61,12 @@
       "css": ".ds-cta { font-family: 'Awesome Serif','Times New Roman',Georgia,serif; font-weight: 400; font-size: clamp(2rem, 5vw, 3.6rem); line-height: 1; letter-spacing: -0.02em; color: #122031; margin: 0; text-wrap: balance; } .ds-cta em { font-style: italic; text-decoration: underline; text-decoration-color: #2bb6d6; text-decoration-thickness: 2px; text-underline-offset: 0.1em; }"
     },
     {
-      "name": "Work Case Row",
+      "name": "Work Metric Readout",
       "kind": "custom",
       "refersTo": "metric-readout",
-      "description": "Ruled full-width row: serif title left, right-aligned tabular ion metric (altimeter readout). The whole row links to the case study.",
-      "html": "<a class=\"ds-case-row\" href=\"#\"><span class=\"ds-case-title\">Checkout migration</span><span class=\"ds-metric\">+2.68%</span></a>",
-      "css": ".ds-case-row { display: flex; align-items: baseline; justify-content: space-between; gap: 2rem; padding: 1.4rem 0; border-top: 1px solid rgba(18,32,49,0.16); color: #122031; text-decoration: none; transition: color 0.25s ease; } .ds-case-row:hover, .ds-case-row:focus-visible { color: #0f6e8e; outline: none; } .ds-case-title { font-family: 'Awesome Serif',Georgia,serif; font-size: clamp(1.4rem, 3vw, 2.2rem); } .ds-metric { font-family: 'Awesome Serif',Georgia,serif; font-variant-numeric: tabular-nums; color: #2bb6d6; font-size: clamp(1.6rem, 3vw, 2.6rem); }"
+      "description": "The work zone's signature instrument readout: the count-up figure framed in viewfinder corner brackets, a graduated gauge tick-scale beneath it, and an ion HUD-marker label. Replaces the earlier ruled-ledger row.",
+      "html": "<div class=\"ds-readout\"><span class=\"ds-readout-fig\"><span class=\"ds-metric\">+2.68<span class=\"ds-unit\">%</span></span></span><span class=\"ds-gauge\"><span class=\"ds-gauge-fill\"></span></span><span class=\"ds-mlabel\">Conversion</span></div>",
+      "css": ".ds-readout { display: inline-flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; } .ds-readout-fig { position: relative; display: inline-block; padding: 0.15rem 0.7rem; } .ds-readout-fig::before, .ds-readout-fig::after { content: ''; position: absolute; width: 13px; height: 13px; border: 1.5px solid #0f6e8e; opacity: 0.55; } .ds-readout-fig::before { top: 0; left: 0; border-right: 0; border-bottom: 0; } .ds-readout-fig::after { bottom: 0; right: 0; border-left: 0; border-top: 0; } .ds-metric { font-family: 'Awesome Serif',Georgia,serif; font-variant-numeric: tabular-nums; color: #0f6e8e; font-size: clamp(2.4rem,8vw,3.4rem); line-height: 0.85; text-shadow: 0 0 22px rgba(43,182,214,0.32); } .ds-unit { color: #1fc6a6; } .ds-gauge { position: relative; width: 11rem; height: 13px; background: repeating-linear-gradient(90deg, rgba(18,32,49,0.16) 0 1px, transparent 1px 8px); -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); } .ds-gauge-fill { position: absolute; inset: 0; background: repeating-linear-gradient(90deg, #2bb6d6 0 1.5px, transparent 1.5px 8px); filter: drop-shadow(0 0 6px rgba(90,209,238,0.55)); } .ds-mlabel { display: inline-flex; align-items: center; gap: 0.45rem; font-family: ui-monospace,monospace; font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: #5f7184; } .ds-mlabel::before { content: ''; width: 5px; height: 5px; background: #0f6e8e; }"
     },
     {
       "name": "Side-Nav HUD Label",
