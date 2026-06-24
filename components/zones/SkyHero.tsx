@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import Image from 'next/image';
 import { gsap } from 'gsap';
 
 /**
@@ -66,24 +65,17 @@ export default function SkyHero() {
 
   return (
     <section id="zone-sky" className="zone sky-hero" ref={root} aria-labelledby="sky-title">
-      {/* full-bleed hero image — swappable placeholder; fills the whole zone */}
-      <div className="sky-bg" aria-hidden>
-        <Image
-          src="/hero/sameer-clouds.jpg"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          style={{ objectFit: 'cover' }}
-        />
-      </div>
-
       <div className="scroll-cues up reveal" aria-hidden>
         <span className="arrow">↑</span>
         <span>scroll up · the creative side</span>
       </div>
 
-      <div className="inner">
+      {/* the headline is read through a cockpit canopy: a thin refractive glass
+          pane that bends the cloud photo at its rim and catches the cursor light.
+          The viewfinder ticks echo the work-zone instrument readout. */}
+      <div className="inner canopy glass glass--thin glass--react reveal">
+        <span className="canopy-tick tl" aria-hidden />
+        <span className="canopy-tick br" aria-hidden />
         <p className="name reveal">Sameer Kapil · Product Designer · Bangalore</p>
         <h1 id="sky-title" className="display tagline reveal">
           Design for outcomes,

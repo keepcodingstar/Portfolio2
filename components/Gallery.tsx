@@ -49,12 +49,15 @@ export default function Gallery({
   palette?: 'space' | 'ground';
 }) {
   const tones = PALETTES[palette];
+  // every tile catches the cursor light (.glass--react), a cheap pseudo-element
+  // sheen + spotlight rim. (Refraction was removed for perf — see globals.css.)
+  const glass = 'glass--react';
   return (
     <ul className="gallery" data-reveal>
       {items.map((it, i) => (
         <li
           key={it.title}
-          className={`tile${it.span ? ` ${it.span}` : ''}${it.href ? ' tile-link' : ''}`}
+          className={`tile ${glass}${it.span ? ` ${it.span}` : ''}${it.href ? ' tile-link' : ''}`}
           tabIndex={it.href ? undefined : 0}
         >
           {it.src ? (

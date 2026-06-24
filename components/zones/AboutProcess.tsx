@@ -39,27 +39,31 @@ export default function AboutProcess() {
           </p>
         </div>
 
-        <ol className="rail" aria-label="How I work">
-          {STEPS.map((s, i) => (
-            <li
-              className="rail-step"
-              key={s.n}
-              data-reveal
-              style={{ transitionDelay: `${0.06 * i}s` }}
-            >
-              <span className="rail-marker" aria-hidden>
-                <span className="rail-node" />
-              </span>
-              <div className="rail-body">
-                <div className="rail-head">
-                  <span className="rail-n">{s.n}</span>
-                  <h3 className="rail-t serif">{s.t}</h3>
+        {/* the process is ONE instrument console (a single frosted pane) holding
+            the glowing-node spine — not four separate cards (a resolved tell). */}
+        <div className="rail-console glass glass--thin glass--react">
+          <ol className="rail" aria-label="How I work">
+            {STEPS.map((s, i) => (
+              <li
+                className="rail-step"
+                key={s.n}
+                data-reveal
+                style={{ transitionDelay: `${0.06 * i}s` }}
+              >
+                <span className="rail-marker" aria-hidden>
+                  <span className="rail-node" />
+                </span>
+                <div className="rail-body">
+                  <div className="rail-head">
+                    <span className="rail-n">{s.n}</span>
+                    <h3 className="rail-t serif">{s.t}</h3>
+                  </div>
+                  <p className="rail-d">{s.d}</p>
                 </div>
-                <p className="rail-d">{s.d}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
+              </li>
+            ))}
+          </ol>
+        </div>
 
         <div className="toolkit" aria-label="Tools & skills" data-reveal>
           {TOOLKIT.map((g) => (

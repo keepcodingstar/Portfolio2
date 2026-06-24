@@ -2,8 +2,9 @@ import Preloader from '@/components/Preloader';
 import Starfield from '@/components/Starfield';
 import CloudField from '@/components/CloudField'; // a few sky clouds on the descent to the ground
 import AltitudeProvider from '@/components/AltitudeProvider';
-import SideNav from '@/components/SideNav';
+import BottomNav from '@/components/BottomNav';
 import Reveals from '@/components/Reveals';
+import GlassLight from '@/components/GlassLight';
 // import TopBlackHole from '@/components/TopBlackHole'; // raymarched shader — hidden for now (perf)
 import SpaceZone from '@/components/zones/SpaceZone';
 import CreativeGallery from '@/components/zones/CreativeGallery';
@@ -30,10 +31,11 @@ export default function Home() {
       <CloudField className="cloudfield" />
 
       <AltitudeProvider>
-        <SideNav />
+        <BottomNav />
 
         <main style={{ position: 'relative' }}>
           <Reveals />  {/* one [data-reveal] observer for the server-rendered zones */}
+          <GlassLight />  {/* pointer-tracked specular light on .glass--react panels */}
           {/* <TopBlackHole /> */}  {/* ◐ black hole — hidden for now to cut shader lag */}
           <SpaceZone />        {/* ↑ space · the creative manifesto */}
           <CreativeGallery />  {/* visual / creative gallery        */}

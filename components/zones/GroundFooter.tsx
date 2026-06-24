@@ -66,7 +66,7 @@ export default function GroundFooter() {
           </h2>
         </div>
 
-        <div className="ground-cols">
+        <div className="ground-cols glass glass--thick glass--react">
           <div className="ground-col brandcol">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className="ground-mark" src="/brand/logo-mark.jpg" alt="" width={40} height={40} />

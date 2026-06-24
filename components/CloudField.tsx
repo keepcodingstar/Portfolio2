@@ -35,13 +35,15 @@ const VIEW_WORLD_H = 2 * 14 * Math.tan((56 * Math.PI) / 180 / 2);
 // the part. The UPPER band (top:true) sits high and PARTS SIDEWAYS only (left/
 // right, never down). Centre stays clear so the subject + headline read. Cool-
 // grey tints; [x,y,z] world units, 0 ≈ sky altitude.
+// QUANTITY trimmed for perf (was 7): volumetric clouds are fill-rate bound, so
+// each overlapping translucent cloud is real overdraw cost every frame. Kept a
+// left/centre/right FLOOR + the two parting side wisps — same positions, fewer
+// of them. Drop more here first if it's still heavy.
 const BANK = [
   // cloud FLOOR — low across the bottom (frames the subject, doesn't bury it);
   // these settle straight DOWN
   { seed: 11, pos: [-8.0, -6.9, -0.4], scale: 1.02, color: '#bccbe2', op: 0.46, top: false },
-  { seed: 4, pos: [-3.0, -7.1, -1.0], scale: 0.92, color: '#b6c6de', op: 0.42, top: false },
   { seed: 9, pos: [0.8, -7.7, 0.2], scale: 1.34, color: '#cdd9ea', op: 0.48, top: false },
-  { seed: 13, pos: [4.0, -7.0, -0.6], scale: 0.98, color: '#bccbe2', op: 0.44, top: false },
   { seed: 6, pos: [8.6, -6.8, -1.3], scale: 0.92, color: '#b6c6de', op: 0.44, top: false },
   // UPPER band — high in the frame; these only slide LEFT/RIGHT to the edges
   { seed: 14, pos: [-8.2, 3.2, -1.2], scale: 1.18, color: '#c8d5e8', op: 0.42, top: true },
@@ -56,11 +58,10 @@ const BANK = [
 // Pushed out to the viewport margins (|x| ~13) and shrunk so they only peek in
 // at the corners — they FRAME the case rows, never cover the titles or the
 // right-aligned metric readout. [x,y,z], y relative to the work-zone centre.
+// QUANTITY trimmed for perf (was 4): one wisp per side, same positions.
 const WORK_EDGE = [
   { seed: 31, pos: [-13.2, 3.6, -1.8], scale: 0.5, color: '#eef4fc', op: 0.4 },
-  { seed: 34, pos: [-12.7, -3.4, -1.4], scale: 0.46, color: '#dde7f5', op: 0.36 },
   { seed: 37, pos: [13.4, 3.0, -1.9], scale: 0.5, color: '#eef4fc', op: 0.4 },
-  { seed: 39, pos: [12.9, -3.6, -1.5], scale: 0.46, color: '#dde7f5', op: 0.36 },
 ] as const;
 
 // curtain timing/shape. The clouds START already covering the screen (bunched
@@ -198,8 +199,9 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
               position={[c.pos[0] * SIDE_SPREAD, c.pos[1], c.pos[2]]}
               scale={c.scale * CLOUD_SCALE}
               /* contained clusters — translucent so the headline + subject read
-                 through the bank */
-              segments={22}
+                 through the bank. segments kept low: this canvas renders every
+                 frame (frameloop always), so each segment is a recurring cost. */
+              segments={16}
               bounds={[3.6, 1.8, 1.5]}
               volume={4}
               color={c.color}
@@ -221,7 +223,7 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
               seed={c.seed}
               position={[c.pos[0], c.pos[1], c.pos[2]]}
               scale={c.scale * CLOUD_SCALE}
-              segments={20}
+              segments={14}
               bounds={[3.2, 1.8, 1.5]}
               volume={4}
               color={c.color}
@@ -265,15 +267,27 @@ export default function CloudField({ className }: { className?: string }) {
 
   return (
     <div className={className} aria-hidden>
-      {/* clouds stay visible (covering the screen) behind the white intro the
-          whole time; the outer .cloudfield keeps the --sky-o altitude envelope.
-          The PART is driven by per-cloud motion in <Sky/>, not opacity. */}
-      <div style={{ position: 'absolute', inset: 0 }}>
+      {/* The cloud layer is held invisible until the curtain is ready to PART
+          (`entered`). All the pre-roll repositioning — the per-cloud snap into the
+          cover pose and the page's centre-anchor scroll shift — happens off-screen
+          at opacity 0; then it fades in AS it parts, so there's no visible
+          "reposition, then animate" jitter. Reduced motion: no fade, appears at
+          rest. The outer .cloudfield still carries the --sky-o altitude envelope. */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          opacity: entered ? 1 : 0,
+          transition: animate ? 'opacity 0.7s ease' : 'none',
+        }}
+      >
         <Canvas
           frameloop="always"
           /* lower DPR cap + no MSAA: soft volumetric clouds hide aliasing, so
-             this roughly halves fragment work on retina with no visible loss */
-          dpr={[1, 1.5]}
+             this roughly halves fragment work on retina with no visible loss.
+             Capped at 1.25 (was 1.5) — the cloud is soft enough that the extra
+             retina samples are pure cost. */
+          dpr={[1, 1.25]}
           camera={{ position: [0, 0, 14], fov: 56 }}
           gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}
           style={{ background: 'transparent' }}

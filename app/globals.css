@@ -63,6 +63,28 @@
   --r-md: 16px;  /* cards, tiles, cells */
   --r-lg: 18px;  /* glass canopy panels */
   --r-xl: 20px;  /* large feature panels, quotes, impact */
+
+  /* GLASS SYSTEM — one frosted material in three depths, optionally light-reactive.
+     Tiers vary blur + fill alpha; --react drives a pointer-tracked specular sheen
+     + spotlight rim. (--refract once added a url() SVG backdrop-filter but was
+     removed for perf — it re-filtered every scroll frame; see .glass--refract.)
+     Bright-sky defaults; the dark SPACE band re-tints these below. */
+  /* blur radius is a per-frame GPU cost (these panels re-filter on every scroll
+     frame as the atmosphere layers cross-fade) — kept modest on purpose */
+  --glass-blur: 13px;
+  --glass-blur-thin: 8px;
+  --glass-blur-thick: 16px;
+  --glass-sat: 1.5;
+  --glass-rgb: 255 255 255;          /* fill colour, alpha applied per tier */
+  --glass-alpha: 0.5;                /* regular pane fill */
+  --glass-alpha-thin: 0.28;          /* see-through canopy / portholes */
+  --glass-alpha-thick: 0.44;         /* dense footer slab */
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --glass-edge: rgba(255, 255, 255, 0.7);   /* inset top highlight */
+  --glass-hair: rgba(43, 182, 214, 0.07);   /* inner ion hairline */
+  --glass-shadow: 0 18px 48px -22px rgba(14, 29, 49, 0.45);
+  --glass-sheen: rgba(255, 255, 255, 0.6);  /* travelling specular glint */
+  --glass-spot: rgba(90, 209, 238, 0.6);    /* cursor rim light */
 }
 
 * { box-sizing: border-box; }
@@ -107,18 +129,95 @@ a { color: inherit; text-decoration: none; }
    The dark space band re-tints it via .band-space / .zone-space below.
    ================================================================= */
 .glass {
-  background: rgba(255, 255, 255, 0.55);
-  -webkit-backdrop-filter: blur(16px) saturate(1.5);
-  backdrop-filter: blur(16px) saturate(1.5);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  border-radius: 18px;
+  /* NEW glass language — "liquid lens": light pools at the crown and thins toward
+     the base (a top→base translucency gradient over the frost), a crisp specular
+     top edge, a soft base light, and a hairline ion rim. Cheap to composite —
+     gradient + shadows only, no url() filter and no blend mode. */
+  background: linear-gradient(to bottom,
+    rgb(var(--glass-rgb) / calc(var(--glass-alpha) + 0.07)),
+    rgb(var(--glass-rgb) / calc(var(--glass-alpha) - 0.05)));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--r-lg);
   box-shadow:
-    0 18px 48px -22px rgba(14, 29, 49, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    inset 0 0 0 1px rgba(43, 182, 214, 0.06);
+    var(--glass-shadow),
+    inset 0 1px 0 var(--glass-edge),          /* crisp specular crown */
+    inset 0 -1px 0 rgba(255, 255, 255, 0.14), /* faint base light */
+    inset 0 0 0 1px var(--glass-hair);        /* ion rim */
 }
 @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
   .glass { background: rgba(243, 249, 254, 0.92); }
+}
+
+/* --- tiers ------------------------------------------------------------- */
+/* thin: stays see-through over a live photo / cosmos (canopy, portholes) */
+.glass--thin {
+  background: linear-gradient(to bottom,
+    rgb(var(--glass-rgb) / calc(var(--glass-alpha-thin) + 0.06)),
+    rgb(var(--glass-rgb) / calc(var(--glass-alpha-thin) - 0.03)));
+  -webkit-backdrop-filter: blur(var(--glass-blur-thin)) saturate(var(--glass-sat));
+  backdrop-filter: blur(var(--glass-blur-thin)) saturate(var(--glass-sat));
+}
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .glass--thin { background: rgba(243, 249, 254, 0.78); }
+}
+/* thick: a denser slab where there's nothing precious behind (footer) */
+.glass--thick {
+  background: linear-gradient(to bottom,
+    rgb(var(--glass-rgb) / calc(var(--glass-alpha-thick) + 0.08)),
+    rgb(var(--glass-rgb) / calc(var(--glass-alpha-thick) - 0.05)));
+  -webkit-backdrop-filter: blur(var(--glass-blur-thick)) saturate(var(--glass-sat));
+  backdrop-filter: blur(var(--glass-blur-thick)) saturate(var(--glass-sat));
+}
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .glass--thick { background: rgba(243, 249, 254, 0.9); }
+}
+
+/* --- refraction --------------------------------------------------------- */
+/* PERF: a url() SVG displacement backdrop-filter re-runs its whole filter graph
+   every frame the backdrop changes — and these panels sit over a fixed,
+   continuously cross-fading atmosphere, so it ran every scroll frame (×several
+   portholes at once). The chromatic edge wasn't worth the jank. The class is
+   kept as a harmless no-op so markup needn't change; the tier blur owns the look. */
+.glass--refract { /* intentionally empty — see note above */ }
+
+/* --- light-reactive sheen + spotlight rim ------------------------------ */
+/* Pointer position arrives as --mx/--my (percent) from GlassLight; with no
+   pointer they default to a calm top-left glint. Pseudo backgrounds are clipped
+   by border-radius:inherit, so nothing spills past the rounded corners. */
+.glass--react { position: relative; isolation: isolate; }
+.glass--react::before,
+.glass--react::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  pointer-events: none;
+}
+.glass--react::before {
+  z-index: -1;
+  background: radial-gradient(60% 70% at var(--mx, 32%) var(--my, 0%),
+    var(--glass-sheen), transparent 62%);
+  /* PERF: no mix-blend-mode — a blend layer forces an extra compositing pass per
+     panel per frame; a plain translucent white radial reads the same as a glint. */
+  opacity: 0.14;
+  transition: opacity 0.22s ease;
+}
+.glass--react::after {
+  z-index: -1; padding: 1px;
+  background: radial-gradient(38% 60% at var(--mx, 50%) var(--my, 50%),
+    var(--glass-spot), transparent 70%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          mask-composite: exclude;
+  opacity: 0; transition: opacity 0.22s ease;
+}
+@media (hover: hover) {
+  .glass--react:hover::before { opacity: 0.3; }
+  .glass--react:hover::after { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glass--react::before { opacity: 0.12; }
+  .glass--react::after { display: none; }
 }
 
 .eyebrow {
@@ -175,100 +274,86 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* =================================================================
-   GLASS SIDE-NAV — the navigation, moved to the left edge, built from
-   <GlassSurface>. Doubles as an altimeter for the four worlds.
+   BOTTOM NAVBAR — the altimeter as a centred glass dock at the foot of the
+   screen, laid left→right as a horizontal altitude scale (Space · creative →
+   Ground · contact). The frost/material comes from the .glass tier (new
+   liquid-lens language); this only owns the layout, the pill shape, and the
+   floating offset. A bottom bar is mobile-native, so it stays on phones.
    ================================================================= */
-.sidenav-wrap {
+.navbar {
   position: fixed;
-  left: clamp(0.6rem, 1.6vw, 1.3rem);
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 120; /* above every cloud layer, incl. the preloader frame (96) */
-  transition: opacity 0.6s ease 0.2s; /* fade IN once the preloader has cleared */
+  left: 50%; bottom: clamp(0.8rem, 2.2vw, 1.4rem);
+  transform: translateX(-50%);
+  z-index: 120; /* above every cloud layer, incl. the preloader frame */
+  display: flex; align-items: center;
+  gap: clamp(0.4rem, 1.2vw, 0.8rem);
+  padding: 0.45rem 0.6rem;
+  border-radius: 999px;             /* pill — overrides the .glass --r-lg */
+  max-width: calc(100vw - 1rem);
+  transition: opacity 0.6s ease 0.2s, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
-/* the nav stays out of sight for the whole intro. The hide is INSTANT (no
-   transition) so it's already gone on the first painted frame; only the reveal
-   at the end fades in. */
-body.preloading .sidenav-wrap { opacity: 0; pointer-events: none; transition: none; }
-/* GlassSurface owns the frost; we only lay out its contents */
-.sidenav-glass { overflow: visible; }
-.sidenav-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.1rem;
-  padding: 0.7rem 0.4rem;
+/* the nav stays out of sight (and nudged down) for the whole intro; only the
+   reveal at the end animates in. */
+body.preloading .navbar {
+  opacity: 0; pointer-events: none;
+  transform: translateX(-50%) translateY(14px); transition: none;
 }
 
-.sidenav-brand {
-  display: block; line-height: 0;
-  border-radius: 11px; overflow: hidden;
-  box-shadow: 0 6px 18px -6px rgba(8, 6, 26, 0.6);
+.navbar-brand {
+  display: block; line-height: 0; flex: none;
+  border-radius: 9px; overflow: hidden;
+  box-shadow: 0 6px 18px -6px rgba(8, 6, 26, 0.5);
   transition: transform 0.25s ease;
 }
-.sidenav-brand:hover { transform: translateY(-2px); }
-.sidenav-brand img { width: 34px; height: 34px; display: block; border-radius: 11px; }
+.navbar-brand:hover { transform: translateY(-2px); }
+.navbar-brand img { width: 30px; height: 30px; display: block; border-radius: 9px; }
 
-.sidenav-stops {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 0.85rem;
-  position: relative;
-}
-/* a faint altimeter spine behind the dots */
-.sidenav-stops::before {
-  content: ""; position: absolute; top: 6px; bottom: 6px; left: 50%;
-  width: 1.5px; transform: translateX(-50%);
-  background: linear-gradient(var(--rule), transparent, var(--rule));
-}
-.stop {
+.navbar-divider { width: 1px; height: 24px; background: var(--rule); flex: none; }
+
+.nav-stops { display: flex; align-items: center; gap: clamp(0.1rem, 0.8vw, 0.5rem); }
+.nav-stop {
   appearance: none; background: none; border: none; cursor: pointer;
-  display: flex; flex-direction: column; align-items: center; gap: 0.28rem;
-  padding: 0.1rem 0.2rem;
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+  padding: 0.25rem 0.5rem; border-radius: 12px; position: relative;
   color: var(--ink-dim);
   font-family: var(--mono); font-size: 0.5rem; font-weight: 500;
-  letter-spacing: 0.16em; text-transform: uppercase;
+  letter-spacing: 0.14em; text-transform: uppercase;
   transition: color 0.25s ease;
-  position: relative; z-index: 1;
 }
-.stop-dot {
+.nav-dot {
   width: 8px; height: 8px; border-radius: 50%;
   background: currentColor;
-  box-shadow: 0 0 0 4px rgba(7, 6, 26, 0.18);
+  box-shadow: 0 0 0 3px rgba(7, 6, 26, 0.1);
   transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
 }
-.stop-label { opacity: 0.85; }
-/* plain-word meaning, flown out to the right of the rail on hover/focus —
-   orients first-timers without making the compact altimeter taller. The glass
-   pill is overflow:visible so this can escape it. Paint-only (opacity/transform). */
-.stop-sub {
-  position: absolute; left: calc(100% + 0.85rem); top: 50%;
-  transform: translateY(-50%) translateX(-4px);
-  white-space: nowrap; pointer-events: none; opacity: 0;
-  font-family: var(--mono); font-size: 0.5rem; font-weight: 500;
-  letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft);
-  transition: opacity 0.25s ease, transform 0.25s ease;
-}
-.stop:hover .stop-sub,
-.stop:focus-visible .stop-sub,
-.stop.is-active:hover .stop-sub { opacity: 0.9; transform: translateY(-50%) translateX(0); }
-@media (prefers-reduced-motion: reduce) { .stop-sub { transition: none; } }
-.stop:hover { color: var(--ink-soft); }
-.stop.is-active { color: var(--ink); }
-.stop.is-active .stop-dot {
-  background: var(--ion-glow);
-  transform: scale(1.35);
+.nav-label { opacity: 0.85; }
+.nav-stop:hover { color: var(--ink-soft); }
+.nav-stop.is-active { color: var(--ink); }
+.nav-stop.is-active .nav-dot {
+  background: var(--ion-glow); transform: scale(1.3);
   box-shadow: 0 0 0 4px rgba(90, 209, 238, 0.22), 0 0 12px 1px rgba(90, 209, 238, 0.6);
 }
+/* plain-word meaning, flown ABOVE the dock on hover/focus (paint-only) */
+.nav-sub {
+  position: absolute; bottom: calc(100% + 0.5rem); left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  white-space: nowrap; pointer-events: none; opacity: 0;
+  font-size: 0.5rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.nav-stop:hover .nav-sub,
+.nav-stop:focus-visible .nav-sub { opacity: 0.9; transform: translateX(-50%) translateY(0); }
+@media (prefers-reduced-motion: reduce) { .nav-sub { transition: none; } }
 
-.sidenav-cta {
-  display: inline-flex; align-items: center; justify-content: center;
+.navbar-cta {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
   width: 30px; height: 30px; border-radius: 50%;
-  background: rgba(7, 22, 38, 0.25);
+  background: rgba(7, 22, 38, 0.2);
   border: 1px solid var(--rule);
   transition: background 0.25s ease, transform 0.25s ease;
 }
-.sidenav-cta:hover { background: var(--ion-700); transform: translateY(-1px); }
-.sidenav-pulse {
+.navbar-cta:hover { background: var(--ion-700); transform: translateY(-2px); }
+.navbar-pulse {
   width: 8px; height: 8px; border-radius: 50%;
   background: var(--ion-glow);
   box-shadow: 0 0 0 0 rgba(90, 209, 238, 0.55);
@@ -277,6 +362,12 @@ body.preloading .sidenav-wrap { opacity: 0; pointer-events: none; transition: no
 @keyframes pulse {
   0% { box-shadow: 0 0 0 0 rgba(90, 209, 238, 0.55); }
   70%, 100% { box-shadow: 0 0 0 9px rgba(90, 209, 238, 0); }
+}
+/* phones: keep the dock (a bottom bar is mobile-native) but shed the brand,
+   dividers and the Void route so the four zones + CTA fit a narrow width. */
+@media (max-width: 560px) {
+  .navbar-brand, .navbar-divider, .nav-route { display: none; }
+  .nav-stop { padding: 0.25rem 0.3rem; }
 }
 
 /* =================================================================
@@ -325,16 +416,12 @@ body.preloading .sidenav-wrap { opacity: 0; pointer-events: none; transition: no
   -webkit-mask-image: radial-gradient(96% 58% at 50% 5%, transparent 0%, transparent 47%, #000 74%);
   mask-image: radial-gradient(96% 58% at 50% 5%, transparent 0%, transparent 47%, #000 74%);
 }
-/* clouds ride in FRONT of the content (a few drift past as you descend),
-   above the page but below the nav (120) and preloader (95+); click-through. */
+/* clouds form a full layer at z-index 40 — below the nav (120) and preloader
+   (95+); click-through. The hero UI now floats ABOVE them (z-index 45), so the
+   clouds no longer need the old centre reading-lens hole: they fill the hero and
+   the canopy rides over the top. A few drift past as you descend. */
 .cloudfield {
   z-index: 40; opacity: var(--sky-o);
-  /* Reading lens: clouds sit IN FRONT of the page, so to keep them framing the
-     centred hero headline (and any centred copy) rather than covering it, mask a
-     soft clear ellipse down the middle. Same technique the starfield uses for the
-     black hole. Edges/top/bottom keep full cloud; the centre column stays legible. */
-  -webkit-mask-image: radial-gradient(74% 42% at 50% 47%, transparent 0%, transparent 30%, #000 66%);
-  mask-image: radial-gradient(74% 42% at 50% 47%, transparent 0%, transparent 30%, #000 66%);
 }
 
 /* =================================================================
@@ -371,6 +458,16 @@ body.preloading .sidenav-wrap { opacity: 0; pointer-events: none; transition: no
   --rule-soft: rgba(244, 247, 255, 0.08);
   --card-bg: rgba(255, 255, 255, 0.05);
   --card-border: rgba(244, 247, 255, 0.16);
+  /* glass over the black cosmos: an ion-tinted near-clear pane, not milky white,
+     so portholes still open onto the live starfield. */
+  --glass-rgb: 150 220 245;
+  --glass-alpha: 0.08;
+  --glass-alpha-thin: 0.05;
+  --glass-alpha-thick: 0.12;
+  --glass-border: rgba(244, 247, 255, 0.18);
+  --glass-edge: rgba(255, 255, 255, 0.22);
+  --glass-hair: rgba(90, 209, 238, 0.16);
+  --glass-sheen: rgba(150, 220, 245, 0.55);
 }
 /* keep light heads legible while the gallery brightens toward the sky */
 .band-space .band-head { text-shadow: 0 2px 20px rgba(0, 0, 8, 0.45); }
@@ -481,17 +578,22 @@ body.preloading .sidenav-wrap { opacity: 0; pointer-events: none; transition: no
    SKY HERO — the hinge: you land here
    ================================================================= */
 .sky-hero { overflow: hidden; }
-/* full-bleed hero image — fills the whole sky zone, headline rides on top. */
-.sky-bg { position: absolute; inset: 0; z-index: 0; }
-.sky-bg img { object-fit: cover; }
-/* soft cool reading lens: lifts the dark-ink headline off the busy hero photo
-   (bright cloud + the darker figure) without a hard scrim box. Sits above the
-   photo (z0), below the copy (z2). Cool ice tint, never warm. */
-.sky-hero::after {
-  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background: radial-gradient(56% 44% at 50% 49%, rgba(231, 244, 252, 0.62), rgba(231, 244, 252, 0) 72%);
+/* The hero UI sits ABOVE the cloud layer (CloudField is fixed at z-index 40):
+   the canopy floats over the clouds rather than peering through a hole in them.
+   No reading-lens scrim — the canopy's own frost carries the contrast. */
+.sky-hero .inner { position: relative; z-index: 45; max-width: 54rem; }
+/* the canopy: thin glass framing the headline, with viewfinder ticks echoing the
+   work-zone readout. Floats above the live clouds. */
+.sky-hero .inner.canopy {
+  padding: clamp(2rem, 5vw, 3.4rem) clamp(1.6rem, 5vw, 3.6rem);
+  border-radius: var(--r-xl);
 }
-.sky-hero .inner { position: relative; z-index: 2; max-width: 54rem; }
+.canopy-tick {
+  position: absolute; width: 16px; height: 16px; z-index: 4; pointer-events: none;
+  border: 1.5px solid var(--ion-700); opacity: 0.5;
+}
+.canopy-tick.tl { top: 14px; left: 14px; border-right: 0; border-bottom: 0; }
+.canopy-tick.br { bottom: 14px; right: 14px; border-left: 0; border-top: 0; }
 .sky-hero .name {
   font-family: var(--sans); font-weight: 600;
   font-size: 0.78rem; letter-spacing: 0.26em; text-transform: uppercase;
@@ -516,7 +618,7 @@ body.preloading .sidenav-wrap { opacity: 0; pointer-events: none; transition: no
 
 /* dual scroll cues — up is unintuitive, so cue it explicitly */
 .scroll-cues {
-  position: absolute; left: 50%; transform: translateX(-50%); z-index: 2;
+  position: absolute; left: 50%; transform: translateX(-50%); z-index: 45;
   display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
   font-size: 0.66rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-dim);
 }
@@ -549,15 +651,18 @@ body.preloading .sidenav-wrap { opacity: 0; pointer-events: none; transition: no
   padding: clamp(1.5rem, 3.2vw, 2.3rem) clamp(1.4rem, 3vw, 2.4rem);
   margin-bottom: clamp(0.8rem, 1.6vw, 1.1rem);
   text-align: left;
-  /* frosted instrument card */
-  background: rgba(255, 255, 255, 0.5);
-  -webkit-backdrop-filter: blur(16px) saturate(1.5);
-  backdrop-filter: blur(16px) saturate(1.5);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  border-radius: 18px;
+  /* frosted instrument card — new liquid-lens glass language (see .glass) */
+  background: linear-gradient(to bottom,
+    rgb(var(--glass-rgb) / calc(var(--glass-alpha) + 0.07)),
+    rgb(var(--glass-rgb) / calc(var(--glass-alpha) - 0.05)));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--r-lg);
   box-shadow:
-    0 18px 48px -24px rgba(14, 29, 49, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    var(--glass-shadow),
+    inset 0 1px 0 var(--glass-edge),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.14);
   opacity: 0; transform: translateY(22px);
   transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
 }
@@ -672,7 +777,8 @@ body.preloading .sidenav-wrap { opacity: 0; pointer-events: none; transition: no
   --ink-dim: rgba(19, 40, 63, 0.6);
   --rule: rgba(19, 40, 63, 0.22);
   overflow: hidden; /* clip the grassland to the zone */
-  padding-bottom: clamp(3rem, 9vh, 7rem); /* let the field run on below the colophon */
+  /* extra base padding so the fixed bottom dock never covers the colophon */
+  padding-bottom: clamp(6rem, 11vh, 8rem);
 }
 /* keep the footer content above the grassland scene */
 .zone-ground .ground-inner { position: relative; z-index: 1; }
@@ -757,15 +863,11 @@ body.preloading .sidenav-wrap { opacity: 0; pointer-events: none; transition: no
 .ground-cols {
   display: grid; gap: clamp(1.8rem, 4vw, 3rem); grid-template-columns: 1fr;
   padding: clamp(1.8rem, 4vw, 2.8rem);
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.42);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4);
-  backdrop-filter: blur(16px) saturate(1.4);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 18px 48px -26px rgba(14, 29, 49, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.75);
-}
-@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-  .ground-cols { background: rgba(243, 249, 254, 0.9); }
+  border-radius: var(--r-xl);
+  /* dense frosted slab — material via the .glass--thick/.glass--react classes
+     in markup; this rule only owns layout + the perimeter chrome */
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-edge);
 }
 .ground-mark { border-radius: 11px; display: block; box-shadow: 0 6px 18px -6px rgba(36, 26, 15, 0.4); }
 .ground-name { font-size: 1.3rem; margin: 0.7rem 0 0; }
@@ -918,9 +1020,14 @@ body.preloading .sidenav-wrap { opacity: 0; pointer-events: none; transition: no
 /* PROCESS RAIL — a vertical instrument spine with glowing nodes (echoes the
    space orbit + altimeter motif); the working method as a readout, not four
    identical glass cards. */
+/* one frosted console holding the whole rail (not four cards) */
+.rail-console {
+  margin: clamp(3rem, 7vw, 5rem) 0 0;
+  padding: clamp(1.7rem, 4vw, 2.6rem) clamp(1.5rem, 4vw, 2.4rem);
+}
 .rail {
   --lane: clamp(1.8rem, 4vw, 2.6rem);
-  list-style: none; margin: clamp(3rem, 7vw, 5rem) 0 0; padding: 0;
+  list-style: none; margin: 0; padding: 0;
   position: relative;
   display: flex; flex-direction: column; gap: clamp(1.3rem, 3vw, 2rem);
 }
@@ -993,12 +1100,8 @@ body.altitude-ready [data-reveal].in { opacity: 1; transform: none; }
   .tile.big, .tile.wide { grid-column: span 1; }
 }
 @media (max-width: 740px) {
-  /* The floating altimeter rail is fixed at the left edge with no clear margin on
-     phones, so it overlaps the centred hero headline and the work metrics. Hide it
-     below tablet: the journey scrolls naturally and the footer's "Navigate" block
-     carries the zone jumps. (A compact mobile nav could return here later.) */
-  .sidenav-wrap { display: none; }
-  /* reclaim the left pad the space zone only needed to clear that rail */
+  /* the nav now lives in the bottom dock (mobile-native), so the space zone no
+     longer needs the big left inset that once cleared a left-edge rail */
   .zone-space { padding-left: clamp(1.25rem, 5vw, 2rem); }
 }
 

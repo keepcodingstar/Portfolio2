@@ -141,10 +141,22 @@ Depth is **atmospheric, not stacked.** There is no conventional drop-shadow card
 Components are **instrument-grade**: precise, frosted, luminous. They read like aircraft instrumentation laid over a sky.
 
 ### Glass Panel (signature surface)
-- **Corner Style:** 18px (`{rounded.lg}`); the ground contact block uses 20px.
-- **Background:** `rgba(255,255,255,0.55)` frosted (`backdrop-filter: blur(16px) saturate(1.5)`); opaque `rgba(243,249,254,0.92)` fallback where backdrop-filter is unsupported.
+- **Corner Style:** 18px (`{rounded.lg}`); the ground contact block uses 20px (`{rounded.xl}`); the bottom nav dock is a full pill (999px).
+- **Background — the "liquid-lens" language:** a vertical translucency gradient (light pools at the crown, thins toward the base) over a `backdrop-filter: blur(13px) saturate(1.5)` frost, finished with a **crisp specular top edge**, a faint base light, and a hairline ion rim. Opaque `rgba(243,249,254,0.92)` fallback where backdrop-filter is unsupported. (Earlier flat-fill glass was upgraded to this gradient + dual-highlight language — still cheap: gradient + box-shadows, no `url()` filter or blend mode.)
 - **Elevation:** the Canopy-lift shadow (see Elevation).
 - **Space-band variant:** background drops to `rgba(255,255,255,0.05)` with a light hairline border when the ink flips light.
+
+#### The glass tier system (tokens)
+One material, driven by `--glass-*` tokens in `:root` (re-tinted ion-cool in the SPACE band). Compose via classes — `.glass` is the regular pane; add modifiers:
+- **`.glass--thin`** — lower fill alpha + softer blur. For surfaces over a live photo/cosmos that must stay see-through: the SkyHero **canopy** and the gallery **portholes**.
+- **`.glass--thick`** — denser slab where nothing precious sits behind: the ground contact block.
+- **`.glass--refract`** — **removed for performance; now a no-op.** It briefly bent the backdrop through a shared `#glass-refract` SVG displacement filter, but a `url()` backdrop-filter re-runs its whole filter graph every frame the backdrop changes — and these panels sit over a continuously cross-fading atmosphere, so it re-filtered every scroll frame (×several portholes at once) and caused jank. The chromatic edge wasn't worth it. The class is kept as a harmless alias so markup needn't change; **do not re-add a `url()` backdrop-filter here.**
+- **`.glass--react`** — pointer-tracked **specular sheen + spotlight rim**, fed `--mx`/`--my` by `components/GlassLight.tsx` (one document listener, rAF-batched with reads/writes separated to avoid reflow, written outside React state, skipped on coarse pointer + reduced motion). The sheen is a plain translucent radial (no `mix-blend-mode` — a blend layer is a per-frame compositing cost), sitting over the frost but under the text (`z-index:-1` inside an `isolation:isolate` context) so readouts stay crisp.
+
+**The Backdrop-Cost Rule.** Every `backdrop-filter` panel re-filters on each scroll frame (the atmosphere layers behind it cross-fade). Keep blur radii modest (`--glass-blur` 13 / thin 8 / thick 16), never stack a `url()` SVG filter or a `mix-blend-mode` on a glass panel, and don't multiply backdrop-filter panels needlessly.
+
+#### The Console Rule
+Where a sequence wants framing (the About process steps), wrap the *whole sequence in one glass console* — never one card per item. Four near-identical cards is the templated tell; a single instrument console holding the glowing-node spine is the house voice.
 
 ### Links / CTAs
 - **Style:** text links, no button chrome. Default Midnight Slate; hover transitions to Horizon Teal with a small arrow (`↗`) that nudges on hover.
@@ -154,9 +166,10 @@ Components are **instrument-grade**: precise, frosted, luminous. They read like 
 - **Style:** full-width ruled rows (hairline `--rule`), serif title left, mono kicker, and a right-aligned tabular-numeral metric in the ion accent that counts up (odometer).
 - **Hover:** a fine progress bar / stretch transition on `cubic-bezier(0.22, 1, 0.36, 1)`; the whole row is the link to the case study.
 
-### Navigation (glass side-rail)
-- **Style:** a fixed left glass rail with a brand mark and mono HUD labels (SPACE / SKY / WORK / GROUND), 11px-radius marks, ion active dot. Jumps to any zone via centre-anchored scroll.
-- **States:** active zone gets the ion dot + brighter label; hover lifts the label opacity.
+### Navigation (bottom glass dock)
+- **Style:** a centred glass dock pill fixed at the **foot of the screen**, wearing the liquid-lens `.glass` material (not the refractive `GlassSurface` — a wide bar would re-filter every frame). Brand mark, mono HUD labels laid left→right as a horizontal altitude scale (SPACE / SKY / WORK / GROUND), a Void route, and a pulsing email beacon. Jumps to any zone via centre-anchored scroll.
+- **States:** active zone gets the ion-glow dot (scaled + haloed) + brighter label; hover lifts the label and floats the plain-word meaning above the dock.
+- **Mobile:** a bottom bar is mobile-native, so the dock stays on phones (unlike the old left rail, which had to hide ≤740px); under 560px it sheds the brand, dividers, and Void route so the four zones + beacon fit.
 
 ### Eyebrow / Designation Labels
 - **Style:** mono, 0.66rem, 0.22em tracking, uppercase, `--ink-dim`. Altitude-themed copy ("OUT PAST THE FUNNEL", "ON THE GROUND · ROOTS & CONTACT"), not generic kickers.

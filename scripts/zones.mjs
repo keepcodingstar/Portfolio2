@@ -3,6 +3,7 @@
 import puppeteer from 'puppeteer-core';
 
 const CHROME = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+const PORT = process.env.PORT || '3000';
 const ZONES = ['zone-space', 'zone-sky', 'zone-work', 'zone-ground'];
 
 const browser = await puppeteer.launch({
@@ -12,7 +13,7 @@ const browser = await puppeteer.launch({
 });
 const page = await browser.newPage();
 await page.setViewport({ width: 1280, height: 820, deviceScaleFactor: 1 });
-await page.goto('http://127.0.0.1:3000/', { waitUntil: 'domcontentloaded', timeout: 60000 });
+await page.goto(`http://127.0.0.1:${PORT}/`, { waitUntil: 'domcontentloaded', timeout: 60000 });
 await new Promise(r => setTimeout(r, 5000));
 // kill the preloader so the page underneath is visible in headless, and signal
 // the page that the intro is done so <CloudField/> brings its clouds in
