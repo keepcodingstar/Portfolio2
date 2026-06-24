@@ -17,9 +17,14 @@ export default function Starfield() {
       style={{ opacity: 'var(--space-o)' }}
     >
       <Canvas
-        dpr={[1, 1.75]}
+        /* render ONCE — the field is a static backdrop; its fade in/out is
+           driven by the wrapper's --space-o opacity in CSS, so it never needs
+           to re-render. (Was frameloop=always animating 2600 stars every frame,
+           even while invisible at the sky/work/ground — a major idle GPU cost.) */
+        frameloop="demand"
+        dpr={[1, 1.5]}
         camera={{ position: [0, 0, 1] }}
-        gl={{ alpha: true, antialias: true }}
+        gl={{ alpha: true, antialias: false }}
         style={{ background: 'transparent' }}
       >
         <Stars
@@ -29,7 +34,7 @@ export default function Starfield() {
           factor={3.2}
           saturation={0}
           fade
-          speed={0.6}
+          speed={0}
         />
       </Canvas>
     </div>

@@ -271,9 +271,11 @@ export default function CloudField({ className }: { className?: string }) {
       <div style={{ position: 'absolute', inset: 0 }}>
         <Canvas
           frameloop="always"
-          dpr={[1, 1.75]}
+          /* lower DPR cap + no MSAA: soft volumetric clouds hide aliasing, so
+             this roughly halves fragment work on retina with no visible loss */
+          dpr={[1, 1.5]}
           camera={{ position: [0, 0, 14], fov: 56 }}
-          gl={{ alpha: true, antialias: true }}
+          gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}
           style={{ background: 'transparent' }}
         >
           <Sky animate={animate} entered={entered} />
