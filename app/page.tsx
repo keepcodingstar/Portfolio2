@@ -7,11 +7,9 @@ import Reveals from '@/components/Reveals';
 import GlassLight from '@/components/GlassLight';
 // import TopBlackHole from '@/components/TopBlackHole'; // raymarched shader — hidden for now (perf)
 import SpaceZone from '@/components/zones/SpaceZone';
-import CreativeGallery from '@/components/zones/CreativeGallery';
 import SkyHero from '@/components/zones/SkyHero';
 import WorkZone from '@/components/zones/WorkZone';
-import UIGallery from '@/components/zones/UIGallery';
-import AboutProcess from '@/components/zones/AboutProcess';
+import ProcessThinking from '@/components/zones/ProcessThinking';
 import GroundFooter from '@/components/zones/GroundFooter';
 
 /**
@@ -37,12 +35,10 @@ export default function Home() {
           <Reveals />  {/* one [data-reveal] observer for the server-rendered zones */}
           <GlassLight />  {/* pointer-tracked specular light on .glass--react panels */}
           {/* <TopBlackHole /> */}  {/* ◐ black hole — hidden for now to cut shader lag */}
-          <SpaceZone />        {/* ↑ space · the creative manifesto */}
-          <CreativeGallery />  {/* visual / creative gallery        */}
+          <SpaceZone />        {/* ↑ space · the beyond-the-work intro */}
           <SkyHero />          {/* ◉ you, now — land here           */}
           <WorkZone />         {/* ↓ sky · the shipped work, counted */}
-          <UIGallery />        {/* the screens behind the numbers   */}
-          <AboutProcess />     {/* about · how I work · tools       */}
+          <ProcessThinking />  {/* sky · process — a way of thinking */}
           <GroundFooter />     {/* ground · proper footer + contact  */}
         </main>
       </AltitudeProvider>

@@ -62,6 +62,17 @@ const BANK = [
 const WORK_EDGE = [
   { seed: 31, pos: [-13.2, 3.6, -1.8], scale: 0.5, color: '#eef4fc', op: 0.4 },
   { seed: 37, pos: [13.4, 3.0, -1.9], scale: 0.5, color: '#eef4fc', op: 0.4 },
+  // PROCESS / "way of thinking" section — a full viewport below the work-zone
+  // centre (~15 world units = one screen). A fuller bank here so the process
+  // manifesto reads through soft sky, not over bare space: a pair hugging each
+  // margin plus a couple pushed further back (lower z, lower opacity) for depth.
+  // Kept at the edges (|x| ~10–14) so the centred headline + 2×2 grid stay clear.
+  { seed: 43, pos: [-13.6, -13.0, -2.0], scale: 0.5, color: '#eef4fc', op: 0.38 },
+  { seed: 47, pos: [13.0, -14.6, -1.7], scale: 0.52, color: '#eef4fc', op: 0.38 },
+  { seed: 53, pos: [-11.4, -19.4, -2.6], scale: 0.46, color: '#e8f0fb', op: 0.32 },
+  { seed: 59, pos: [11.8, -20.8, -2.4], scale: 0.48, color: '#e8f0fb', op: 0.32 },
+  { seed: 61, pos: [-13.8, -24.6, -2.2], scale: 0.5, color: '#eef4fc', op: 0.3 },
+  { seed: 67, pos: [13.6, -26.0, -2.0], scale: 0.5, color: '#eef4fc', op: 0.3 },
 ] as const;
 
 // curtain timing/shape. The clouds START already covering the screen (bunched
@@ -76,6 +87,13 @@ const COVER_LIFT = 7.0; // floor clouds start THIS far ABOVE rest — enough to 
 //                         the centre at the start, then settle straight DOWN to the
 //                         low floor (upper clouds get no lift; see coverOffset)
 const COVER_NEAR = 4.0; // start z nudge toward camera (bigger ⇒ fuller cover)
+
+// the hero bank leaves frame at LESS than scroll speed, so the clouds linger a
+// beat as you descend past the hero instead of snapping away the moment you
+// scroll. 1 = locked to the page (old behaviour); lower = more lag, more linger.
+// Only the hero bank uses this — the work-edge clouds stay 1:1 so their #zone-work
+// anchor still lands them dead-centre.
+const BANK_PARALLAX = 0.42;
 
 // the widest resting cloud — used to normalise the centre-out stagger.
 const MAX_ABS_X = Math.max(...BANK.map((c) => Math.abs(c.pos[0])));
@@ -111,6 +129,12 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
   // pre-paint cover (html.pl-cover) can dissolve out AS the clouds materialise —
   // gating on real paint stops the cover lifting to reveal already-formed clouds.
   const announcedReady = useRef(false);
+  // drei <Clouds> batches every cloud into one instanced mesh; when that mesh's
+  // bounding sphere leaves the camera frustum the WHOLE batch is culled at once,
+  // so the clouds pop out abruptly as they scroll off. Turn culling off (once the
+  // scene graph exists) so they keep rendering just outside the frame and drift
+  // away smoothly. Handful of clouds → the always-render cost is negligible.
+  const culledOff = useRef(false);
 
   useEffect(() => {
     const measure = () => {
@@ -148,9 +172,16 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
       window.dispatchEvent(new Event('clouds:ready'));
     }
 
-    // The GROUP scrolls 1:1 with the page (no smoothing ⇒ no lag, locked to the
-    // bg). The per-cloud CURTAIN (cover → part) layers on each cloud's local pos.
-    g.position.y = pRef.current;
+    if (!culledOff.current) {
+      culledOff.current = true;
+      group.current?.traverse((o) => { o.frustumCulled = false; });
+      workGroup.current?.traverse((o) => { o.frustumCulled = false; });
+    }
+
+    // The GROUP scrolls with the page, but at BANK_PARALLAX (<1) so the hero bank
+    // lags slightly and lingers in frame on the descent rather than snapping off.
+    // The per-cloud CURTAIN (cover → part) layers on each cloud's local pos.
+    g.position.y = pRef.current * BANK_PARALLAX;
     g.position.x = animate ? Math.sin(state.clock.elapsedTime / 16) * 0.5 : 0;
 
     // curtain: until `entered` fires every cloud sits in the COVER pose (full

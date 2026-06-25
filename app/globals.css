@@ -22,16 +22,16 @@
 
   /* ink — DARK by default (most of the page is bright sky / sunset / ground);
      the SPACE band flips these to light. */
-  --ink: #122031;
-  --ink-soft: #38485b;
-  --ink-dim: #5f7184;
-  --rule: rgba(18, 32, 49, 0.16);
-  --rule-soft: rgba(18, 32, 49, 0.08);
+  --ink: #16181d;
+  --ink-soft: #4b4f57;
+  --ink-dim: #6b6f78;
+  --rule: rgba(22, 24, 29, 0.16);
+  --rule-soft: rgba(22, 24, 29, 0.08);
 
   /* surface cards adapt to the band: frosted-white on bright sky,
      white-tint on black space (overridden in the space context) */
   --card-bg: rgba(255, 255, 255, 0.5);
-  --card-border: rgba(18, 32, 49, 0.12);
+  --card-border: rgba(22, 24, 29, 0.12);
 
   /* accents — one cool ion / aurora family, structure + numbers alike.
      -700 is the deep ion-teal that holds AA on the bright sky; -glow is the
@@ -41,10 +41,15 @@
   --ion-glow: #5ad1ee;
   --aurora-teal: #1fc6a6;
   --auroral: linear-gradient(105deg, var(--aurora-teal) 0%, var(--ion) 55%, #2f86d6 100%);
+  /* deep tertiary blue — AA-safe sibling of the auroral blue (#2f86d6), for
+     accent text on the bright sky band (e.g. the process/thinking emphasis). */
+  --blue-700: #1f6bbf;
 
   /* type */
   --display: var(--font-awesome-serif), 'Times New Roman', Georgia, serif;
   --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* hand-written script — ONE emphasised word in the hero statement, nowhere else */
+  --script: var(--font-caveat), 'Segoe Script', 'Bradley Hand', cursive;
   /* HUD / data utility face — instrument labels only (eyebrows, designations,
      altimeter labels), never body. */
   --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Cascadia Code', 'Roboto Mono', monospace;
@@ -300,7 +305,10 @@ html.pl-cover.pl-reveal body::before { opacity: 0; }
   filter: blur(0.4px);
   text-shadow: 0 0 16px rgba(22, 20, 15, 0.12);
 }
-.odo { display: inline-flex; align-items: flex-end; font-variant-numeric: tabular-nums; }
+/* lining-nums keeps every figure inside the cap-height/baseline box; without it
+   AwesomeSerif's oldstyle figures hang ascenders/descenders past each digit's
+   1em window and get clipped by .odo-digit's overflow. */
+.odo { display: inline-flex; align-items: flex-end; font-variant-numeric: tabular-nums lining-nums; }
 .odo-digit { display: inline-block; width: 1ch; height: 1em; line-height: 1; overflow: hidden; }
 .odo-strip { display: flex; flex-direction: column; will-change: transform, filter; }
 .odo-strip > span { display: block; height: 1em; line-height: 1; text-align: center; }
@@ -318,28 +326,28 @@ html.pl-cover.pl-reveal body::before { opacity: 0; }
    ================================================================= */
 .navbar {
   position: fixed;
-  left: 50%; bottom: clamp(0.8rem, 2.2vw, 1.4rem);
-  transform: translateX(-50%);
+  right: clamp(0.8rem, 2.2vw, 1.4rem); top: 50%;
+  transform: translateY(-50%);
   z-index: 120; /* above every cloud layer, incl. the preloader frame */
-  display: flex; align-items: center;
-  gap: clamp(0.4rem, 1.2vw, 0.8rem);
-  padding: 0.45rem 0.6rem;
+  display: flex; flex-direction: column; align-items: center;
+  gap: clamp(0.4rem, 1.2vw, 0.7rem);
+  padding: 0.6rem 0.45rem;
   border-radius: 999px;             /* pill — overrides the .glass --r-lg */
-  max-width: calc(100vw - 1rem);
+  max-height: calc(100vh - 1rem);
   transition: opacity 0.6s ease 0.2s, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
-/* the nav stays out of sight (and nudged down) for the whole intro; only the
-   reveal at the end animates in. */
+/* the nav stays out of sight (and nudged out to the right) for the whole intro;
+   only the reveal at the end animates in. */
 body.preloading .navbar {
   opacity: 0; pointer-events: none;
-  transform: translateX(-50%) translateY(14px); transition: none;
+  transform: translateY(-50%) translateX(14px); transition: none;
 }
-/* at the GROUND (the footer/contact zone, the bottom of the journey) the dock
-   flies down out of the viewport — the footer carries its own contact + menu, so
-   the altimeter has nowhere left to climb. Scrolling back up brings it home. */
+/* at the GROUND (the footer/contact zone, the bottom of the journey) the rail
+   flies off the right edge — the footer carries its own contact + menu, so the
+   altimeter has nowhere left to climb. Scrolling back up brings it home. */
 .navbar.is-tucked {
   opacity: 0; pointer-events: none;
-  transform: translateX(-50%) translateY(calc(100% + clamp(0.8rem, 2.2vw, 1.4rem) + 1rem));
+  transform: translateY(-50%) translateX(calc(100% + clamp(0.8rem, 2.2vw, 1.4rem) + 1rem));
 }
 
 .navbar-brand {
@@ -351,9 +359,9 @@ body.preloading .navbar {
 .navbar-brand:hover { transform: translateY(-2px); }
 .navbar-brand img { width: 30px; height: 30px; display: block; border-radius: 9px; }
 
-.navbar-divider { width: 1px; height: 24px; background: var(--rule); flex: none; }
+.navbar-divider { width: 24px; height: 1px; background: var(--rule); flex: none; }
 
-.nav-stops { display: flex; align-items: center; gap: clamp(0.1rem, 0.8vw, 0.5rem); }
+.nav-stops { display: flex; flex-direction: column; align-items: center; gap: clamp(0.1rem, 0.8vw, 0.45rem); }
 .nav-stop {
   appearance: none; background: none; border: none; cursor: pointer;
   display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
@@ -376,16 +384,16 @@ body.preloading .navbar {
   background: var(--ion-glow); transform: scale(1.3);
   box-shadow: 0 0 0 4px rgba(90, 209, 238, 0.22), 0 0 12px 1px rgba(90, 209, 238, 0.6);
 }
-/* plain-word meaning, flown ABOVE the dock on hover/focus (paint-only) */
+/* plain-word meaning, flown to the LEFT of the rail on hover/focus (paint-only) */
 .nav-sub {
-  position: absolute; bottom: calc(100% + 0.5rem); left: 50%;
-  transform: translateX(-50%) translateY(4px);
+  position: absolute; right: calc(100% + 0.6rem); top: 50%; left: auto;
+  transform: translateY(-50%) translateX(4px);
   white-space: nowrap; pointer-events: none; opacity: 0;
   font-size: 0.5rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft);
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 .nav-stop:hover .nav-sub,
-.nav-stop:focus-visible .nav-sub { opacity: 0.9; transform: translateX(-50%) translateY(0); }
+.nav-stop:focus-visible .nav-sub { opacity: 0.9; transform: translateY(-50%) translateX(0); }
 @media (prefers-reduced-motion: reduce) { .nav-sub { transition: none; } }
 
 .navbar-cta {
@@ -442,8 +450,8 @@ body.preloading .navbar {
 .altitude-bg .ground {
   opacity: var(--ground-o);
   background:
-    radial-gradient(110% 70% at 50% 120%, rgba(150, 210, 240, 0.5) 0%, rgba(120, 185, 225, 0.28) 40%, transparent 74%),
-    linear-gradient(180deg, #bcdcf0 0%, #a9d2ee 44%, #cfe6f4 74%, #e9f5fd 100%);
+    radial-gradient(110% 70% at 50% 120%, rgba(120, 190, 240, 0.55) 0%, rgba(95, 170, 225, 0.3) 40%, transparent 74%),
+    linear-gradient(180deg, #a7d2f4 0%, #8cc4f0 44%, #abd8f6 74%, #cbe8fb 100%);
 }
 
 /* fixed atmospheric canvases */
@@ -459,12 +467,12 @@ body.preloading .navbar {
   -webkit-mask-image: radial-gradient(96% 58% at 50% 5%, transparent 0%, transparent 47%, #000 74%);
   mask-image: radial-gradient(96% 58% at 50% 5%, transparent 0%, transparent 47%, #000 74%);
 }
-/* clouds form a full layer at z-index 40 — below the nav (120) and preloader
-   (95+); click-through. The hero UI now floats ABOVE them (z-index 45), so the
-   clouds no longer need the old centre reading-lens hole: they fill the hero and
-   the canopy rides over the top. A few drift past as you descend. */
+/* clouds sit at z-index -1: above the sky gradient (-3) and starfield (-2) but
+   BEHIND all page content (zones are z-index auto / 0). This keeps them as pure
+   atmosphere on the descent — they show through the transparent gaps between
+   glass panels but never overlap text or cards. Click-through. */
 .cloudfield {
-  z-index: 40; opacity: var(--sky-o);
+  z-index: -1; opacity: var(--sky-o);
 }
 
 /* =================================================================
@@ -489,10 +497,11 @@ body.preloading .navbar {
 }
 
 /* =================================================================
-   SPACE ZONE — the creative side, out in the cosmos
-   LIGHT-INK CONTEXT: black space + the creative gallery above the sky.
+   SPACE ZONE — the creative side, as a hand-made SCRAPBOOK
+   DARK-INK CONTEXT: warm grey paper, dark ink, one red marker accent.
+   The band-space gallery (work zone) keeps its dark-cosmos context.
    ================================================================= */
-.zone-space, .band-space {
+.band-space {
   color: #f3f6ff;
   --ink: #f4f7ff;
   --ink-soft: #c9d2e8;
@@ -501,8 +510,6 @@ body.preloading .navbar {
   --rule-soft: rgba(244, 247, 255, 0.08);
   --card-bg: rgba(255, 255, 255, 0.05);
   --card-border: rgba(244, 247, 255, 0.16);
-  /* glass over the black cosmos: an ion-tinted near-clear pane, not milky white,
-     so portholes still open onto the live starfield. */
   --glass-rgb: 150 220 245;
   --glass-alpha: 0.08;
   --glass-alpha-thin: 0.05;
@@ -512,109 +519,235 @@ body.preloading .navbar {
   --glass-hair: rgba(90, 209, 238, 0.16);
   --glass-sheen: rgba(150, 220, 245, 0.55);
 }
-/* keep light heads legible while the gallery brightens toward the sky */
 .band-space .band-head { text-shadow: 0 2px 20px rgba(0, 0, 8, 0.45); }
 
-/* the apex is its own layout — escape the centred .zone scaffold, set left,
-   let the hero stage own the first screen and the orbit flow beneath it */
+/* the apex. a scrapbook pinned across the DARK COSMOS: the fixed space gradient
+   + starfield show straight through. light ink + a single red marker accent. */
 .zone-space {
+  --ink: #f4f7ff;
+  --ink-soft: #c9d2e8;
+  --ink-dim: #98a4c4;
+  --marker: #f5483a;       /* the one red, hand-drawn accent (lifted for dark) */
+  --tape: rgba(244, 240, 230, 0.5);
+
   justify-content: flex-start;
-  align-items: stretch;        /* children own their centring */
+  align-items: stretch;
   text-align: left;
-  /* left pad clears the fixed glass side-nav; hole stays full-bleed behind */
-  padding: 0 clamp(1.25rem, 5vw, 3rem) clamp(5rem, 14vh, 10rem) clamp(4.25rem, 8vw, 8.5rem);
-  overflow: hidden;            /* contain the weightless drift */
+  color: var(--ink);
+  /* left pad clears the fixed glass side-nav; the cosmos stays full-bleed behind */
+  padding: 0 clamp(1.25rem, 5vw, 3rem) clamp(7rem, 18vh, 12rem) clamp(4.25rem, 8vw, 8.5rem);
+  overflow: hidden;            /* contain the weightless drift + parallax */
+  isolation: isolate;
 }
 
-/* EVENT HORIZON — the manifesto, composed against the black hole's ring */
-.space-stage {
-  width: 100%; max-width: var(--maxw); margin-inline: auto;
-  min-height: 100vh; min-height: 100svh;
-  display: flex; flex-direction: column; justify-content: flex-end;
-  padding-bottom: clamp(3rem, 9vh, 7rem);
-}
-.space-hero { max-width: 46rem; }
-.zone-space .space-title {
-  font-size: clamp(2.7rem, 8.5vw, 6.1rem);
-  line-height: 0.98; letter-spacing: -0.022em;
-  text-shadow: 0 2px 44px rgba(0, 0, 7, 0.65);
-}
-.zone-space .space-title em {
-  font-style: italic;
-  color: var(--ion-glow);
-  text-shadow: 0 0 28px rgba(90, 209, 238, 0.45);
-}
-.space-lede {
-  margin: clamp(1.4rem, 3vw, 2rem) 0 0; max-width: 36rem;
-  font-size: clamp(1rem, 1.6vw, 1.18rem); line-height: 1.6; color: var(--ink-soft);
-}
-
-/* IN ORBIT — three bodies hung off one hairline spine, each at its own reach */
-.orbit {
-  --spine: clamp(0.4rem, 2vw, 1.4rem);
-  position: relative; width: 100%; max-width: var(--maxw); margin-inline: auto;
-  list-style: none; padding: clamp(1rem, 4vh, 2.5rem) 0 0;
-  display: flex; flex-direction: column; gap: clamp(2.4rem, 6vh, 4.6rem);
-}
-.orbit-line {
-  position: absolute; left: var(--spine);
-  top: clamp(1.6rem, 4.5vh, 3rem); bottom: 0.6rem;
-  width: 2px; transform-origin: top; border-radius: 2px;
-  background: linear-gradient(to bottom,
-    transparent 0%, rgba(90, 209, 238, 0.85) 12%,
-    rgba(90, 209, 238, 0.85) 88%, transparent 100%);
-  box-shadow: 0 0 12px rgba(43, 182, 214, 0.55);
-}
-.body {
+/* THE SCRAPBOOK PAGE — a tall field you scroll up through; prints are pinned
+   across it by top/left %, loosely strung by the red thread. Two nested layers
+   (.par-far / .par-near) take the pointer-parallax; pieces take the drift. */
+.scrap {
   position: relative;
-  display: flex; align-items: baseline; justify-content: space-between; gap: 1.5rem;
-  padding-left: calc(var(--spine) + var(--reach, 2.6rem));
-  will-change: transform;
+  width: 100%; max-width: var(--maxw); margin-inline: auto;
+  min-height: 116vh;
+  padding-top: clamp(5rem, 12vh, 8rem);
 }
-.body:nth-child(2) { --reach: clamp(1.5rem, 4vw, 3rem); }
-.body:nth-child(3) { --reach: clamp(2.8rem, 7.5vw, 5.6rem); }
-.body:nth-child(4) { --reach: clamp(1.9rem, 5vw, 3.9rem); }
-/* the node sits on the spine; a hairline tether reaches out to the body */
-.body::before {
-  content: ""; position: absolute; left: var(--spine); top: 0.6em;
-  width: var(--reach, 2.6rem); height: 1.5px; transform: translateY(-50%);
-  background: linear-gradient(to right, rgba(90, 209, 238, 0.7), rgba(90, 209, 238, 0.16));
+.par-far, .par-near { position: absolute; inset: 0; }
+.par-near { z-index: 2; }
+.par-far { z-index: 1; }
+
+/* the hand-drawn red thread that loosely strings the cluster */
+.thread {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  z-index: 0; pointer-events: none; overflow: visible;
 }
-.node {
-  position: absolute; left: var(--spine); top: 0.6em;
-  width: 13px; height: 13px; margin: -6.5px 0 0 -6.5px;  /* centre w/o transform */
-  border-radius: 50%;
-  background: radial-gradient(circle at 38% 34%, #fff 0%, var(--ion-glow) 42%, var(--ion-700) 100%);
-  box-shadow: 0 0 0 5px rgba(90, 209, 238, 0.16), 0 0 24px 5px rgba(43, 182, 214, 0.7);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+.thread path {
+  fill: none; stroke: var(--marker); stroke-width: 1.5; opacity: 0.55;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 4 8; stroke-linecap: round;
 }
-.body-main { min-width: 0; }
-.body-title {
-  margin: 0; font-size: clamp(1.55rem, 3.6vw, 2.5rem);
-  line-height: 1.04; letter-spacing: -0.015em;
-  text-shadow: 0 1px 18px rgba(0, 0, 6, 0.5);
-  transition: color 0.25s ease;
+
+/* every pinned piece. position owns top/left; transform is OWNED BY GSAP
+   (base tilt + drift + parallax), so we never set transform here. */
+.frag {
+  position: absolute;
+  will-change: transform, opacity;
 }
-.body-note {
-  margin: 0.5rem 0 0; max-width: 46ch;
-  font-size: clamp(0.92rem, 1.4vw, 1rem); line-height: 1.55; color: var(--ink-dim);
+
+/* THE PHOTO PRINTS — white-matte prints, tilted, taped to the page. */
+.print { width: var(--pw, 15rem); }
+.print-frame {
+  display: block; position: relative;
+  padding: 0.5rem 0.5rem 0.5rem;
+  background: linear-gradient(180deg, #fcfbf8, #f3f0e9);
+  border-radius: 3px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 18px 30px -16px rgba(40, 36, 30, 0.55),
+    0 3px 8px -4px rgba(40, 36, 30, 0.35);
 }
-.designation {
-  flex: none; padding-top: 0.5em;
-  font-family: var(--mono); font-weight: 500;
-  font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--ion-glow); white-space: nowrap;
+.print img {
+  display: block; width: 100%; height: auto; border-radius: 1px;
+  filter: saturate(0.92) contrast(1.02);
+}
+/* a strip of translucent tape, corner chosen per print via data-tape */
+.print[data-tape]:not([data-tape='none']) .print-frame::before {
+  content: ""; position: absolute; width: 3.4rem; height: 1.15rem;
+  background: var(--tape);
+  box-shadow: 0 1px 3px rgba(40, 36, 30, 0.18);
+  -webkit-backdrop-filter: blur(1px); backdrop-filter: blur(1px);
+}
+.print[data-tape='tl'] .print-frame::before { top: -0.55rem; left: -0.4rem; transform: rotate(-38deg); }
+.print[data-tape='tr'] .print-frame::before { top: -0.55rem; right: -0.4rem; transform: rotate(36deg); }
+.print[data-tape='bl'] .print-frame::before { bottom: -0.55rem; left: -0.4rem; transform: rotate(36deg); }
+.print[data-tape='br'] .print-frame::before { bottom: -0.55rem; right: -0.4rem; transform: rotate(-38deg); }
+
+/* the red handwritten note + mono kicker pinned to each print */
+.print-note {
+  position: absolute; display: flex; flex-direction: column; gap: 0.05rem;
+  max-width: 13rem; pointer-events: none;
+}
+.note-below .print-note { top: calc(100% + 0.5rem); left: 0.6rem; }
+.note-above .print-note { bottom: calc(100% + 0.5rem); left: 0.6rem; }
+.note-right .print-note { top: 18%; left: calc(100% + 0.9rem); }
+.note-left  .print-note { top: 18%; right: calc(100% + 0.9rem); text-align: right; align-items: flex-end; }
+.note-hand {
+  font-family: var(--script); font-weight: 700;
+  font-size: clamp(1.15rem, 2.1vw, 1.65rem); line-height: 1.05;
+  color: var(--marker); transform: rotate(-3deg);
+}
+.note-kind {
+  font-family: var(--mono); font-size: 0.56rem; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-dim);
 }
 @media (hover: hover) {
-  .body:hover .node { transform: scale(1.35); box-shadow: 0 0 0 5px rgba(90, 209, 238, 0.2), 0 0 30px 6px rgba(43, 182, 214, 0.85); }
-  .body:hover .body-title { color: var(--ion-glow); }
-}
-@media (max-width: 720px) {
-  .body {
-    flex-direction: column; align-items: flex-start; gap: 0.5rem;
-    --reach: clamp(1.2rem, 5vw, 2rem) !important;
+  .print-frame { transition: box-shadow 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1); }
+  .print:hover .print-frame {
+    transform: translateY(-3px);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.8) inset,
+      0 26px 40px -18px rgba(40, 36, 30, 0.6),
+      0 4px 10px -4px rgba(40, 36, 30, 0.4);
   }
-  .designation { padding-top: 0; order: -1; }
+}
+
+/* THE MOON — a self-portrait in a lunar window. No frame/tape: it floats in the
+   cosmos as its own celestial body, with a soft cold rim of light. */
+.scrap-moon {
+  width: clamp(13rem, 19vw, 18rem);
+  filter: drop-shadow(0 0 60px rgba(120, 150, 200, 0.18));
+}
+.scrap-moon img {
+  display: block; width: 100%; height: auto;
+}
+.scrap-moon .print-note {
+  position: absolute; top: calc(100% - 1.5rem); left: 8%;
+  display: flex; flex-direction: column; gap: 0.05rem;
+  max-width: 12rem; pointer-events: none;
+}
+
+/* THE MANIFESTO — clean column, right side, plenty of air */
+.scrap-copy {
+  width: clamp(18rem, 30vw, 26rem);
+  display: flex; flex-direction: column; gap: clamp(1.1rem, 2.4vw, 1.7rem);
+}
+.space-eyebrow {
+  margin: 0;
+  font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-dim);
+}
+.zone-space .space-title {
+  margin: 0; max-width: 16ch;
+  font-size: clamp(2.4rem, 5.4vw, 4.4rem);
+  line-height: 0.98; letter-spacing: -0.022em; color: var(--ink);
+  text-shadow: 0 2px 40px rgba(0, 0, 7, 0.6);
+}
+.zone-space .space-title .hand-accent {
+  font-family: var(--script); font-weight: 700; font-style: normal;
+  color: var(--marker); letter-spacing: 0; display: inline-block;
+  transform: rotate(-2deg); padding: 0 0.05em;
+}
+
+/* SIDE PROJECTS — a curved WebGL ring of personal builds, below the scrapbook.
+   Sits in the same dark-cosmos context; labels render in ion-teal from canvas. */
+.space-projects {
+  position: relative; z-index: 3;
+  width: 100%; max-width: var(--maxw); margin: clamp(2rem, 6vh, 5rem) auto 0;
+}
+.space-projects-head { margin-bottom: clamp(1rem, 2.4vh, 1.8rem); }
+.space-projects-title {
+  margin: 0.2rem 0 0;
+  font-size: clamp(1.9rem, 4vw, 3rem);
+  line-height: 1; letter-spacing: -0.02em; color: var(--ink);
+  text-shadow: 0 2px 40px rgba(0, 0, 7, 0.6);
+}
+.space-projects-title .hand-accent {
+  font-family: var(--script); font-weight: 700; font-style: normal;
+  color: var(--marker); letter-spacing: 0; display: inline-block;
+  transform: rotate(-2deg); padding: 0 0.05em;
+}
+.space-projects-stage {
+  position: relative;
+  height: clamp(20rem, 48vh, 32rem);
+}
+.space-lede {
+  margin: 0;
+  font-size: clamp(1.02rem, 1.7vw, 1.28rem); line-height: 1.55; color: var(--ink);
+  text-wrap: pretty; text-shadow: 0 1px 18px rgba(0, 0, 6, 0.5);
+}
+.space-note {
+  margin: 0;
+  font-size: clamp(0.92rem, 1.4vw, 1.02rem); line-height: 1.6; color: var(--ink-soft);
+  text-shadow: 0 1px 16px rgba(0, 0, 6, 0.5);
+}
+.space-ps {
+  margin: 0;
+  font-family: var(--script); font-weight: 600;
+  font-size: clamp(1.05rem, 1.8vw, 1.35rem); color: var(--marker);
+  transform: rotate(-1.5deg); transform-origin: left;
+}
+
+/* the red marker doodles in the far field */
+.doodle { width: var(--ds, 3rem); color: var(--marker); line-height: 0; }
+.doodle svg { width: 100%; height: auto; display: block; }
+.doodle--star svg,
+.doodle--flower svg { fill: var(--marker); stroke: none; }
+.doodle--arrow svg,
+.doodle--squiggle svg {
+  fill: none; stroke: var(--marker); stroke-width: 3;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* TABLET + NARROW DESKTOP — the absolute collage only holds up on wide screens.
+   Below ~1024px the scrapbook collapses to a plain readable column with generous
+   air; absolute pins, tilts and the thread are dropped; pieces flow in order. */
+@media (max-width: 1024px) {
+  .zone-space { padding-bottom: clamp(6rem, 16vh, 10rem); }
+  .scrap {
+    min-height: 0; padding-top: clamp(6rem, 14vh, 9rem);
+    display: flex; flex-direction: column;
+  }
+  .thread { display: none; }
+  .par-far, .par-near {
+    position: static; display: flex; flex-direction: column; gap: clamp(3.5rem, 9vw, 5rem);
+  }
+  .par-far { order: 2; align-items: flex-start; }
+  .par-near { order: 1; }
+  .frag {
+    position: static !important;
+    transform: none !important;
+    inset: auto !important;
+    z-index: auto !important;
+  }
+  .doodle { display: none; }   /* decorative scatter — drop it in the clean column */
+  .print { width: min(72vw, 20rem) !important; }
+  .scrap-moon { width: min(78vw, 22rem) !important; }
+  .print-note { position: static !important; max-width: none; margin-top: 0.6rem; text-align: left !important; align-items: flex-start !important; }
+  /* the manifesto leads, with a comfortable measure and a clear gap to the prints */
+  .scrap-copy {
+    width: 100%; max-width: 40rem; order: -1;
+    margin-bottom: clamp(2rem, 6vw, 3.5rem);
+    gap: clamp(1.3rem, 3vw, 2rem);
+  }
+  .zone-space .space-title { max-width: 14ch; font-size: clamp(2.2rem, 8vw, 3.6rem); }
+  .space-lede, .space-note { max-width: 38ch; }
 }
 
 /* =================================================================
@@ -632,108 +765,201 @@ body.preloading .navbar {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-snap-type: none; }
 }
-/* The hero UI sits ABOVE the cloud layer (CloudField is fixed at z-index 40):
-   the canopy floats over the clouds rather than peering through a hole in them.
-   No reading-lens scrim — the canopy's own frost carries the contrast. */
-.sky-hero .inner { position: relative; z-index: 45; max-width: 54rem; }
-/* the canopy: thin glass framing the headline, with viewfinder ticks echoing the
-   work-zone readout. Floats above the live clouds. */
-.sky-hero .inner.canopy {
-  padding: clamp(2rem, 5vw, 3.4rem) clamp(1.6rem, 5vw, 3.6rem);
-  border-radius: var(--r-xl);
-}
-.canopy-tick {
-  position: absolute; width: 16px; height: 16px; z-index: 4; pointer-events: none;
-  border: 1.5px solid var(--ion-700); opacity: 0.5;
-}
-.canopy-tick.tl { top: 14px; left: 14px; border-right: 0; border-bottom: 0; }
-.canopy-tick.br { bottom: 14px; right: 14px; border-left: 0; border-top: 0; }
-.sky-hero .name {
-  font-family: var(--sans); font-weight: 600;
-  font-size: 0.78rem; letter-spacing: 0.26em; text-transform: uppercase;
-  color: var(--ink-soft); margin: 0 0 1.4rem;
-}
-.sky-hero .tagline {
-  font-size: clamp(2.4rem, 7vw, 5.4rem);
-  text-shadow: 0 1px 30px rgba(255, 255, 255, 0.35);
-}
-.sky-hero .tagline em {
-  font-style: italic;
-  color: var(--ink);
-  text-decoration: underline;
-  text-decoration-color: var(--ion);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.12em;
-}
-.sky-hero .one-liner {
-  margin: clamp(1.6rem, 3.5vw, 2.2rem) auto 0; max-width: 36rem;
-  font-size: clamp(1rem, 1.7vw, 1.2rem); line-height: 1.6; color: var(--ink-soft);
+/* The hero sits ABOVE the cloud layer (CloudField is fixed at z-index 40): the
+   type floats over the live clouds rather than peering through a hole in them.
+   Padding keeps the fold clear of the right-edge altimeter rail. */
+.sky-hero {
+  overflow: visible;
+  padding: clamp(4.4rem, 11vh, 6.4rem) clamp(3.4rem, 7vw, 6rem) clamp(3.6rem, 9vh, 5rem);
 }
 
-/* the window in the sky — Sameer rising from the cloud line, bottom-right.
-   z-44 sits below the canopy (z-45) so the glass frosts him where they overlap;
-   out in the open sky he stays crisp. Pinned to the section's lower-right so his
-   downward gaze leads into the "scroll down" cue. */
-.sky-figure {
-  position: absolute; z-index: 44; pointer-events: none;
-  bottom: -0.5rem;
-  right: clamp(-1.5rem, 3vw, 4rem);
-  width: clamp(7.5rem, 15vw, 13.5rem);
-  /* anchor the rise to the bottom so it grows up out of the clouds */
-  transform-origin: 50% 100%;
+/* --- corner metadata: two mono ticks pinned to the top corners of the fold.
+   The right one ("Create › Consume") names the vertical axis — up is the creative
+   world, down is the shipped work — echoing the two edge markers. */
+.sky-corner {
+  position: absolute; z-index: 46;
+  top: clamp(1.3rem, 4vh, 2.4rem);
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--ink-dim);
 }
-.sky-figure-img {
-  display: block; width: 100%; height: auto;
-  /* atmospheric ground-shadow so the window sits IN the sky, not on top of it */
-  filter:
-    drop-shadow(0 24px 34px rgba(20, 44, 66, 0.30))
-    drop-shadow(0 4px 10px rgba(20, 44, 66, 0.18));
-  /* slow drift — he breathes in the wind. Separate element from the GSAP
-     reveal wrapper so the two transforms never collide. */
-  animation: skyFigureFloat 11s ease-in-out infinite;
+.sky-corner.tl { left: clamp(1.4rem, 5vw, 4rem); }
+.sky-corner.tr { right: clamp(1.4rem, 5vw, 4rem); }
+.sky-corner-k { color: var(--ink-soft); font-weight: 600; }
+.sky-corner-arrow { color: var(--ion-700); margin: 0 0.15em; }
+
+/* --- the statement fold: copy left, portrait right (asymmetric editorial) --- */
+.sky-fold {
+  position: relative; z-index: 45;
+  width: 100%; max-width: 66rem;
+  display: grid; grid-template-columns: 1.55fr 0.8fr;
+  gap: clamp(1.8rem, 5vw, 4rem); align-items: center;
+  text-align: left;
+}
+
+.sky-eyebrow {
+  margin: 0 0 clamp(1rem, 2.6vw, 1.7rem);
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--ink-soft);
+  display: inline-flex; align-items: center; gap: 0.65rem;
+}
+.sky-eyebrow .dia { color: var(--ion); font-size: 0.72em; }
+
+/* the thesis — big serif statement. One hand-written ion word, faded tail. */
+.sky-statement {
+  margin: 0;
+  font-size: clamp(2rem, 4.7vw, 3.75rem);
+  line-height: 1.1; letter-spacing: -0.012em;
+  color: var(--ink);
+  text-shadow: 0 1px 30px rgba(255, 255, 255, 0.4);
+}
+.sky-statement .script {
+  font-family: var(--script); font-style: normal; font-weight: 700;
+  color: var(--ion-700);
+  font-size: 1.14em; line-height: 1; padding: 0 0.04em;
+}
+.sky-tail { color: var(--ink-dim); opacity: 0.5; }
+
+/* stat readouts — the two truths a recruiter should hit in the first glance */
+.sky-stats {
+  margin: clamp(1.8rem, 4.5vw, 2.7rem) 0 0;
+  display: flex; gap: clamp(2.2rem, 6vw, 4.2rem);
+}
+.sky-stat { display: flex; flex-direction: column; gap: 0.3rem; }
+.sky-stat-num {
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(2.3rem, 5vw, 3.5rem); line-height: 0.92;
+  color: var(--ion-700);
+}
+.sky-stat-k {
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-dim);
+}
+
+/* --- portrait: the headshot in a glass viewfinder, pushed to the right --- */
+.sky-portrait {
+  position: relative; margin: 0; z-index: 45;
+  width: 100%; max-width: 15.5rem; justify-self: end;
+  padding: 7px;
+  border-radius: var(--r-lg);
+  background: linear-gradient(to bottom,
+    rgb(var(--glass-rgb) / 0.34), rgb(var(--glass-rgb) / 0.16));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-edge);
+  /* slow drift — opacity-only reveal in GSAP so the two transforms never fight */
+  animation: skyPortraitFloat 11s ease-in-out infinite;
   will-change: transform;
 }
-@keyframes skyFigureFloat {
+.sky-portrait-img {
+  display: block; width: 100%; height: auto;
+  aspect-ratio: 3 / 4; object-fit: cover; object-position: 50% 18%;
+  border-radius: calc(var(--r-lg) - 5px);
+}
+@keyframes skyPortraitFloat {
   0%, 100% { transform: translateY(0) rotate(0deg); }
-  50%      { transform: translateY(-12px) rotate(-0.4deg); }
+  50%      { transform: translateY(-9px) rotate(-0.5deg); }
 }
-/* tablet: keep him present but let him drift toward the edge so text breathes */
-@media (max-width: 1024px) {
-  .sky-figure { width: clamp(6.5rem, 20vw, 11rem); right: clamp(-2rem, -1vw, 0rem); bottom: -1rem; }
+/* viewfinder corner ticks bracketing the face */
+.vf-tick {
+  position: absolute; width: 14px; height: 14px; z-index: 3; pointer-events: none;
+  border: 1.5px solid #fff; opacity: 0.9;
+  filter: drop-shadow(0 1px 2px rgba(14, 29, 49, 0.55));
 }
-/* phone: a quiet accent low in the corner, well clear of the headline */
-@media (max-width: 640px) {
-  .sky-figure {
-    width: clamp(5.5rem, 26vw, 8rem);
-    right: -1.5rem; bottom: -1.5rem;
-    opacity: 0.92;
-  }
-  .sky-figure-img { filter: drop-shadow(0 16px 26px rgba(20, 44, 66, 0.28)); }
-}
+.vf-tick.tl { top: 15px; left: 15px; border-right: 0; border-bottom: 0; }
+.vf-tick.tr { top: 15px; right: 15px; border-left: 0; border-bottom: 0; }
+.vf-tick.bl { bottom: 15px; left: 15px; border-right: 0; border-top: 0; }
+.vf-tick.br { bottom: 15px; right: 15px; border-left: 0; border-top: 0; }
 
-/* dual scroll cues — up is unintuitive, so cue it explicitly */
-.scroll-cues {
-  position: absolute; left: 50%; transform: translateX(-50%); z-index: 45;
-  display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
-  font-size: 0.66rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-dim);
+/* --- THE TWO EDGE MARKERS: the bidirectional spine. A glowing ion line runs off
+   the TOP of the fold to the creative world and off the BOTTOM to the shipped
+   work. Each is a real button (flies there via the altitude scroller) — scrolling
+   UP is the unintuitive move, so it is named, not implied. */
+.sky-edge {
+  position: absolute; left: 50%; z-index: 46;
+  display: flex; flex-direction: column; align-items: center; gap: 0.45rem;
+  margin: 0; padding: 0.25rem 0.7rem; border: 0; background: none;
+  font: inherit; cursor: pointer; color: var(--ink);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.scroll-cues.up { top: 1.6rem; }
-.scroll-cues.down { bottom: 1.6rem; }
-.scroll-cues .arrow { font-size: 1rem; animation: bob 2.2s ease-in-out infinite; }
-.scroll-cues.up .arrow { animation-direction: alternate; }
+.sky-edge.up { top: clamp(2.8rem, 8vh, 4.6rem); transform: translateX(-50%); }
+.sky-edge.down { bottom: clamp(1rem, 3.2vh, 2.2rem); transform: translateX(-50%); }
+.sky-edge.up:hover { transform: translateX(-50%) translateY(-3px); }
+.sky-edge.down:hover { transform: translateX(-50%) translateY(3px); }
+.sky-edge:active { transform: translateX(-50%) scale(0.98); }
+
+.fc-line {
+  width: 1.5px; height: clamp(1.8rem, 4.5vh, 3rem); position: relative;
+}
+.fc-line.up { background: linear-gradient(to top, var(--ion), rgba(43, 182, 214, 0.03)); }
+.fc-line.down { background: linear-gradient(to bottom, var(--ion), rgba(43, 182, 214, 0.03)); }
+.fc-line::after {
+  content: ''; position: absolute; left: 50%; width: 6px; height: 6px;
+  margin-left: -3px; border-radius: 50%;
+  background: var(--ion); box-shadow: 0 0 10px 1px var(--ion-glow);
+}
+.fc-line.up::after { top: -3px; }
+.fc-line.down::after { bottom: -3px; }
+
+.fc-arrow {
+  font-size: 0.95rem; line-height: 1; color: var(--ion-700);
+  animation: bob 2.4s ease-in-out infinite;
+}
+.sky-edge.up .fc-arrow { animation-direction: alternate; }
+.fc-dest {
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink-soft);
+  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.6);
+}
 @keyframes bob {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(4px); }
+  50% { transform: translateY(3px); }
+}
+
+/* short viewports: tighten the lines so the markers never crowd the statement */
+@media (max-height: 780px) {
+  .fc-line { height: clamp(1.2rem, 2.6vh, 1.8rem); }
+}
+/* tablet: collapse to one column, face first as a warm intro */
+@media (max-width: 900px) {
+  .sky-hero { padding-left: clamp(1.4rem, 6vw, 3rem); padding-right: clamp(3rem, 9vw, 4.4rem); }
+  .sky-fold { grid-template-columns: 1fr; gap: clamp(1.4rem, 4vw, 2rem); justify-items: start; }
+  .sky-portrait { order: -1; max-width: 12.5rem; justify-self: start; }
+}
+/* phone: stats wrap, corners tuck in */
+@media (max-width: 540px) {
+  .sky-corner { font-size: 0.55rem; letter-spacing: 0.14em; }
+  .sky-stats { gap: 2rem; }
+  .sky-portrait { max-width: 10.5rem; }
 }
 
 /* =================================================================
-   WORK ZONE — descending sky, the shipped work (count-up signature)
+   WORK ZONE — descending sky, the shipped work.
+   A GSAP-scrubbed sticky stack: each glass card pins under the header and
+   the one above it recedes (scale + fade) as the next arrives. Ion-teal edge
+   glow tracks the pointer. No pin/Lenis — pure position:sticky + scrub so it
+   never fights scroll-snap or the altitude cross-fade.
    ================================================================= */
-.zone-work { justify-content: center; }
+.zone-work {
+  justify-content: flex-start;
+  min-height: auto;
+  /* extra headroom: lets the hero cloud bank sweep off (and the work-edge wisps
+     settle) before the sticky cards pin, so the deck doesn't collide with clouds */
+  margin-top: clamp(4rem, 14vh, 10rem);
+  padding-top: clamp(6rem, 16vh, 11rem);
+  padding-bottom: clamp(5rem, 12vh, 9rem);
+}
 .section-head {
   display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
   padding-bottom: 1.2rem; border-bottom: 1px solid var(--ink);
   text-align: left;
+}
+/* the work header pins to the top of the viewport and stays put while the card
+   deck scrolls and stacks beneath it. No background fill — it floats over the
+   sky. z-index sits BELOW the cards (1–4) so the last card rides up and over the
+   title as you leave the section, rather than the title overlapping the card. */
+.zone-work .section-head {
+  position: sticky;
+  top: clamp(0.75rem, 3vh, 1.75rem);
+  z-index: 0;
 }
 .section-head h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); }
 .section-head .count {
@@ -741,124 +967,112 @@ body.preloading .navbar {
   text-transform: uppercase; color: var(--ink-dim);
 }
 
-.case {
-  display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 1rem 2rem;
-  padding: clamp(1.5rem, 3.2vw, 2.3rem) clamp(1.4rem, 3vw, 2.4rem);
-  margin-bottom: clamp(0.8rem, 1.6vw, 1.1rem);
+.work-stack {
+  position: relative;
+  display: flex; flex-direction: column;
+  gap: clamp(1.2rem, 3vw, 2.2rem);
+  margin-top: clamp(2.2rem, 5vw, 3.4rem);
+}
+/* each card pins; `top` + z-index are set inline per index so they fan as they stack */
+.gcard { position: sticky; will-change: transform, opacity; }
+
+.glow-card {
+  position: relative; isolation: isolate;
+  --edge: 0; --angle: 45deg;
+  display: grid; grid-template-columns: 1fr;
+  gap: clamp(1.2rem, 3vw, 2rem); align-items: center;
+  padding: clamp(1.3rem, 3vw, 2rem);
+  border-radius: var(--r-xl);
   text-align: left;
-  /* frosted instrument card — new liquid-lens glass language (see .glass) */
-  background: linear-gradient(to bottom,
-    rgb(var(--glass-rgb) / calc(var(--glass-alpha) + 0.07)),
-    rgb(var(--glass-rgb) / calc(var(--glass-alpha) - 0.05)));
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
-  border: 1px solid var(--glass-border);
-  border-radius: var(--r-lg);
+  overflow: hidden;
+  /* near-opaque frosted fill (explicit, NOT the --glass-alpha gradient, which
+     wasn't rendering solid): these cards stack with only a small offset, so the
+     front card must fully cover the ones behind — a translucent pane lets the
+     whole deck bleed through. This overrides .glass's background. */
+  background: linear-gradient(to bottom, rgba(247, 251, 255, 0.98), rgba(234, 244, 253, 0.96));
+}
+@media (min-width: 820px) {
+  .glow-card { grid-template-columns: 1.02fr 1fr; }
+}
+/* directional ion edge-glow: a teal box-shadow ring revealed only along the arc
+   nearest the pointer (conic mask), its intensity ramping with edge proximity */
+.glow-ring {
+  position: absolute; inset: 0; border-radius: inherit; z-index: 0;
+  pointer-events: none;
   box-shadow:
-    var(--glass-shadow),
-    inset 0 1px 0 var(--glass-edge),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.14);
-  opacity: 0; transform: translateY(22px);
-  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+    inset 0 0 0 1px rgba(43, 182, 214, 0.55),
+    inset 0 0 18px rgba(90, 209, 238, 0.45),
+    0 0 22px rgba(43, 182, 214, 0.35);
+  opacity: calc((var(--edge) - 34) / 66);
+  -webkit-mask-image: conic-gradient(from var(--angle), #000 0deg, #000 36deg, transparent 96deg, transparent 264deg, #000 324deg, #000 360deg);
+          mask-image: conic-gradient(from var(--angle), #000 0deg, #000 36deg, transparent 96deg, transparent 264deg, #000 324deg, #000 360deg);
+  transition: opacity 0.2s ease;
 }
-.case.in { opacity: 1; transform: none; }
-@media (hover: hover) {
-  .case:hover {
-    box-shadow:
-      0 26px 60px -24px rgba(14, 29, 49, 0.5),
-      inset 0 1px 0 rgba(255, 255, 255, 0.8),
-      inset 0 0 0 1px rgba(43, 182, 214, 0.18);
-  }
+
+.gc-media {
+  position: relative; z-index: 1;
+  min-width: 0; /* don't let a large intrinsic image widen the grid track */
+  aspect-ratio: 16 / 10; border-radius: var(--r-md); overflow: hidden;
+  background: linear-gradient(150deg, rgba(43, 182, 214, 0.14), rgba(31, 198, 166, 0.08));
+  border: 1px solid var(--card-border);
 }
-@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-  .case { background: rgba(243, 249, 254, 0.92); }
+/* fill + crop the media box regardless of the source image's aspect ratio, so
+   every card is the same width (portrait thumbs get cropped to 16:10, not stretched) */
+.gc-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.gc-media--metric {
+  display: grid; place-content: center;
+  background: linear-gradient(150deg, rgba(15, 110, 142, 0.16), rgba(43, 182, 214, 0.08));
 }
-.case .info { min-width: 0; }
-.case .idx {
+.gc-bigmetric {
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(3rem, 9vw, 5.5rem); line-height: 0.85; letter-spacing: -0.03em;
+  color: var(--ion-700); font-variant-numeric: tabular-nums;
+}
+
+.gc-body { position: relative; z-index: 1; min-width: 0; }
+.gc-idx {
   font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em;
   color: var(--ion-700); font-weight: 500;
 }
-.case h3 {
+.gc-title {
   font-family: var(--display); font-weight: 400;
-  font-size: clamp(1.6rem, 4vw, 2.6rem); line-height: 1.05; letter-spacing: -0.015em;
+  font-size: clamp(1.5rem, 3.6vw, 2.4rem); line-height: 1.05; letter-spacing: -0.015em;
   margin: 0.5rem 0 0; transition: color 0.25s ease;
 }
-.case .ctx { margin: 0.7rem 0 0; font-size: 0.92rem; color: var(--ink-soft); max-width: 46ch; }
-
-.case .measure-wrap {
-  display: flex; flex-direction: column; align-items: flex-end; text-align: right;
-  gap: 0.5rem;
+.gc-ctx { margin: 0.7rem 0 0; font-size: 0.92rem; color: var(--ink-soft); max-width: 48ch; }
+.gc-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  margin-top: clamp(1rem, 2.4vw, 1.5rem);
 }
-/* the readout — the count-up figure framed like an instrument display
-   (viewfinder corner brackets), not a ledger number in a ruled row */
-.case .readout { position: relative; display: inline-block; padding: 0.15rem 0.7rem 0.05rem; }
-.case .readout::before,
-.case .readout::after {
-  content: ""; position: absolute; width: 13px; height: 13px;
-  border: 1.5px solid var(--ion-700); opacity: 0.55; pointer-events: none;
-}
-.case .readout::before { top: 0; left: 0; border-right: 0; border-bottom: 0; }
-.case .readout::after { bottom: 0; right: 0; border-left: 0; border-top: 0; }
-.case .metric {
-  font-family: var(--display); font-weight: 400;
-  font-size: clamp(2.8rem, 8vw, 5.5rem); line-height: 0.85; letter-spacing: -0.03em;
-  color: var(--ion-700); font-variant-numeric: tabular-nums; white-space: nowrap;
-  /* altimeter readout: a soft cyan halo, never the contrast source */
-  text-shadow: 0 0 22px rgba(43, 182, 214, 0.32);
-}
-.case .metric .unit { color: var(--aurora-teal); }
-/* graduated gauge — a tick scale with a glowing needle that sweeps to full on
-   reveal. Decorative readout-activation (robust across heterogeneous metrics),
-   not a literal magnitude bar. The dim ticks are the bezel; the ion ticks fill. */
-.case .gauge {
-  position: relative; width: clamp(7rem, 18vw, 12rem); height: 13px;
-  background: repeating-linear-gradient(90deg, var(--rule) 0 1px, transparent 1px 8px);
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-}
-/* paint-only wipe (clip-path, not width — no layout thrash): the ion ticks
-   sweep in left→right like a gauge needle tracking up to the reading */
-.case .gauge-fill {
-  position: absolute; inset: 0;
-  background: repeating-linear-gradient(90deg, var(--ion) 0 1.5px, transparent 1.5px 8px);
-  filter: drop-shadow(0 0 6px rgba(90, 209, 238, 0.55));
-  clip-path: inset(0 100% 0 0);
-  transition: clip-path 1s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
-}
-.case.in .gauge-fill { clip-path: inset(0 0 0 0); }
-.case .mlabel {
+.gc-meta {
   display: inline-flex; align-items: center; gap: 0.45rem;
-  font-family: var(--mono);
-  font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim);
-}
-.case .mlabel::before {
-  content: ""; width: 5px; height: 5px; background: var(--ion-700); /* HUD marker */
-}
-@media (prefers-reduced-motion: reduce) {
-  .case .gauge-fill { transition: none; }
-}
-@media (hover: hover) { .case:hover h3 { color: var(--ion-700); } }
-
-/* whole metric card → its full study (stretched-link pattern, so the
-   count-up + reveal article structure is untouched) */
-.case.linked { position: relative; }
-.case-stretch { position: absolute; inset: 0; z-index: 3; border-radius: inherit; }
-.case-stretch:focus-visible { outline: 2px solid var(--ion); outline-offset: 4px; }
-.case-cta {
-  display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 1.1rem;
-  font-family: var(--mono); font-size: 0.66rem; font-weight: 500;
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ion-700);
-}
-.case-go { display: inline-block; transition: transform 0.25s ease; }
-.case-soon {
-  display: inline-block; margin-top: 1.1rem;
   font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.13em;
   text-transform: uppercase; color: var(--ink-dim);
 }
-@media (hover: hover) {
-  .case.linked { cursor: pointer; }
-  .case.linked:hover .case-go { transform: translateX(4px); }
+.gc-meta::before { content: ""; width: 5px; height: 5px; background: var(--ion-700); }
+.gc-go {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-family: var(--mono); font-size: 0.66rem; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ion-700);
 }
+.gc-go .ar { display: inline-block; transition: transform 0.25s ease; }
+.gc-soon {
+  font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.13em;
+  text-transform: uppercase; color: var(--ink-dim);
+}
+/* whole card → its full study (stretched-link, keeps the markup linkable) */
+.gc-stretch { position: absolute; inset: 0; z-index: 3; border-radius: inherit; }
+.gc-stretch:focus-visible { outline: 2px solid var(--ion); outline-offset: 4px; }
+@media (hover: hover) {
+  .glow-card:hover .gc-title { color: var(--ion-700); }
+  .glow-card:hover .gc-go .ar { transform: translateX(4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gcard { position: relative; top: auto !important; transform: none !important; opacity: 1 !important; }
+  .glow-ring { display: none; }
+}
+
 /* "All case studies →" link in the section head */
 .count.work-all { transition: color 0.2s ease; }
 .count.work-all:hover { color: var(--ion-700); }
@@ -896,17 +1110,33 @@ body.preloading .navbar {
 .ground-scape { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 .gs-grassland {
   position: absolute; inset: 0;
-  /* just the photo — green hills, anchored to the foot, covering the zone */
-  background: url('/footer/grassland.png') no-repeat center bottom / cover;
+  /* the photo — a lone desk in an open field, anchored to the foot, covering
+     the zone. webp first, png fallback. */
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: cover;
+  background-image: url('/footer/field-desk.png');
+  background-image: -webkit-image-set(
+    url('/footer/field-desk.webp') type('image/webp'),
+    url('/footer/field-desk.png') type('image/png'));
+  background-image: image-set(
+    url('/footer/field-desk.webp') type('image/webp'),
+    url('/footer/field-desk.png') type('image/png'));
 }
-/* a soft dark scrim where the content lands (lower band) so the WHITE text
-   stays legible over the grass — the rest of the photo is left untouched */
+/* premium grading over the field: a whisper of warmth up top so the open sky
+   reads soft, and a deeper scrim at the foot where the WHITE content lands so
+   the type stays legible over the grass without muddying the scene. */
 .gs-grassland::after {
   content: ""; position: absolute; inset: 0;
-  background: linear-gradient(180deg,
-    rgba(6, 18, 10, 0) 38%,
-    rgba(6, 18, 10, 0.34) 74%,
-    rgba(6, 18, 10, 0.56) 100%);
+  background:
+    radial-gradient(120% 70% at 50% 30%,
+      rgba(255, 248, 230, 0.06) 0%,
+      rgba(255, 248, 230, 0) 55%),
+    linear-gradient(180deg,
+      rgba(6, 18, 10, 0) 34%,
+      rgba(6, 18, 10, 0.28) 66%,
+      rgba(5, 14, 9, 0.62) 88%,
+      rgba(4, 11, 7, 0.78) 100%);
 }
 
 /* ---- three columns: menu · socials · newsletter --------------------- */
@@ -958,15 +1188,26 @@ body.preloading .navbar {
 .footer-sub .arrow { transition: transform 0.2s ease; }
 .footer-sub button:hover .arrow { transform: translateX(3px); }
 
-/* ---- the brand mark, a quiet white lockup above the menu ------------- */
-.footer-mark { margin: 0 0 clamp(2.2rem, 5vw, 3.2rem); }
+/* ---- the brand mark, pinned over the open field — the footer's crest ----
+   centered horizontally and anchored to the upper field so it floats above the
+   figure's head, reading as a quiet maker's signature over the scene. */
+.footer-mark {
+  position: absolute; z-index: 2;
+  left: 0; right: 0; top: clamp(3.75rem, 20vh, 14rem);
+  display: flex; justify-content: center;
+  pointer-events: none;
+}
+.footer-mark > * { pointer-events: auto; }
 .footer-mark-btn {
   display: inline-grid; place-items: center; line-height: 0;
-  background: none; border: none; padding: 0; cursor: pointer; opacity: 0.9;
+  background: none; border: none; padding: 0.5rem; cursor: pointer; opacity: 0.92;
   transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .footer-mark-btn:hover { opacity: 1; transform: translateY(-3px); }
-.footer-mark-logo { width: clamp(54px, 6vw, 76px); height: auto; display: block; }
+.footer-mark-logo {
+  width: clamp(64px, 7vw, 92px); height: auto; display: block;
+  filter: drop-shadow(0 6px 22px rgba(0, 0, 0, 0.35));
+}
 
 @media (min-width: 740px) {
   .footer-cols { grid-template-columns: 1fr 1fr 1.6fr; gap: clamp(2rem, 6vw, 5rem); }
@@ -1074,6 +1315,62 @@ body.preloading .navbar {
 }
 .tile-link:focus-within .tile-go { opacity: 1; transform: none; }
 
+/* PROCESS / WAY-OF-THINKING — sits in the sky world after the case studies.
+   A centred serif manifesto over a 2×2 grid of frosted principle cards. */
+.band-think {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  isolation: isolate;
+}
+.think-head {
+  max-width: 46rem;
+  margin: 0 auto clamp(2.4rem, 6vw, 4rem);
+  position: relative; z-index: 2;
+}
+.think-title {
+  margin: 0;
+  font-size: clamp(2rem, 5.4vw, 3.6rem);
+  line-height: 1.18; letter-spacing: 0;
+  word-spacing: 0.04em;
+  color: var(--ink);
+}
+.think-title em {
+  font-style: italic;
+  color: var(--blue-700);
+  /* italic glyphs lean into the next word — pad so the spaces read */
+  padding: 0 0.12em;
+}
+.think-grid {
+  position: relative; z-index: 2;
+  display: grid; gap: clamp(1rem, 2vw, 1.6rem);
+  grid-template-columns: 1fr;
+  max-width: 60rem; margin-inline: auto;
+  text-align: left;
+}
+@media (min-width: 760px) {
+  .think-grid { grid-template-columns: 1fr 1fr; }
+}
+.think-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: clamp(1rem, 1.6vw, 1.4rem);
+  padding: clamp(1.4rem, 2.5vw, 2.1rem);
+  box-shadow: 0 26px 54px -30px rgba(5, 15, 45, 0.6);
+  color: #10204a;
+}
+.think-card h3 {
+  margin: 0 0 0.45rem;
+  font-family: var(--display); font-weight: 400;
+  font-size: clamp(1.25rem, 2.2vw, 1.7rem);
+  line-height: 1.12; letter-spacing: -0.01em;
+  color: #10204a;
+}
+.think-card p {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.4vw, 1.05rem);
+  line-height: 1.55; color: #5a6a8c;
+}
 /* about + process + tools */
 .about-grid { display: grid; gap: clamp(1.5rem, 4vw, 3rem); grid-template-columns: 1fr; }
 .about-title { font-size: clamp(1.8rem, 4.5vw, 3rem); line-height: 1.1; max-width: 18ch; margin: 0.6rem 0 0; }
@@ -1150,9 +1447,6 @@ body.altitude-ready [data-reveal].in { opacity: 1; transform: none; }
    ================================================================= */
 @media (max-width: 680px) {
   body { font-size: 17px; }
-  .case { grid-template-columns: 1fr; align-items: start; }
-  .case .measure-wrap { align-items: flex-start; text-align: left; }
-  .case .metric { font-size: clamp(2.6rem, 16vw, 4rem); }
   .section-head { flex-direction: column; gap: 0.3rem; }
   .gallery { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 9rem; }
   .tile.big { grid-column: span 2; grid-row: span 2; }
@@ -1176,7 +1470,6 @@ body.altitude-ready [data-reveal].in { opacity: 1; transform: none; }
     transition-duration: 0.001ms !important;
   }
   body { opacity: 1; }
-  .case { opacity: 1; transform: none; }
-  .case .measure::after { transform: scaleX(1); }
-  .scroll-cues .arrow { animation: none; }
+  .fc-arrow { animation: none; }
+  .sky-portrait { animation: none; }
 }

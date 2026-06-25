@@ -1,149 +1,161 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import GlowCard from '@/components/GlowCard';
+
+gsap.registerPlugin(ScrollTrigger);
 
 /**
- * The "down" world — descending through the colours of the sky toward the
- * ground. Here the work is measured: the business UI/UX projects where a single
- * percentage point is real money. Each row's ion-cyan numeral counts up from zero
- * on reveal like an altimeter readout — the site's signature ("numbers that
- * move"), kept to this place.
- * Reduced motion shows the final figure at rest.
+ * The "down" world — the shipped work, presented as a sticky stack of glass
+ * cards. Each card pins beneath the header; as you scroll, the card above
+ * recedes (scale + fade) while the next slides up to meet it — a deck of
+ * case studies dealt one at a time. Ion-teal edge glow tracks the pointer.
+ * Reduced motion falls back to a plain vertical list (see globals.css).
  */
 
-type Metric = { to: number; decimals?: number; prefix?: string; suffix?: string };
-
 type Case = {
-  project: string;
+  name: string;
   context: string;
-  label: string;
-  metric: Metric;
+  meta: string;
   href?: string;
+  img?: { src: string; alt: string };
+  metric?: string;
 };
 
 const CASES: Case[] = [
   {
-    project: 'Fair Pricing Widget',
-    context: 'Award-winning pricing experience — now company IP.',
-    label: 'users reached',
-    metric: { to: 500, suffix: 'K+' },
-    href: '/work/fair-pricing',
-  },
-  {
-    project: 'Checkout migration',
-    context: 'Rebuilt the Shopify checkout in-house — and cut time-to-convert by 25.74%.',
-    label: 'conversion',
-    metric: { to: 2.68, decimals: 2, prefix: '+', suffix: '%' },
+    name: 'Checkout, off Shopify',
+    context:
+      'Migrated the most revenue-critical flow off Shopify to escape peak-load rate limits, rebuilding address and payment selection around instant feedback.',
+    meta: '+2.68% conversion',
     href: '/work/checkout',
+    metric: '+2.68%',
   },
   {
-    project: 'Login & auth revamp',
-    context: 'Reworked the Kwikpass → Shiprocket sign-in flow end to end.',
-    label: 'login success',
-    metric: { to: 20, prefix: '+', suffix: '%' },
+    name: 'Fair Pricing',
+    context:
+      'A price-transparency widget shipped on day one that went viral, won best e-commerce feature, and became registered company IP.',
+    meta: '500K+ users reached',
+    href: '/work/fair-pricing',
+    img: { src: '/work/fair-pricing/widget-v3.png', alt: 'Fair Pricing widget on a product page' },
+  },
+  {
+    name: 'Eco-nic Fair',
+    context:
+      'Virgio’s anniversary “anti-sale”, every garment at cost. A Preview toggle let shoppers see every sale price days early. Best Brand Campaign, e4m RetailEX 2026.',
+    meta: '50× revenue · sale days',
+    href: '/work/econic',
+    img: { src: '/work/econic/pdp-toggle.png', alt: 'Eco-nic Fair price preview toggle' },
+  },
+  {
+    name: 'Amodira: Sound of the Scent',
+    context:
+      'A 0→1 perfume brand for Virgio. An original song per fragrance whose layers mirror its notes — you hear the perfume before you smell it.',
+    meta: 'Brand 0→1 · Virgio',
+    href: '/work/amodira',
+    img: { src: '/work/amodira/raya-sound.png', alt: 'Amodira fragrance with its sound layers' },
   },
 ];
 
-const fmt = (v: number, m: Metric) =>
-  `${m.prefix ?? ''}${v.toFixed(m.decimals ?? 0)}`;
-
-function Row({ c, i }: { c: Case; i: number }) {
-  const ref = useRef<HTMLElement>(null);
-  const numRef = useRef<HTMLSpanElement>(null);
-  const [inView, setInView] = useState(false);
-
-  // reveal: flip the .in class once, when the row scrolls into view
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.35, rootMargin: '0px 0px -10% 0px' },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  // count-up: only after the row is in view; snap for reduced motion
-  useEffect(() => {
-    if (!numRef.current) return;
-    const el = numRef.current;
-    const m = c.metric;
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (!inView || reduce) {
-      if (inView) el.textContent = fmt(m.to, m);
-      return;
-    }
-
-    const dur = 1100;
-    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
-    let start: number | null = null;
-    let raf = 0;
-    const step = (now: number) => {
-      if (start === null) start = now;
-      const t = Math.min(1, (now - start) / dur);
-      el.textContent = fmt(m.to * ease(t), m);
-      if (t < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [inView, c.metric]);
-
+function CardInner({ c, i }: { c: Case; i: number }) {
+  const idx = String(i + 1).padStart(2, '0');
   return (
-    <article className={`case${inView ? ' in' : ''}${c.href ? ' linked' : ''}`} ref={ref}>
-      <div className="info">
-        <span className="idx">{String(i + 1).padStart(2, '0')}</span>
-        <h3 className="serif">{c.project}</h3>
-        <p className="ctx">{c.context}</p>
-        {c.href ? (
-          <span className="case-cta">
-            Read case study <span className="case-go" aria-hidden>→</span>
-          </span>
-        ) : (
-          <span className="case-soon">Case study in writing</span>
-        )}
-      </div>
-      <div className="measure-wrap">
-        <span className="readout">
-          <span className="metric tnum">
-            <span ref={numRef}>{`${c.metric.prefix ?? ''}0`}</span>
-            <span className="unit">{c.metric.suffix}</span>
-          </span>
-        </span>
-        <span className="gauge" aria-hidden>
-          <span className="gauge-fill" />
-        </span>
-        <span className="mlabel">{c.label}</span>
+    <GlowCard>
+      {c.img ? (
+        <div className="gc-media">
+          <Image
+            className="gc-img"
+            src={c.img.src}
+            alt={c.img.alt}
+            width={720}
+            height={450}
+            sizes="(min-width: 820px) 50vw, 100vw"
+          />
+        </div>
+      ) : (
+        <div className="gc-media gc-media--metric">
+          <span className="gc-bigmetric tnum">{c.metric}</span>
+        </div>
+      )}
+      <div className="gc-body">
+        <span className="gc-idx">{idx}</span>
+        <h3 className="gc-title">{c.name}</h3>
+        <p className="gc-ctx">{c.context}</p>
+        <div className="gc-foot">
+          <span className="gc-meta">{c.meta}</span>
+          {c.href ? (
+            <span className="gc-go">
+              Read study <span className="ar" aria-hidden>→</span>
+            </span>
+          ) : (
+            <span className="gc-soon">In writing</span>
+          )}
+        </div>
       </div>
       {c.href && (
         <Link
           href={c.href}
-          className="case-stretch"
-          aria-label={`${c.project} — read case study`}
+          className="gc-stretch"
+          aria-label={`${c.name}: read case study`}
         />
       )}
-    </article>
+    </GlowCard>
   );
 }
 
 export default function WorkZone() {
+  const stackRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const root = stackRef.current;
+    if (!root) return;
+
+    const ctx = gsap.context(() => {
+      const cards = gsap.utils.toArray<HTMLElement>('.gcard');
+      cards.forEach((card, i) => {
+        if (i === cards.length - 1) return;
+        gsap.to(card, {
+          scale: 0.95,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: cards[i + 1],
+            start: 'top bottom',
+            end: 'top top',
+            scrub: true,
+          },
+        });
+      });
+    }, root);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section id="zone-work" className="zone zone-work" aria-labelledby="work-title">
       <div className="panel wide">
         <div className="section-head">
-          <h2 id="work-title" className="display">Selected work</h2>
-          <Link href="/work" className="count work-all">All case studies →</Link>
+          <h2 id="work-title" className="display">Case studies</h2>
+          <Link href="/work" className="count work-all">All work →</Link>
         </div>
-        {CASES.map((c, i) => (
-          <Row key={c.project} c={c} i={i} />
-        ))}
+        <div className="work-stack" ref={stackRef}>
+          {CASES.map((c, i) => (
+            <div
+              key={c.name}
+              className="gcard"
+              style={{
+                top: `calc(clamp(7rem, 15vh, 9.5rem) + ${i} * 0.85rem)`,
+                zIndex: i + 1,
+              }}
+            >
+              <CardInner c={c} i={i} />
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

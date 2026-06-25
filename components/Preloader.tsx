@@ -1,7 +1,28 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Odometer from '@/components/Odometer';
+
+// Runs before paint on the client (so a skipped intro never flashes), falls back
+// to useEffect during SSR where layout effects can't run.
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
+// The intro plays on a fresh session AND on every reload. Navigating back to the
+// homepage within the same SPA session (no document reload) skips it.
+const PLAYED_KEY = 'intro:played';
+
+// A hard reload (F5 / Cmd-R) should replay the intro even though the session flag
+// is still set. Navigation Timing L2 reports the type; fall back to the deprecated
+// PerformanceNavigation for older engines.
+function isReload(): boolean {
+  try {
+    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+    if (nav) return nav.type === 'reload';
+    return (performance as unknown as { navigation?: { type: number } }).navigation?.type === 1;
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Intro only — the number counting 0 → 100 over a faint haze, with the page's
@@ -41,11 +62,32 @@ function Counter({ onDone }: { onDone: () => void }) {
 export default function Preloader() {
   const [phase, setPhase] = useState<'count' | 'reveal' | 'done'>('count');
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) {
+    let played = false;
+    try {
+      played = sessionStorage.getItem(PLAYED_KEY) === '1';
+    } catch {}
+    // A reload always replays the intro, regardless of the session flag.
+    if (isReload()) played = false;
+
+    // Already seen this session (or reduced motion): skip straight to the live
+    // page — drop the cover and clear the flag so the nav, clouds and hero all
+    // render at rest. CloudField/SkyHero read the absence of `preloading` and
+    // appear immediately, so no count, no curtain.
+    if (reduced || played) {
+      document.documentElement.classList.remove('pl-cover', 'pl-reveal');
+      document.body.classList.remove('preloading');
       setPhase('done');
+      return;
     }
+
+    // First view this session — remember it now (before the count even finishes)
+    // so navigating away mid-intro still counts as played.
+    try {
+      sessionStorage.setItem(PLAYED_KEY, '1');
+    } catch {}
+
     // Mark the document as "preloading" so chrome that lives ABOVE the intro
     // (the side-nav) can stay hidden until the loader clears. Added here, before
     // AltitudeProvider reveals the body, so the nav never flashes in first.
@@ -58,17 +100,13 @@ export default function Preloader() {
     // rendered) once the clouds have actually painted their first frame: the
     // cover dissolves out AS the clouds materialise underneath, so they read as
     // fading in — not popping in fully-formed when a blind timer lifts the cover.
-    // A safety timeout clears it even if the canvas never signals; reduced motion
-    // clears it at once.
+    // A safety timeout clears it even if the canvas never signals.
     const root = document.documentElement;
     let dropId = 0;
     const reveal = () => {
       root.classList.add('pl-reveal'); // start the cross-fade (see globals.css)
       dropId = window.setTimeout(() => root.classList.remove('pl-cover', 'pl-reveal'), 1000);
     };
-    if (reduced) {
-      root.classList.remove('pl-cover');
-    }
     window.addEventListener('clouds:ready', reveal, { once: true });
     const safetyId = window.setTimeout(reveal, 1600);
     return () => {

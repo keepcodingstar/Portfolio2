@@ -2,21 +2,30 @@
 
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
+import { useAltitude } from '@/components/AltitudeProvider';
 
 /**
- * The hinge of the whole site: "Sameer, now." You LAND here, in the sky.
- * Scrolling up rises into space (the creative side); scrolling down descends
- * through the colours of the sky to the shipped work and the ground.
+ * The hinge of the whole site: an editorial THESIS read over a cockpit canopy of
+ * live sky. You LAND here, at altitude zero. The fold leads with what Sameer
+ * actually does, in a big serif statement whose one hand-written ion word carries
+ * the brand voice, and pays it off with two real, verifiable numbers (500K+
+ * reached, +2.68% checkout lift) — proof before adjectives.
  *
- * A GSAP timeline reveals the lines, but only once the preloader clears (the
- * `preloader:done` signal) — otherwise the reveal would play hidden behind the
- * white intro field. It's timed to land as the cloud curtain parts and the
- * centre clears. Dual scroll cues actively invite the (unintuitive) up-scroll as
- * well as the down-scroll. Reduced motion is handled with gsap.matchMedia —
- * everything simply appears, no movement.
+ * The site is BIDIRECTIONAL, so the fold says so on both edges: a glowing ion
+ * line runs off the TOP to the creative world and off the BOTTOM to the shipped
+ * work. Each marker is a real button wired to the altitude scroller — scrolling
+ * UP is the unintuitive move, so it is named, not implied. The top-right corner
+ * ("Create › Consume") names the same axis in shorthand.
+ *
+ * A GSAP timeline reveals the statement, then draws the two edge lines OUTWARD to
+ * their off-screen destinations — but only once the preloader clears (the
+ * `preloader:done` signal), otherwise the reveal plays hidden behind the white
+ * intro field. Reduced motion is handled with gsap.matchMedia: everything simply
+ * appears, no movement.
  */
 export default function SkyHero() {
   const root = useRef<HTMLElement>(null);
+  const { goTo } = useAltitude();
 
   useEffect(() => {
     const mm = gsap.matchMedia();
@@ -28,25 +37,30 @@ export default function SkyHero() {
       (ctx) => {
         if (ctx.conditions?.reduce) {
           gsap.set('.reveal', { autoAlpha: 1, y: 0 });
-          gsap.set('.scroll-cues', { autoAlpha: 1 });
-          gsap.set('.sky-figure', { autoAlpha: 1, yPercent: 0 });
+          gsap.set('.sky-edge', { autoAlpha: 1 });
+          gsap.set('.fc-line', { autoAlpha: 1, scaleY: 1 });
+          gsap.set('.sky-portrait', { autoAlpha: 1 });
           return;
         }
 
         // hide first so nothing flashes under the white preloader field
         gsap.set('.reveal', { autoAlpha: 0, y: 26 });
-        gsap.set('.scroll-cues', { autoAlpha: 0 });
-        // the figure rises a little further than the text — out of the clouds
-        gsap.set('.sky-figure', { autoAlpha: 0, yPercent: 9 });
+        gsap.set('.sky-edge', { autoAlpha: 0 });
+        // portrait fades only (no transform) so it never fights the CSS float
+        gsap.set('.sky-portrait', { autoAlpha: 0 });
+        // each edge line collapses, then draws outward to its off-screen stop
+        gsap.set('.fc-line.up', { autoAlpha: 1, scaleY: 0, transformOrigin: 'bottom center' });
+        gsap.set('.fc-line.down', { autoAlpha: 1, scaleY: 0, transformOrigin: 'top center' });
 
-        // play the reveal AFTER the curtain begins parting; the delay lands the
-        // lines as the centre clears (clouds settle to the sides/bottom).
+        // play AFTER the curtain begins parting; the delay lands the statement as
+        // the centre clears (clouds settle to the sides/bottom).
         const play = () => {
           gsap
             .timeline({ defaults: { ease: 'power3.out' }, delay: 0.9 })
-            .to('.sky-figure', { autoAlpha: 1, yPercent: 0, duration: 1.4 }, 0)
-            .to('.reveal', { autoAlpha: 1, y: 0, duration: 1, stagger: 0.12 }, 0.15)
-            .to('.scroll-cues', { autoAlpha: 1, duration: 0.8 }, '-=0.3');
+            .to('.sky-portrait', { autoAlpha: 1, duration: 1.3 }, 0)
+            .to('.reveal', { autoAlpha: 1, y: 0, duration: 1, stagger: 0.09 }, 0.15)
+            .to('.fc-line', { scaleY: 1, duration: 0.9, ease: 'power2.inOut' }, 0.55)
+            .to('.sky-edge', { autoAlpha: 1, duration: 0.8 }, '-=0.4');
         };
 
         // if the intro is already gone (remount), play now; else wait for the
@@ -69,51 +83,83 @@ export default function SkyHero() {
 
   return (
     <section id="zone-sky" className="zone sky-hero" ref={root} aria-labelledby="sky-title">
-      <div className="scroll-cues up reveal" aria-hidden>
-        <span className="arrow">↑</span>
-        <span>scroll up · the creative side</span>
+      {/* corner metadata */}
+      <p className="sky-corner tl reveal">
+        <span className="sky-corner-k">Based in</span> Bengaluru, IN
+      </p>
+      <p className="sky-corner tr reveal">
+        Create <span className="sky-corner-arrow" aria-hidden>›</span> Consume
+      </p>
+
+      {/* ↑ the creative world — a real button, line drawn off the top edge */}
+      <button
+        type="button"
+        className="sky-edge up"
+        onClick={() => goTo('zone-space')}
+        aria-label="Go up to the creative side"
+      >
+        <span className="fc-line up" aria-hidden />
+        <span className="fc-arrow" aria-hidden>↑</span>
+        <span className="fc-dest">The creative side</span>
+      </button>
+
+      {/* the thesis fold */}
+      <div className="sky-fold">
+        <div className="sky-statement-col">
+          <p className="sky-eyebrow reveal">
+            <span className="dia" aria-hidden>◆</span> Hello
+          </p>
+
+          <h1 id="sky-title" className="display sky-statement reveal">
+            Hi, I&rsquo;m Sameer &mdash; an innovation-driven product designer.
+            <span className="sky-tail">
+              {' '}I don&rsquo;t just design &mdash; I move{' '}
+              <span className="script">ideas</span>.
+            </span>
+          </h1>
+
+          <div className="sky-stats reveal">
+            <div className="sky-stat">
+              <span className="sky-stat-num display">500K+</span>
+              <span className="sky-stat-k">users reached</span>
+            </div>
+            <div className="sky-stat">
+              <span className="sky-stat-num display">+2.68%</span>
+              <span className="sky-stat-k">checkout lift</span>
+            </div>
+          </div>
+        </div>
+
+        {/* the portrait, framed in a glass viewfinder — corner ticks echo the
+            work-zone instrument readout. Fades in; CSS owns its slow drift. */}
+        <figure className="sky-portrait">
+          <span className="vf-tick tl" aria-hidden />
+          <span className="vf-tick tr" aria-hidden />
+          <span className="vf-tick bl" aria-hidden />
+          <span className="vf-tick br" aria-hidden />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="sky-portrait-img"
+            src="/hero/sameer-portrait.png"
+            alt="Sameer Kapil"
+            width={1200}
+            height={1600}
+            decoding="async"
+          />
+        </figure>
       </div>
 
-      {/* The window in the sky: Sameer leans from a shuttered window that floats
-          in the cloud line, his downward gaze leading the eye to the descent cue.
-          It sits BEHIND the canopy (z-44 < z-45) so the glass frosts him softly
-          where they overlap, and stays crisp out in the open sky. The wrapper
-          carries the GSAP rise-from-clouds reveal; the inner img carries the
-          continuous float so the two transforms never fight. */}
-      <div className="sky-figure" aria-hidden>
-        <img
-          className="sky-figure-img"
-          src="/hero/sameer-window.png"
-          alt="Sameer Kapil leaning from a green-shuttered window"
-          width={1130}
-          height={1161}
-          decoding="async"
-        />
-      </div>
-
-      {/* the headline is read through a cockpit canopy: a thin refractive glass
-          pane that bends the cloud photo at its rim and catches the cursor light.
-          The viewfinder ticks echo the work-zone instrument readout. */}
-      <div className="inner canopy glass glass--thin glass--react reveal">
-        <span className="canopy-tick tl" aria-hidden />
-        <span className="canopy-tick br" aria-hidden />
-        <p className="name reveal">Sameer Kapil · Product Designer · Bangalore</p>
-        <h1 id="sky-title" className="display tagline reveal">
-          Design for outcomes,
-          <br />
-          numbers that <em>move</em>.
-        </h1>
-
-        <p className="one-liner reveal">
-          I turn fuzzy problems into shipped interfaces that move real numbers —
-          checkout, trust, and the first &ldquo;yes.&rdquo;
-        </p>
-      </div>
-
-      <div className="scroll-cues down reveal" aria-hidden>
-        <span>scroll down · the shipped work</span>
-        <span className="arrow">↓</span>
-      </div>
+      {/* ↓ the shipped work — a real button, line drawn off the bottom edge */}
+      <button
+        type="button"
+        className="sky-edge down"
+        onClick={() => goTo('zone-work')}
+        aria-label="Go down to the shipped work"
+      >
+        <span className="fc-dest">The shipped work</span>
+        <span className="fc-arrow" aria-hidden>↓</span>
+        <span className="fc-line down" aria-hidden />
+      </button>
     </section>
   );
 }

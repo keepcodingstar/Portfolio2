@@ -33,23 +33,23 @@ export default function SiteFooter() {
         <div className="gs-grassland" />
       </div>
 
+      <div className="footer-mark">
+        <a className="footer-mark-btn" href="/" aria-label="Sameer Kapil — home">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="footer-mark-logo"
+            src="/brand/sameer-logo.svg"
+            alt="Sameer Kapil"
+            width={60}
+            height={55}
+          />
+        </a>
+      </div>
+
       <div className="panel wide ground-inner">
         <h2 id="ground-title" className="sr-only">
           Contact &amp; site footer
         </h2>
-
-        <div className="footer-mark">
-          <a className="footer-mark-btn" href="/" aria-label="Sameer Kapil — home">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              className="footer-mark-logo"
-              src="/brand/sameer-logo.svg"
-              alt="Sameer Kapil"
-              width={60}
-              height={55}
-            />
-          </a>
-        </div>
 
         <div className="footer-cols">
           <nav className="footer-col" aria-label="Menu">

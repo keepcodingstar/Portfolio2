@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import { Caveat } from 'next/font/google';
 import './globals.css';
 
 /**
@@ -12,6 +13,18 @@ const awesomeSerif = localFont({
   src: '../public/fonts/AwesomeSerif-Regular.otf',
   weight: '400',
   variable: '--font-awesome-serif',
+  display: 'swap',
+});
+
+/**
+ * Script accent = Caveat. Used for exactly ONE emphasised word in the hero
+ * statement (the kinetic hand-written "yes"), in ion-teal. Deliberate single-use
+ * second face, not a body option.
+ */
+const caveat = Caveat({
+  subsets: ['latin'],
+  weight: ['600', '700'],
+  variable: '--font-caveat',
   display: 'swap',
 });
 
@@ -48,7 +61,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={awesomeSerif.variable} suppressHydrationWarning>
+    <html lang="en" className={`${awesomeSerif.variable} ${caveat.variable}`} suppressHydrationWarning>
       <body>
         {/* Run BEFORE the page markup parses. The clouds + loader that cover the
             count, and the rule that hides the nav, are all client-side — they only
@@ -56,9 +69,11 @@ export default function RootLayout({
             (and the bottom nav) flash for a beat on reload. `pl-cover` paints the
             opaque intro cover; `preloading` hides the nav from frame one. Both are
             cleared by <Preloader/> once the React intro has taken over.
-            ONLY the home route has the intro/Preloader — guard on pathname so the
-            other pages (which never mount a Preloader to clear it) aren't covered. */}
-        <script dangerouslySetInnerHTML={{ __html: "if(location.pathname==='/'){document.documentElement.classList.add('pl-cover');document.body.classList.add('preloading')}" }} />
+            Cover when the intro will play: a fresh session (no flag) OR a reload
+            (Navigation Timing type), so reloads replay the intro and never flash
+            the bare page first. ONLY the home route mounts a Preloader to clear
+            this — guard on pathname so the other pages aren't left covered. */}
+        <script dangerouslySetInnerHTML={{ __html: "if(location.pathname==='/'){var s=true;try{var p=!!sessionStorage.getItem('intro:played');var n=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];var r=n?n.type==='reload':(performance.navigation&&performance.navigation.type===1);s=!p||r}catch(e){}if(s){document.documentElement.classList.add('pl-cover');document.body.classList.add('preloading')}}" }} />
         {children}
         <script dangerouslySetInnerHTML={{ __html: ANCHOR_SKY }} />
       </body>

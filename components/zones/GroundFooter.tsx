@@ -36,29 +36,29 @@ export default function GroundFooter() {
         <div className="gs-grassland" />
       </div>
 
+      {/* ─ the brand mark — pinned over the open field, above the figure ─ */}
+      <div className="footer-mark">
+        <button
+          type="button"
+          className="footer-mark-btn"
+          aria-label="Sameer Kapil — back to the top"
+          onClick={() => goTo('zone-sky')}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="footer-mark-logo"
+            src="/brand/sameer-logo.svg"
+            alt="Sameer Kapil"
+            width={60}
+            height={55}
+          />
+        </button>
+      </div>
+
       <div className="panel wide ground-inner">
         <h2 id="ground-title" className="sr-only">
           Contact &amp; site footer
         </h2>
-
-        {/* ─ the brand mark, above the menu (back to the top) ─ */}
-        <div className="footer-mark">
-          <button
-            type="button"
-            className="footer-mark-btn"
-            aria-label="Sameer Kapil — back to the top"
-            onClick={() => goTo('zone-sky')}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              className="footer-mark-logo"
-              src="/brand/sameer-logo.svg"
-              alt="Sameer Kapil"
-              width={60}
-              height={55}
-            />
-          </button>
-        </div>
 
         {/* ─ three columns: menu · socials · newsletter ─ */}
         <div className="footer-cols">
