@@ -29,19 +29,23 @@ export default function SkyHero() {
         if (ctx.conditions?.reduce) {
           gsap.set('.reveal', { autoAlpha: 1, y: 0 });
           gsap.set('.scroll-cues', { autoAlpha: 1 });
+          gsap.set('.sky-figure', { autoAlpha: 1, yPercent: 0 });
           return;
         }
 
         // hide first so nothing flashes under the white preloader field
         gsap.set('.reveal', { autoAlpha: 0, y: 26 });
         gsap.set('.scroll-cues', { autoAlpha: 0 });
+        // the figure rises a little further than the text — out of the clouds
+        gsap.set('.sky-figure', { autoAlpha: 0, yPercent: 9 });
 
         // play the reveal AFTER the curtain begins parting; the delay lands the
         // lines as the centre clears (clouds settle to the sides/bottom).
         const play = () => {
           gsap
             .timeline({ defaults: { ease: 'power3.out' }, delay: 0.9 })
-            .to('.reveal', { autoAlpha: 1, y: 0, duration: 1, stagger: 0.12 })
+            .to('.sky-figure', { autoAlpha: 1, yPercent: 0, duration: 1.4 }, 0)
+            .to('.reveal', { autoAlpha: 1, y: 0, duration: 1, stagger: 0.12 }, 0.15)
             .to('.scroll-cues', { autoAlpha: 1, duration: 0.8 }, '-=0.3');
         };
 
@@ -68,6 +72,23 @@ export default function SkyHero() {
       <div className="scroll-cues up reveal" aria-hidden>
         <span className="arrow">↑</span>
         <span>scroll up · the creative side</span>
+      </div>
+
+      {/* The window in the sky: Sameer leans from a shuttered window that floats
+          in the cloud line, his downward gaze leading the eye to the descent cue.
+          It sits BEHIND the canopy (z-44 < z-45) so the glass frosts him softly
+          where they overlap, and stays crisp out in the open sky. The wrapper
+          carries the GSAP rise-from-clouds reveal; the inner img carries the
+          continuous float so the two transforms never fight. */}
+      <div className="sky-figure" aria-hidden>
+        <img
+          className="sky-figure-img"
+          src="/hero/sameer-window.png"
+          alt="Sameer Kapil leaning from a green-shuttered window"
+          width={1130}
+          height={1161}
+          decoding="async"
+        />
       </div>
 
       {/* the headline is read through a cockpit canopy: a thin refractive glass

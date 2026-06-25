@@ -2,6 +2,7 @@
 
 import RevealBody from '@/components/RevealBody';
 import WorkTop from '@/components/work/WorkTop';
+import SiteFooter from '@/components/SiteFooter';
 import { useReveal } from '@/components/work/useReveal';
 import Link from 'next/link';
 import '../work.css';
@@ -352,10 +353,7 @@ export default function CheckoutCase() {
           </nav>
         </main>
 
-        <div className="work-colophon">
-          <span>Checkout · Virgio · 2024</span>
-          <span>Product Design Case Study</span>
-        </div>
+        <SiteFooter />
       </div>
     </>
   );

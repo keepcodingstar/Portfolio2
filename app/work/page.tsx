@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import RevealBody from '@/components/RevealBody';
 import WorkTop from '@/components/work/WorkTop';
+import SiteFooter from '@/components/SiteFooter';
 import { useReveal } from '@/components/work/useReveal';
 import './work.css';
 
@@ -27,6 +28,28 @@ type Project = {
 };
 
 const PROJECTS: Project[] = [
+  {
+    slug: 'amodira',
+    href: '/work/amodira',
+    name: 'Amodira: Sound of the Scent',
+    context:
+      'A 0→1 perfume brand for Virgio. Invented a way to sell a scent online — an original song per fragrance whose layers mirror its notes, so you feel the perfume before you smell it.',
+    tags: ['Virgio', 'Brand 0→1', 'Fragrance', '2025'],
+    metric: '7',
+    unit: '×',
+    label: 'revenue · Econic sale',
+  },
+  {
+    slug: 'econic',
+    href: '/work/econic',
+    name: 'Eco-nic Fair: Preview the Sale',
+    context:
+      'Virgio’s 2nd-anniversary “anti-sale” — every garment at its cost to make. I co-designed the campaign UI, anchored by a Preview toggle that let shoppers see every sale price days before it went live. Won Best Brand Campaign at the e4m RetailEX Awards 2026.',
+    tags: ['Virgio', 'Campaign UI', '2025', 'Award'],
+    metric: '50',
+    unit: '×',
+    label: 'revenue · Eco-nic Fair days',
+  },
   {
     slug: 'fair-pricing',
     href: '/work/fair-pricing',
@@ -150,10 +173,7 @@ export default function WorkHub() {
             sameerkapildesigns@gmail.com
           </a>
         </footer>
-        <div className="work-colophon">
-          <span>Sameer Kapil — Product Designer</span>
-          <span>The hangar · /work</span>
-        </div>
+        <SiteFooter />
       </div>
     </>
   );

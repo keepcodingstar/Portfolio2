@@ -8,14 +8,14 @@ import { Clouds, Cloud } from '@react-three/drei';
 /**
  * The hero's clouds. They belong to the PAGE, not the preloader.
  *
- * The intro (<Preloader/>) is just a white field + counting number; the clouds
- * sit BEHIND it the whole time, already covering the screen. The moment the
- * intro lifts it fires `preloader:done`; this layer catches that and plays a
- * CURTAIN: the full cloud cover PARTS — sliding left and right (the centre opens
- * first, the edges last) — and settles into the resting bank, clearing the
- * centre so the hero photo + headline read. Then it STAYS; nothing unmounts. On
- * scroll the whole bank parallaxes off, so it reads as a hero feature, not a
- * fixed overlay.
+ * The intro (<Preloader/>) is just the counting number over a faint haze; these
+ * clouds are VISIBLE behind it the whole count, a soft full cover. The moment the
+ * count lands the intro fires `preloader:done`; this layer catches that and
+ * SCATTERS: the full cloud cover bursts apart — sliding left and right (the
+ * centre opens first, the edges last) — and settles into the resting bank,
+ * clearing the centre so the hero photo + headline read. Then it STAYS; nothing
+ * unmounts. On scroll the whole bank parallaxes off, so it reads as a hero
+ * feature, not a fixed overlay.
  *
  * The render window (canvas) is fixed to the viewport, but the cloud *world*
  * inside it is anchored to the document by scroll: a parallax value `p` runs 0
@@ -107,6 +107,10 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
   const anchor = useRef({ skyMid: 0, workOffsetY: 0 });
   const pRef = useRef(0); // scroll-driven world-y target for the bank (1:1 with page)
   const introStart = useRef<number | null>(null);
+  // fires once the canvas has actually painted its first cloud frame, so the
+  // pre-paint cover (html.pl-cover) can dissolve out AS the clouds materialise —
+  // gating on real paint stops the cover lifting to reveal already-formed clouds.
+  const announcedReady = useRef(false);
 
   useEffect(() => {
     const measure = () => {
@@ -138,6 +142,11 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
   useFrame((state) => {
     const g = group.current;
     if (!g) return;
+
+    if (!announcedReady.current) {
+      announcedReady.current = true;
+      window.dispatchEvent(new Event('clouds:ready'));
+    }
 
     // The GROUP scrolls 1:1 with the page (no smoothing ⇒ no lag, locked to the
     // bg). The per-cloud CURTAIN (cover → part) layers on each cloud's local pos.
@@ -188,7 +197,11 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
       <spotLight position={[-16, -8, 10]} color="#a9c8f0" angle={0.4} decay={0} penumbra={1} intensity={18} />
 
       <group ref={group}>
-        <Clouds material={THREE.MeshLambertMaterial} limit={400} range={400}>
+        {/* self-hosted texture: drei's <Clouds> defaults to a third-party CDN
+            (rawcdn.githack.com); a failed fetch there throws in three.js and takes
+            the whole canvas (and the page) down to black. Serve it from /public so
+            the hero never depends on an external asset. */}
+        <Clouds texture="/hero/cloud.png" material={THREE.MeshLambertMaterial} limit={400} range={400}>
           {BANK.map((c, i) => (
             <Cloud
               key={c.seed}
@@ -216,7 +229,7 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
       {/* PROJECTS/WORK edge clouds — separate group + <Clouds> so this instanced
           mesh stays near its own origin and culls correctly as it scrolls in. */}
       <group ref={workGroup}>
-        <Clouds material={THREE.MeshLambertMaterial} limit={120} range={120}>
+        <Clouds texture="/hero/cloud.png" material={THREE.MeshLambertMaterial} limit={120} range={120}>
           {WORK_EDGE.map((c) => (
             <Cloud
               key={c.seed}
@@ -240,26 +253,34 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
 
 export default function CloudField({ className }: { className?: string }) {
   const [animate, setAnimate] = useState(true);
-  // the clouds are VISIBLE the whole time (they sit behind the white intro field,
-  // already covering the screen). `entered` only fires the PART: it flips when the
-  // preloader clears — or immediately on reduced motion / a remount.
+  // clouds are VISIBLE during the countdown — a soft full cover behind the
+  // counting number. `visible` wells them up; `entered` only fires the SCATTER:
+  // the cover bursts apart and settles into the resting bank when the preloader
+  // clears — or immediately on reduced motion / a remount.
+  const [visible, setVisible] = useState(false);
   const [entered, setEntered] = useState(false);
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     setAnimate(!reduced);
 
-    // if the intro is already gone (reduced motion, or a remount), don't wait
+    // well the cover up into view for the count (a tick after mount so the first
+    // painted frame is already in the cover pose — no reposition jitter)
+    const show = window.setTimeout(() => setVisible(true), reduced ? 0 : 60);
+
+    // if the intro is already gone (reduced motion, or a remount), scatter now
     if (reduced || !document.body.classList.contains('preloading')) {
+      setVisible(true);
       setEntered(true);
-      return;
+      return () => clearTimeout(show);
     }
 
     const enter = () => setEntered(true);
     window.addEventListener('preloader:done', enter);
-    // safety net — never leave the clouds hidden if the event is missed
+    // safety net — never leave the clouds covering if the event is missed
     const fallback = window.setTimeout(enter, 7000);
     return () => {
+      clearTimeout(show);
       window.removeEventListener('preloader:done', enter);
       clearTimeout(fallback);
     };
@@ -267,18 +288,17 @@ export default function CloudField({ className }: { className?: string }) {
 
   return (
     <div className={className} aria-hidden>
-      {/* The cloud layer is held invisible until the curtain is ready to PART
-          (`entered`). All the pre-roll repositioning — the per-cloud snap into the
-          cover pose and the page's centre-anchor scroll shift — happens off-screen
-          at opacity 0; then it fades in AS it parts, so there's no visible
-          "reposition, then animate" jitter. Reduced motion: no fade, appears at
-          rest. The outer .cloudfield still carries the --sky-o altitude envelope. */}
+      {/* The cloud layer wells up (`visible`) in its COVER pose to back the
+          counting number, then SCATTERS to the resting bank on `entered`. The
+          first painted frame is already the cover pose, so fading in is clean —
+          no "reposition, then animate" jitter. Reduced motion: no fade, appears
+          at rest. The outer .cloudfield still carries the --sky-o envelope. */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
-          opacity: entered ? 1 : 0,
-          transition: animate ? 'opacity 0.7s ease' : 'none',
+          opacity: visible ? 1 : 0,
+          transition: animate ? 'opacity 0.8s ease' : 'none',
         }}
       >
         <Canvas

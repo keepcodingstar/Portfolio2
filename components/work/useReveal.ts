@@ -26,7 +26,11 @@ export function useReveal() {
           }
         }
       },
-      { threshold: 0.18, rootMargin: '0px 0px -8% 0px' },
+      // low threshold so sections taller than the viewport (image grids, stacked
+      // phone screenshots) still reveal — a high ratio is unreachable when the
+      // element is several viewports tall, which would otherwise leave it stuck
+      // at opacity:0 and the whole section invisible
+      { threshold: 0.04, rootMargin: '0px 0px -8% 0px' },
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();

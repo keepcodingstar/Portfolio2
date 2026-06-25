@@ -26,7 +26,10 @@ export default function BottomNav() {
   const { active, goTo } = useAltitude();
 
   return (
-    <div className="navbar glass glass--react" aria-label="Site">
+    <div
+      className={`navbar glass glass--react${active === 'zone-ground' ? ' is-tucked' : ''}`}
+      aria-label="Site"
+    >
       <a
         className="navbar-brand"
         href="#zone-sky"

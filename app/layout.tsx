@@ -19,7 +19,28 @@ export const metadata: Metadata = {
   title: 'Sameer Kapil — Product Designer',
   description:
     'Sameer Kapil is a product designer who designs for outcomes, not applause — checkout, pricing and trust flows that move real numbers. 500K+ users reached.',
+  icons: {
+    icon: '/brand/logo-mark.jpg',
+    shortcut: '/brand/logo-mark.jpg',
+    apple: '/brand/logo-mark.jpg',
+  },
 };
+
+/**
+ * Pre-paint scroll anchor. Runs synchronously at parse time — placed AFTER the
+ * page markup, so #zone-sky already exists — and lands the viewport on the sky
+ * zone BEFORE the first paint. That removes the visible scroll-jump from the top
+ * of the document down to the sky, so the body no longer needs the opacity
+ * fade-in to mask it: the page simply renders already anchored. AltitudeProvider
+ * re-anchors once post-layout (after images settle) as a correction.
+ */
+const ANCHOR_SKY = `(function(){try{
+  if('scrollRestoration' in history)history.scrollRestoration='manual';
+  var el=document.getElementById('zone-sky');
+  if(el){var r=el.getBoundingClientRect();
+    var top=r.top+window.pageYOffset+r.height/2-window.innerHeight/2;
+    window.scrollTo(0,Math.max(0,top));}
+}catch(e){}})();`;
 
 export default function RootLayout({
   children,
@@ -27,8 +48,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={awesomeSerif.variable}>
-      <body>{children}</body>
+    <html lang="en" className={awesomeSerif.variable} suppressHydrationWarning>
+      <body>
+        {/* Run BEFORE the page markup parses. The clouds + loader that cover the
+            count, and the rule that hides the nav, are all client-side — they only
+            take effect after hydration, so without this the server-rendered site
+            (and the bottom nav) flash for a beat on reload. `pl-cover` paints the
+            opaque intro cover; `preloading` hides the nav from frame one. Both are
+            cleared by <Preloader/> once the React intro has taken over.
+            ONLY the home route has the intro/Preloader — guard on pathname so the
+            other pages (which never mount a Preloader to clear it) aren't covered. */}
+        <script dangerouslySetInnerHTML={{ __html: "if(location.pathname==='/'){document.documentElement.classList.add('pl-cover');document.body.classList.add('preloading')}" }} />
+        {children}
+        <script dangerouslySetInnerHTML={{ __html: ANCHOR_SKY }} />
+      </body>
     </html>
   );
 }

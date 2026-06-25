@@ -406,6 +406,54 @@ a.proj { cursor: pointer; }
   .cs-hero { grid-template-columns: 1fr 320px; }
 }
 
+/* the outcomes block — metrics, viral proof and recognition read as one
+   unit: a single tight stack instead of three separately-spaced sections */
+.cs-results {
+  display: grid;
+  gap: clamp(0.7rem, 1.6vw, 1rem);
+  margin-bottom: clamp(3.5rem, 8vw, 6rem);
+}
+.cs-results .cs-impact,
+.cs-results .cs-proof,
+.cs-results .cs-accolades,
+.cs-results .cs-ip { margin-bottom: 0; }
+
+/* metric lead — the headline number that opens each outcome card, sharing the
+   impact-strip's display treatment so the stat reads as the card's anchor */
+.cs-stat { margin: 1.3rem 0; }
+.cs-stat-num {
+  display: block;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 5vw, 3.1rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ion-700);
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 22px rgba(43, 182, 214, 0.26);
+}
+.cs-stat-label {
+  display: block;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 26ch;
+}
+
+/* the IP card — Company IP stat alongside the two Econic Fair badges */
+.cs-ip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(1.3rem, 3.4vw, 2.4rem);
+  padding: clamp(1.6rem, 3.6vw, 2.4rem);
+  border-radius: var(--r-xl);
+}
+.cs-ip .cs-stat { margin: 0; }
+.cs-ip .cs-iplogos { margin-top: 0; }
+.cs-ip .cs-iplogo { height: 64px; }
+
 /* impact strip — three glass cells */
 .cs-impact {
   display: grid;
@@ -434,19 +482,12 @@ a.proj { cursor: pointer; }
   max-width: 18ch;
 }
 
-/* numbered section heads — these ARE a real 01→04 sequence */
+/* section heads — the headline alone names the section; no number eyebrow */
 .cs-sec-head {
   display: flex;
   align-items: baseline;
   gap: 1.1rem;
   margin: 0 0 clamp(2rem, 5vw, 3rem);
-}
-.cs-sec-num {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  color: var(--ion-700);
-  min-width: 1.8rem;
 }
 .cs-sec-title {
   font-family: var(--display);
@@ -457,6 +498,12 @@ a.proj { cursor: pointer; }
   margin: 0;
 }
 .cs-section { margin-bottom: clamp(3.5rem, 8vw, 6rem); }
+/* in a study the lede sits alone under a short heading — let it run wide so
+   it fills the measure instead of stranding half the row in empty sky */
+.cs .hub-lede {
+  max-width: 74ch;
+  font-size: clamp(1.05rem, 1.9vw, 1.28rem);
+}
 
 /* problem grid + insight grid share the glass-cell look */
 .cs-grid {
@@ -530,10 +577,6 @@ a.proj { cursor: pointer; }
   background: rgba(255, 255, 255, 0.45);
   border: 1px solid var(--rule);
 }
-.cs-iter-tag .d { width: 6px; height: 6px; border-radius: 50%; }
-.cs-iter-tag.v1 .d { background: #1d9e75; }
-.cs-iter-tag.v2 .d { background: #2f86d6; }
-.cs-iter-tag.v3 .d { background: #6a5cc0; }
 
 /* the screen frame the widget sits on — a light frosted inset so the
    mockup reads like a real screenshot regardless of the sky behind */
@@ -576,7 +619,8 @@ a.proj { cursor: pointer; }
 }
 .cs-pill::before { content: "→"; color: var(--ion-700); font-size: 0.85rem; }
 
-/* outcomes */
+/* outcome metric strip — used by the checkout study, where three distinct
+   quantified results (not a restatement) earn a parallel 3-up grid */
 .cs-outcomes {
   display: grid;
   grid-template-columns: 1fr;
@@ -851,6 +895,268 @@ a.proj { cursor: pointer; }
   padding: 0.22rem 0.5rem;
 }
 .ck-chip.on { color: var(--w-green); border-color: #bfe6d6; background: #f4fbf8; }
+
+/* =================================================================
+   REAL ARTIFACTS — screenshots, framing docs, the award photo shown
+   as evidence. Each sits in a frosted figure; the caption does the
+   annotating (tells the reviewer what to look at and why).
+   ================================================================= */
+.iter-screen img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 280px;
+  border-radius: 11px;
+  box-shadow: 0 10px 30px -18px rgba(20, 22, 30, 0.45);
+}
+
+/* a framed artifact + a caption */
+.cs-shot { margin: 0; padding: clamp(0.7rem, 1.8vw, 1rem); border-radius: var(--r-lg); }
+.cs-shot img { display: block; width: 100%; height: auto; border-radius: 10px; }
+.cs-shot figcaption {
+  margin: 0.9rem 0.2rem 0.1rem;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.cs-shot figcaption b { color: var(--ink); font-weight: 600; }
+
+/* artifact beside its narration */
+.cs-split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.3rem, 3.4vw, 2.4rem);
+  align-items: center;
+}
+@media (min-width: 820px) { .cs-split { grid-template-columns: 1fr 1fr; } }
+.cs-split-copy p {
+  margin: 0 0 1rem;
+  font-size: 0.99rem;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+.cs-split-copy p:last-child { margin-bottom: 0; }
+.cs-split-copy p strong { color: var(--ink); font-weight: 600; }
+
+/* THE VIRAL PROOF — the narrative payoff: the metric IS the mission */
+.cs-proof {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.6rem, 4vw, 2.8rem);
+  align-items: start;
+  padding: clamp(1.6rem, 4vw, 2.6rem);
+  border-radius: var(--r-xl);
+  margin-bottom: clamp(3rem, 7vw, 5rem);
+  border: 1px solid rgba(43, 182, 214, 0.3);
+}
+@media (min-width: 820px) { .cs-proof { grid-template-columns: 330px 1fr; } }
+.cs-proof-shot { margin: 0; }
+.cs-proof-shot img { display: block; width: 100%; height: auto; border-radius: var(--r-md); }
+.cs-proof-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ion-700);
+  margin: 0 0 1.1rem;
+}
+.cs-proof-quote {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.5rem, 3.4vw, 2.3rem);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0;
+}
+.cs-proof-sub { margin: 1.1rem 0 0; font-size: 0.96rem; line-height: 1.65; color: var(--ink-soft); }
+.cs-proof-sub strong { color: var(--ink); font-weight: 600; }
+/* the reach metric closes the column — a compact stat strip, number + label
+   side by side under a hairline rule, so it anchors the card without competing
+   with the serif quote that leads it. */
+.cs-proof-metric {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.8rem, 2vw, 1.3rem);
+  flex-wrap: wrap;
+  margin: clamp(1.4rem, 3vw, 1.9rem) 0 0;
+  padding-top: clamp(1.4rem, 3vw, 1.9rem);
+  border-top: 1px solid rgba(43, 182, 214, 0.22);
+}
+.cs-proof-metric-num {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2rem, 4vw, 2.7rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ion-700);
+  text-shadow: 0 0 22px rgba(43, 182, 214, 0.26);
+}
+.cs-proof-metric-label {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  max-width: 24ch;
+}
+
+/* COMPETITOR TEARDOWN — a collage of what everyone else shipped: real
+   screenshots pinned to the wall, natural proportions, packed masonry-style
+   with a slight tilt so it reads as evidence gathered, not a tidy grid */
+.cs-comp-grid {
+  column-count: 2;
+  column-gap: clamp(0.7rem, 1.6vw, 1.1rem);
+  margin-top: clamp(1.8rem, 3.5vw, 2.6rem);
+}
+@media (min-width: 640px) { .cs-comp-grid { column-count: 3; } }
+@media (min-width: 980px) { .cs-comp-grid { column-count: 4; } }
+.cs-comp {
+  break-inside: avoid;
+  display: inline-block;
+  width: 100%;
+  margin: 0 0 clamp(0.8rem, 1.8vw, 1.2rem);
+  padding: 0.45rem 0.45rem 0.6rem;
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: 0 14px 30px -18px rgba(14, 29, 49, 0.55);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, rotate 0.3s ease;
+}
+.cs-comp:nth-child(4n + 1) { rotate: -2.2deg; }
+.cs-comp:nth-child(4n + 2) { rotate: 1.4deg; }
+.cs-comp:nth-child(4n + 3) { rotate: -0.7deg; }
+.cs-comp:nth-child(4n + 4) { rotate: 2deg; }
+.cs-comp-shot {
+  background: #fff;
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid var(--w-border);
+}
+.cs-comp-shot img { width: 100%; height: auto; object-fit: contain; display: block; }
+.cs-comp-name {
+  font-family: var(--mono);
+  font-size: 0.54rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  text-align: center;
+  line-height: 1.4;
+  margin-top: 0.5rem;
+}
+@media (hover: hover) {
+  .cs-comp:hover {
+    rotate: 0deg;
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 24px 48px -20px rgba(14, 29, 49, 0.65);
+    position: relative;
+    z-index: 3;
+  }
+}
+.cs-verdict {
+  margin-top: clamp(1.6rem, 3vw, 2.2rem);
+  font-size: clamp(1.05rem, 2vw, 1.28rem);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 62ch;
+}
+.cs-verdict strong { color: var(--ink); font-weight: 600; }
+
+/* DEFINED PROBLEM — a prominent statement block (text, not an image) */
+.cs-problem {
+  padding: clamp(1.6rem, 3.4vw, 2.4rem);
+  border-radius: var(--r-lg);
+  margin-bottom: clamp(0.7rem, 1.6vw, 1rem);
+}
+.cs-statement {
+  font-family: var(--sans);
+  font-size: clamp(1.15rem, 2.3vw, 1.55rem);
+  line-height: 1.5;
+  color: var(--ink-soft);
+  margin: 0;
+  max-width: 58ch;
+}
+.cs-statement strong { color: var(--ink); font-weight: 600; }
+
+/* three-up cells (WHO / WHAT / WHY) */
+@media (min-width: 720px) { .cs-grid.three { grid-template-columns: repeat(3, 1fr); } }
+
+/* HOW MIGHT WE — question → answer pairs (text, not an image) */
+.cs-hmw { padding: clamp(1.4rem, 3vw, 2rem) clamp(1.5rem, 3.2vw, 2.2rem); border-radius: var(--r-lg); }
+.cs-hmw-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  padding: clamp(1rem, 2.4vw, 1.45rem) 0;
+  border-bottom: 1px solid var(--rule);
+}
+.cs-hmw-row:first-child { padding-top: 0; }
+.cs-hmw-row:last-child { border-bottom: none; padding-bottom: 0; }
+@media (min-width: 720px) {
+  .cs-hmw-row { grid-template-columns: 1.1fr 1fr; gap: clamp(1.5rem, 3vw, 2.5rem); align-items: baseline; }
+}
+.cs-hmw-q {
+  margin: 0;
+  font-size: clamp(1rem, 1.8vw, 1.16rem);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.4;
+}
+.cs-hmw-q .hmw {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--ion-700);
+  margin-right: 0.6rem;
+  vertical-align: 0.05em;
+}
+.cs-hmw-a { margin: 0; font-size: 0.95rem; color: var(--ink-soft); line-height: 1.6; }
+
+/* RECOGNITION BAND — the award photo + the IP it became (Econic Fair) */
+.cs-accolades {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.3rem, 3.4vw, 2.4rem);
+  align-items: start;
+  padding: clamp(1.5rem, 3.6vw, 2.4rem);
+  border-radius: var(--r-xl);
+  margin-bottom: clamp(3rem, 7vw, 5rem);
+}
+@media (min-width: 760px) { .cs-accolades { grid-template-columns: 230px 1fr; } }
+.cs-accolades-shot { margin: 0; }
+.cs-accolades-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 230px;
+  margin: 0 auto;
+  border-radius: var(--r-md);
+}
+.cs-accolades-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ion-700);
+  margin: 0 0 1rem;
+}
+.cs-accolades-title {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0 0 0.7rem;
+}
+.cs-accolades-body { font-size: 0.97rem; line-height: 1.65; color: var(--ink-soft); margin: 0; max-width: 52ch; }
+.cs-accolades-body strong { color: var(--ink); font-weight: 600; }
+.cs-iplogos { display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; margin-top: 1.3rem; }
+.cs-iplogo {
+  height: 56px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 8px 18px rgba(14, 29, 49, 0.32));
+}
 
 /* =================================================================
    RESPONSIVE

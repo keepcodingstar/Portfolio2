@@ -1,19 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { useAltitude, type ZoneId } from '@/components/AltitudeProvider';
 
 /**
- * The ground — the bottom of the descent. A wide editorial footer:
- * three columns (Menu · Socials · Newsletter), a large brand mark, and a
- * colophon bar — all sitting on the grassland you finally land on.
+ * The grassland footer, ported off the homepage for standalone routes (case
+ * studies). Same markup and classes as the homepage GroundFooter, but with no
+ * dependence on AltitudeProvider — menu items are plain anchors back to the
+ * homepage zones instead of goTo() scroll calls.
  */
 
-const MENU: { id: ZoneId; label: string }[] = [
-  { id: 'zone-work', label: 'Work' },
-  { id: 'zone-space', label: 'Creative' },
-  { id: 'zone-sky', label: 'About' },
-  { id: 'zone-ground', label: 'Contact' },
+const MENU: { href: string; label: string }[] = [
+  { href: '/#zone-work', label: 'Work' },
+  { href: '/#zone-space', label: 'Creative' },
+  { href: '/#zone-sky', label: 'About' },
+  { href: '/#zone-ground', label: 'Contact' },
 ];
 
 const SOCIALS: { label: string; href: string; note?: string }[] = [
@@ -23,15 +23,12 @@ const SOCIALS: { label: string; href: string; note?: string }[] = [
   { label: 'Behance', href: '#', note: 'soon' },
 ];
 
-export default function GroundFooter() {
-  const { goTo } = useAltitude();
+export default function SiteFooter() {
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
 
   return (
     <footer id="zone-ground" className="zone zone-ground" aria-labelledby="ground-title">
-      {/* the grassland you land on — stretched along the bottom of the descent.
-          Purely decorative; sits behind the content. */}
       <div className="ground-scape" aria-hidden>
         <div className="gs-grassland" />
       </div>
@@ -41,14 +38,8 @@ export default function GroundFooter() {
           Contact &amp; site footer
         </h2>
 
-        {/* ─ the brand mark, above the menu (back to the top) ─ */}
         <div className="footer-mark">
-          <button
-            type="button"
-            className="footer-mark-btn"
-            aria-label="Sameer Kapil — back to the top"
-            onClick={() => goTo('zone-sky')}
-          >
+          <a className="footer-mark-btn" href="/" aria-label="Sameer Kapil — home">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               className="footer-mark-logo"
@@ -57,19 +48,16 @@ export default function GroundFooter() {
               width={60}
               height={55}
             />
-          </button>
+          </a>
         </div>
 
-        {/* ─ three columns: menu · socials · newsletter ─ */}
         <div className="footer-cols">
           <nav className="footer-col" aria-label="Menu">
             <h3 className="footer-h">Menu</h3>
             <ul>
               {MENU.map((m) => (
-                <li key={m.id}>
-                  <button type="button" onClick={() => goTo(m.id)}>
-                    {m.label}
-                  </button>
+                <li key={m.href}>
+                  <a href={m.href}>{m.label}</a>
                 </li>
               ))}
               <li>
