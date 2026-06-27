@@ -1,0 +1,77 @@
+.li-carousel {
+  position: relative;
+  width: 100%;
+}
+
+.li-carousel:focus-visible {
+  outline: 2px solid var(--ion, #9b51e0);
+  outline-offset: 6px;
+  border-radius: 8px;
+}
+
+/* the drag-to-scroll rail */
+.li-rail {
+  display: flex;
+  align-items: center;        /* cards keep their own height, no stretch */
+  gap: clamp(1rem, 2vw, 1.5rem);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.5rem clamp(0.5rem, 4vw, 3rem) 1.5rem;
+  cursor: grab;
+  scrollbar-width: none;       /* Firefox */
+  touch-action: pan-y;         /* vertical gestures still scroll the page */
+}
+.li-rail::-webkit-scrollbar { display: none; }
+.li-rail:active { cursor: grabbing; }
+
+/* each post card hosts the LinkedIn embed iframe */
+.li-card {
+  flex: 0 0 auto;
+  scroll-snap-align: center;
+  /* width is set inline to the embed's native size; height follows the iframe */
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.35),
+    0 24px 50px -22px rgba(0, 0, 10, 0.7),
+    0 0 60px -28px rgba(255, 255, 255, 0.5);
+}
+.li-card iframe {
+  display: block;
+  border: 0;
+  /* native width/height + scale() are set inline per-post — no inner scroll */
+}
+
+/* prev / next controls */
+.li-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(10, 14, 26, 0.6);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--ink, #f4f7ff);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  z-index: 2;
+}
+.li-nav:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.7);
+}
+.li-nav:active { transform: translateY(-50%) scale(0.94); }
+.li-prev { left: clamp(-0.25rem, 1vw, 0.75rem); }
+.li-next { right: clamp(-0.25rem, 1vw, 0.75rem); }
+
+@media (max-width: 640px) {
+  .li-nav { display: none; }
+}

@@ -5,7 +5,7 @@ import AltitudeProvider from '@/components/AltitudeProvider';
 import BottomNav from '@/components/BottomNav';
 import Reveals from '@/components/Reveals';
 import GlassLight from '@/components/GlassLight';
-// import TopBlackHole from '@/components/TopBlackHole'; // raymarched shader — hidden for now (perf)
+import TopBlackHole from '@/components/TopBlackHole'; // small tilted black hole at the apex
 import SpaceZone from '@/components/zones/SpaceZone';
 import SkyHero from '@/components/zones/SkyHero';
 import WorkZone from '@/components/zones/WorkZone';
@@ -34,7 +34,7 @@ export default function Home() {
         <main style={{ position: 'relative' }}>
           <Reveals />  {/* one [data-reveal] observer for the server-rendered zones */}
           <GlassLight />  {/* pointer-tracked specular light on .glass--react panels */}
-          {/* <TopBlackHole /> */}  {/* ◐ black hole — hidden for now to cut shader lag */}
+          <TopBlackHole />  {/* ◐ small tilted black hole at the apex */}
           <SpaceZone />        {/* ↑ space · the beyond-the-work intro */}
           <SkyHero />          {/* ◉ you, now — land here           */}
           <WorkZone />         {/* ↓ sky · the shipped work, counted */}

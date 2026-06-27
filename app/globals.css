@@ -33,17 +33,19 @@
   --card-bg: rgba(255, 255, 255, 0.5);
   --card-border: rgba(22, 24, 29, 0.12);
 
-  /* accents — one cool ion / aurora family, structure + numbers alike.
-     -700 is the deep ion-teal that holds AA on the bright sky; -glow is the
-     bright cyan reserved for the dark space band and halos. */
-  --ion: #2bb6d6;
-  --ion-700: #0f6e8e;
-  --ion-glow: #5ad1ee;
-  --aurora-teal: #1fc6a6;
-  --auroral: linear-gradient(105deg, var(--aurora-teal) 0%, var(--ion) 55%, #2f86d6 100%);
-  /* deep tertiary blue — AA-safe sibling of the auroral blue (#2f86d6), for
-     accent text on the bright sky band (e.g. the process/thinking emphasis). */
-  --blue-700: #1f6bbf;
+  /* accents — MONOCHROME. No hue at all: dark grey carries emphasis on the bright
+     bands, white on the dark bands (space, footer). The script + italic FORMS do
+     the work colour used to. (Var names kept as --ion* so every call site updates
+     from here.) -700 is the dark grey that holds AA on the bright sky; -glow is
+     white, reserved for the dark space / footer bands and halos. */
+  --ion: #545352;
+  --ion-700: #3e3d3c;
+  --ion-glow: #ffffff;
+  --aurora-teal: #80807d;
+  --auroral: linear-gradient(105deg, #adaca8 0%, #80807d 55%, #3e3d3c 100%);
+  /* mid-dark grey sibling for accent text on the bright sky band (process/thinking
+     emphasis) — matches --ion-700 so the page holds ONE accent everywhere. */
+  --blue-700: #3e3d3c;
 
   /* type */
   --display: var(--font-awesome-serif), 'Times New Roman', Georgia, serif;
@@ -86,10 +88,10 @@
   --glass-alpha-thick: 0.44;         /* dense footer slab */
   --glass-border: rgba(255, 255, 255, 0.55);
   --glass-edge: rgba(255, 255, 255, 0.7);   /* inset top highlight */
-  --glass-hair: rgba(43, 182, 214, 0.07);   /* inner ion hairline */
+  --glass-hair: rgba(255, 255, 255, 0.07);   /* inner ion hairline */
   --glass-shadow: 0 18px 48px -22px rgba(14, 29, 49, 0.45);
   --glass-sheen: rgba(255, 255, 255, 0.6);  /* travelling specular glint */
-  --glass-spot: rgba(90, 209, 238, 0.6);    /* cursor rim light */
+  --glass-spot: rgba(255, 255, 255, 0.6);    /* cursor rim light */
 }
 
 * { box-sizing: border-box; }
@@ -124,7 +126,7 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+  overflow-x: visible;
   /* No opacity fade-in: the inline pre-paint script (app/layout.tsx) anchors the
      scroll to the sky BEFORE the first paint, so there's no mid-page jump to
      mask. The page renders already on the sky — no black-to-content reveal. */
@@ -314,7 +316,7 @@ html.pl-cover.pl-reveal body::before { opacity: 0; }
 .odo-strip > span { display: block; height: 1em; line-height: 1; text-align: center; }
 .loader-num i {
   font-style: normal; font-family: var(--sans); font-size: 0.5em;
-  color: #0f6e8e; margin-left: 0.08em;
+  color: var(--ion-700); margin-left: 0.08em;
 }
 
 /* =================================================================
@@ -329,10 +331,10 @@ html.pl-cover.pl-reveal body::before { opacity: 0; }
   right: clamp(0.8rem, 2.2vw, 1.4rem); top: 50%;
   transform: translateY(-50%);
   z-index: 120; /* above every cloud layer, incl. the preloader frame */
-  display: flex; flex-direction: column; align-items: center;
-  gap: clamp(0.4rem, 1.2vw, 0.7rem);
-  padding: 0.6rem 0.45rem;
-  border-radius: 999px;             /* pill — overrides the .glass --r-lg */
+  display: flex; flex-direction: column; align-items: stretch;
+  gap: clamp(0.5rem, 1.2vw, 0.8rem);
+  padding: 0.7rem 0.85rem;
+  border-radius: 20px;              /* a labelled menu panel, not a skinny pill */
   max-height: calc(100vh - 1rem);
   transition: opacity 0.6s ease 0.2s, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -351,7 +353,7 @@ body.preloading .navbar {
 }
 
 .navbar-brand {
-  display: block; line-height: 0; flex: none;
+  display: block; line-height: 0; flex: none; align-self: center;
   border-radius: 9px; overflow: hidden;
   box-shadow: 0 6px 18px -6px rgba(8, 6, 26, 0.5);
   transition: transform 0.25s ease;
@@ -359,66 +361,90 @@ body.preloading .navbar {
 .navbar-brand:hover { transform: translateY(-2px); }
 .navbar-brand img { width: 30px; height: 30px; display: block; border-radius: 9px; }
 
-.navbar-divider { width: 24px; height: 1px; background: var(--rule); flex: none; }
+.navbar-divider { width: 100%; height: 1px; background: var(--rule); flex: none; }
 
-.nav-stops { display: flex; flex-direction: column; align-items: center; gap: clamp(0.1rem, 0.8vw, 0.45rem); }
+/* the stops form a vertical MENU that reads as an ALTIMETER: every world is
+   labelled and always visible so visitors can SEE the choices, with a hairline
+   track threading the dots on the right edge. The current world is the lit row. */
+.nav-stops {
+  display: flex; flex-direction: column; align-items: stretch;
+  gap: 0.7rem;
+  position: relative; padding: 0.15rem 0;
+}
+/* hairline track behind the dots — the scale the markers ride, on the left */
+.nav-stops::before {
+  content: ''; position: absolute; left: 2.5px; top: 0.5rem; bottom: 0.5rem;
+  width: 1px; background: var(--rule); border-radius: 1px;
+}
 .nav-stop {
   appearance: none; background: none; border: none; cursor: pointer;
-  display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
-  padding: 0.25rem 0.5rem; border-radius: 12px; position: relative;
-  color: var(--ink-dim);
-  font-family: var(--mono); font-size: 0.5rem; font-weight: 500;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  transition: color 0.25s ease;
+  display: flex; flex-direction: row; align-items: center; justify-content: flex-start;
+  gap: 0.7rem; width: 100%; padding: 0.1rem 0; position: relative;
+  color: var(--ink-dim); text-align: left;
 }
 .nav-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: currentColor;
-  box-shadow: 0 0 0 3px rgba(7, 6, 26, 0.1);
-  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  flex: none;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--ink-dim); opacity: 0.5;
+  /* glass-coloured ring punches the dot cleanly off the hairline track */
+  box-shadow: 0 0 0 3px rgba(var(--glass-rgb), var(--glass-alpha));
+  transition: transform 0.22s cubic-bezier(0.23, 1, 0.32, 1),
+              background 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
 }
-.nav-label { opacity: 0.85; }
-.nav-stop:hover { color: var(--ink-soft); }
-.nav-stop.is-active { color: var(--ink); }
+/* labels are always shown so the menu reads as a menu, left-aligned off the rail */
+.nav-label {
+  font-family: var(--mono); font-size: 0.62rem; font-weight: 600;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft);
+  white-space: nowrap; pointer-events: none; line-height: 1;
+  transition: color 0.2s ease;
+}
+.nav-stop:hover .nav-label { color: var(--ink); }
+.nav-stop:hover .nav-dot { opacity: 0.85; }
+/* current world — the lit row + enlarged marker */
+.nav-stop.is-active .nav-label { color: var(--ink); }
 .nav-stop.is-active .nav-dot {
-  background: var(--ion-glow); transform: scale(1.3);
-  box-shadow: 0 0 0 4px rgba(90, 209, 238, 0.22), 0 0 12px 1px rgba(90, 209, 238, 0.6);
+  background: var(--ink); opacity: 1; transform: scale(1.55);
+  box-shadow: 0 0 0 3px rgba(var(--glass-rgb), var(--glass-alpha)),
+              0 0 0 4px var(--rule-soft);
 }
-/* plain-word meaning, flown to the LEFT of the rail on hover/focus (paint-only) */
-.nav-sub {
-  position: absolute; right: calc(100% + 0.6rem); top: 50%; left: auto;
-  transform: translateY(-50%) translateX(4px);
-  white-space: nowrap; pointer-events: none; opacity: 0;
-  font-size: 0.5rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft);
-  transition: opacity 0.25s ease, transform 0.25s ease;
+@media (prefers-reduced-motion: reduce) {
+  .nav-dot, .nav-label { transition: none; }
 }
-.nav-stop:hover .nav-sub,
-.nav-stop:focus-visible .nav-sub { opacity: 0.9; transform: translateY(-50%) translateX(0); }
-@media (prefers-reduced-motion: reduce) { .nav-sub { transition: none; } }
 
-.navbar-cta {
-  display: inline-flex; align-items: center; justify-content: center; flex: none;
-  width: 30px; height: 30px; border-radius: 50%;
-  background: rgba(7, 22, 38, 0.2);
-  border: 1px solid var(--rule);
-  transition: background 0.25s ease, transform 0.25s ease;
-}
-.navbar-cta:hover { background: var(--ion-700); transform: translateY(-2px); }
-.navbar-pulse {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--ion-glow);
-  box-shadow: 0 0 0 0 rgba(90, 209, 238, 0.55);
-  animation: pulse 2.6s ease-out infinite;
-}
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(90, 209, 238, 0.55); }
-  70%, 100% { box-shadow: 0 0 0 9px rgba(90, 209, 238, 0); }
-}
-/* phones: keep the dock (a bottom bar is mobile-native) but shed the brand,
-   dividers and the Void route so the four zones + CTA fit a narrow width. */
-@media (max-width: 560px) {
-  .navbar-brand, .navbar-divider, .nav-route { display: none; }
-  .nav-stop { padding: 0.25rem 0.3rem; }
+/* phones: the altimeter becomes a TRUE bottom dock (mobile-native) so it no
+   longer floats over the right edge of the content. The vertical right-rail
+   only suits the wide canvas; on a narrow screen it overlapped photos, cards
+   and the hero corner labels. We lay it out left→right along the bottom edge,
+   shed the brand, dividers and the Void route, and re-aim the intro nudge +
+   ground "tuck" so the bar slides DOWN off-screen instead of off to the right.
+   Applied up to 900px (phones + tablet-portrait): the wide cards reach the right
+   edge there too, so the dock has to clear out of their way. */
+@media (max-width: 900px) {
+  .navbar-brand, .navbar-divider { display: none; }
+  .navbar {
+    left: 50%; right: auto; top: auto;
+    bottom: calc(0.7rem + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    flex-direction: row; align-items: center;
+    gap: 0.1rem; padding: 0.4rem 0.55rem;
+    max-height: none; max-width: calc(100vw - 1.4rem);
+  }
+  .nav-stops { flex-direction: row; gap: 0.2rem; padding: 0; }
+  .nav-stops::before { display: none; }   /* horizontal dock: no vertical track */
+  /* dot over its label, the dock way — labels always read on touch (no hover) */
+  .nav-stop {
+    width: auto; height: auto;
+    display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+    padding: 0.3rem 0.55rem;
+  }
+  .nav-label {
+    position: static; transform: none; opacity: 0.65; pointer-events: none;
+  }
+  .nav-stop.is-active .nav-label { opacity: 1; transform: none; }
+  .nav-stop:hover .nav-label,
+  .nav-stop:focus-visible .nav-label { transform: none; }
+  body.preloading .navbar { transform: translateX(-50%) translateY(16px); }
+  .navbar.is-tucked { transform: translateX(-50%) translateY(calc(100% + 1.5rem)); }
 }
 
 /* =================================================================
@@ -516,7 +542,7 @@ body.preloading .navbar {
   --glass-alpha-thick: 0.12;
   --glass-border: rgba(244, 247, 255, 0.18);
   --glass-edge: rgba(255, 255, 255, 0.22);
-  --glass-hair: rgba(90, 209, 238, 0.16);
+  --glass-hair: rgba(255, 255, 255, 0.16);
   --glass-sheen: rgba(150, 220, 245, 0.55);
 }
 .band-space .band-head { text-shadow: 0 2px 20px rgba(0, 0, 8, 0.45); }
@@ -535,10 +561,16 @@ body.preloading .navbar {
   text-align: left;
   color: var(--ink);
   /* left pad clears the fixed glass side-nav; the cosmos stays full-bleed behind */
-  padding: 0 clamp(1.25rem, 5vw, 3rem) clamp(7rem, 18vh, 12rem) clamp(4.25rem, 8vw, 8.5rem);
-  overflow: hidden;            /* contain the weightless drift + parallax */
+  padding: 0 clamp(1.25rem, 5vw, 3rem) clamp(1.5rem, 4vh, 3rem) clamp(4.25rem, 8vw, 8.5rem);
+  /* clip the wide horizontal satellite travel + drift (no h-scroll), but let the
+     bottom prints SPILL down past the edge so the scrapbook frays into the hero */
+  overflow-x: clip;
+  overflow-y: visible;
   isolation: isolate;
 }
+/* during the intro, clip the vertical spill too so no print pokes past the
+   parting clouds into the hero — the spill returns the moment the preloader clears */
+body.preloading .zone-space { overflow-y: clip; }
 
 /* THE SCRAPBOOK PAGE — a tall field you scroll up through; prints are pinned
    across it by top/left %, loosely strung by the red thread. Two nested layers
@@ -563,6 +595,42 @@ body.preloading .navbar {
   vector-effect: non-scaling-stroke;
   stroke-dasharray: 4 8; stroke-linecap: round;
 }
+
+/* THE SATELLITE — a slow flyby behind the collage. .sat-anchor parks the body
+   high in the field (.sat-arm rides the top edge); GSAP then slides .sat-arm
+   horizontally past both viewport edges and yoyos it back, so it reads as a
+   craft crossing the sky and returning. Pushed back with reduced opacity + a
+   cool haze so it reads as atmosphere, not a foreground subject. The section
+   clips at overflow:hidden, so the wide travel adds no scrollbar. Hidden on
+   small screens. */
+.sat-field {
+  position: absolute; inset: 0; z-index: 0;
+  pointer-events: none; overflow: visible;
+}
+.sat-anchor {
+  position: absolute; top: 92%; left: 70%;
+  --sat-d: clamp(26rem, 44vw, 40rem);   /* orbit diameter */
+  width: var(--sat-d); height: var(--sat-d);
+  transform: translate(-50%, -50%);     /* centre the orbit box on the point */
+}
+.sat-orbit {
+  position: absolute; inset: 0;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+.sat-arm {
+  position: absolute; top: 0; left: 50%;
+  transform: translateX(-50%);          /* park the satellite at top-centre = radius up */
+  will-change: transform;
+}
+.sat {
+  display: block;
+  width: clamp(12rem, 18vw, 17rem); height: auto;
+  opacity: 0.62;
+  filter: brightness(0.95) saturate(0.95) drop-shadow(0 0 50px rgba(120, 150, 200, 0.22));
+  will-change: transform;
+}
+@media (max-width: 1024px) { .sat-field { display: none; } }
 
 /* every pinned piece. position owns top/left; transform is OWNED BY GSAP
    (base tilt + drift + parallax), so we never set transform here. */
@@ -665,11 +733,12 @@ body.preloading .navbar {
   transform: rotate(-2deg); padding: 0 0.05em;
 }
 
-/* SIDE PROJECTS — a curved WebGL ring of personal builds, below the scrapbook.
+/* SIDE PROJECTS — a curved WebGL ring of personal builds, above the scrapbook.
    Sits in the same dark-cosmos context; labels render in ion-teal from canvas. */
 .space-projects {
   position: relative; z-index: 3;
-  width: 100%; max-width: var(--maxw); margin: clamp(2rem, 6vh, 5rem) auto 0;
+  width: 100%; max-width: var(--maxw);
+  margin: 0 auto clamp(2rem, 6vh, 5rem); padding-top: clamp(4rem, 10vh, 7rem);
 }
 .space-projects-head { margin-bottom: clamp(1rem, 2.4vh, 1.8rem); }
 .space-projects-title {
@@ -686,6 +755,12 @@ body.preloading .navbar {
 .space-projects-stage {
   position: relative;
   height: clamp(20rem, 48vh, 32rem);
+}
+/* the LinkedIn rail sizes to its own cards, so let it grow past the WebGL
+   stage height and drop the parallax overflow clip for this one. */
+.space-projects-stage--li {
+  height: auto;
+  margin-inline: calc(-1 * clamp(0.5rem, 4vw, 3rem));
 }
 .space-lede {
   margin: 0;
@@ -727,8 +802,9 @@ body.preloading .navbar {
   .thread { display: none; }
   .par-far, .par-near {
     position: static; display: flex; flex-direction: column; gap: clamp(3.5rem, 9vw, 5rem);
+    align-items: center;
   }
-  .par-far { order: 2; align-items: flex-start; }
+  .par-far { order: 2; }
   .par-near { order: 1; }
   .frag {
     position: static !important;
@@ -739,13 +815,16 @@ body.preloading .navbar {
   .doodle { display: none; }   /* decorative scatter — drop it in the clean column */
   .print { width: min(72vw, 20rem) !important; }
   .scrap-moon { width: min(78vw, 22rem) !important; }
-  .print-note { position: static !important; max-width: none; margin-top: 0.6rem; text-align: left !important; align-items: flex-start !important; }
+  .print-note { position: static !important; max-width: none; margin-top: 0.6rem; text-align: center !important; align-items: center !important; }
   /* the manifesto leads, with a comfortable measure and a clear gap to the prints */
   .scrap-copy {
     width: 100%; max-width: 40rem; order: -1;
+    margin-inline: auto;
+    align-items: center; text-align: center;
     margin-bottom: clamp(2rem, 6vw, 3.5rem);
     gap: clamp(1.3rem, 3vw, 2rem);
   }
+  .space-ps { transform: rotate(-1.5deg); transform-origin: center; }
   .zone-space .space-title { max-width: 14ch; font-size: clamp(2.2rem, 8vw, 3.6rem); }
   .space-lede, .space-note { max-width: 38ch; }
 }
@@ -817,22 +896,34 @@ body.preloading .navbar {
   color: var(--ion-700);
   font-size: 1.14em; line-height: 1; padding: 0 0.04em;
 }
-.sky-tail { color: var(--ink-dim); opacity: 0.5; }
+.sky-tail { display: block; color: var(--ink-dim); opacity: 0.5; }
 
-/* stat readouts — the two truths a recruiter should hit in the first glance */
-.sky-stats {
-  margin: clamp(1.8rem, 4.5vw, 2.7rem) 0 0;
-  display: flex; gap: clamp(2.2rem, 6vw, 4.2rem);
-}
-.sky-stat { display: flex; flex-direction: column; gap: 0.3rem; }
-.sky-stat-num {
-  font-family: var(--display); font-weight: 400;
-  font-size: clamp(2.3rem, 5vw, 3.5rem); line-height: 0.92;
+/* the primary CTA — a glass pill that drops the recruiter straight into the résumé */
+.sky-cta { margin: clamp(1.8rem, 4.5vw, 2.7rem) 0 0; }
+.sky-resume {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;              /* pill — overrides the .glass --r-lg */
   color: var(--ion-700);
+  font-family: var(--mono); font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, color 0.2s ease;
 }
-.sky-stat-k {
-  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.16em;
-  text-transform: uppercase; color: var(--ink-dim);
+.sky-resume-icon { font-size: 1.05em; transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+@media (hover: hover) {
+  .sky-resume:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      var(--glass-shadow),
+      0 14px 30px -16px rgba(255, 255, 255, 0.5),
+      inset 0 1px 0 var(--glass-edge),
+      inset 0 0 0 1px var(--glass-hair);
+  }
+  .sky-resume:hover .sky-resume-icon { transform: translate(2px, -2px); }
+}
+.sky-resume:focus-visible {
+  outline: 2px solid var(--ion-700); outline-offset: 3px;
 }
 
 /* --- portrait: the headshot in a glass viewfinder, pushed to the right --- */
@@ -886,38 +977,25 @@ body.preloading .navbar {
 .sky-edge.down:hover { transform: translateX(-50%) translateY(3px); }
 .sky-edge:active { transform: translateX(-50%) scale(0.98); }
 
-.fc-line {
-  width: 1.5px; height: clamp(1.8rem, 4.5vh, 3rem); position: relative;
-}
-.fc-line.up { background: linear-gradient(to top, var(--ion), rgba(43, 182, 214, 0.03)); }
-.fc-line.down { background: linear-gradient(to bottom, var(--ion), rgba(43, 182, 214, 0.03)); }
-.fc-line::after {
-  content: ''; position: absolute; left: 50%; width: 6px; height: 6px;
-  margin-left: -3px; border-radius: 50%;
-  background: var(--ion); box-shadow: 0 0 10px 1px var(--ion-glow);
-}
-.fc-line.up::after { top: -3px; }
-.fc-line.down::after { bottom: -3px; }
-
 .fc-arrow {
   font-size: 0.95rem; line-height: 1; color: var(--ion-700);
   animation: bob 2.4s ease-in-out infinite;
 }
 .sky-edge.up .fc-arrow { animation-direction: alternate; }
+
+/* one meaningful line under the arrow: the world this marker flies you to,
+   set in the brand serif. */
 .fc-dest {
-  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.18em;
-  text-transform: uppercase; color: var(--ink-soft);
-  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.6);
+  font-family: var(--display); font-size: 1rem; line-height: 1; letter-spacing: 0.01em;
+  color: var(--ink); text-shadow: 0 1px 12px rgba(255, 255, 255, 0.7);
 }
+.sky-edge { gap: 0.4rem; }
 @keyframes bob {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(3px); }
 }
 
 /* short viewports: tighten the lines so the markers never crowd the statement */
-@media (max-height: 780px) {
-  .fc-line { height: clamp(1.2rem, 2.6vh, 1.8rem); }
-}
 /* tablet: collapse to one column, face first as a warm intro */
 @media (max-width: 900px) {
   .sky-hero { padding-left: clamp(1.4rem, 6vw, 3rem); padding-right: clamp(3rem, 9vw, 4.4rem); }
@@ -927,7 +1005,6 @@ body.preloading .navbar {
 /* phone: stats wrap, corners tuck in */
 @media (max-width: 540px) {
   .sky-corner { font-size: 0.55rem; letter-spacing: 0.14em; }
-  .sky-stats { gap: 2rem; }
   .sky-portrait { max-width: 10.5rem; }
 }
 
@@ -1000,9 +1077,9 @@ body.preloading .navbar {
   position: absolute; inset: 0; border-radius: inherit; z-index: 0;
   pointer-events: none;
   box-shadow:
-    inset 0 0 0 1px rgba(43, 182, 214, 0.55),
-    inset 0 0 18px rgba(90, 209, 238, 0.45),
-    0 0 22px rgba(43, 182, 214, 0.35);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    inset 0 0 18px rgba(255, 255, 255, 0.45),
+    0 0 22px rgba(255, 255, 255, 0.35);
   opacity: calc((var(--edge) - 34) / 66);
   -webkit-mask-image: conic-gradient(from var(--angle), #000 0deg, #000 36deg, transparent 96deg, transparent 264deg, #000 324deg, #000 360deg);
           mask-image: conic-gradient(from var(--angle), #000 0deg, #000 36deg, transparent 96deg, transparent 264deg, #000 324deg, #000 360deg);
@@ -1013,7 +1090,7 @@ body.preloading .navbar {
   position: relative; z-index: 1;
   min-width: 0; /* don't let a large intrinsic image widen the grid track */
   aspect-ratio: 16 / 10; border-radius: var(--r-md); overflow: hidden;
-  background: linear-gradient(150deg, rgba(43, 182, 214, 0.14), rgba(31, 198, 166, 0.08));
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.08));
   border: 1px solid var(--card-border);
 }
 /* fill + crop the media box regardless of the source image's aspect ratio, so
@@ -1021,7 +1098,7 @@ body.preloading .navbar {
 .gc-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .gc-media--metric {
   display: grid; place-content: center;
-  background: linear-gradient(150deg, rgba(15, 110, 142, 0.16), rgba(43, 182, 214, 0.08));
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.08));
 }
 .gc-bigmetric {
   font-family: var(--display); font-weight: 400;
@@ -1133,60 +1210,77 @@ body.preloading .navbar {
       rgba(255, 248, 230, 0.06) 0%,
       rgba(255, 248, 230, 0) 55%),
     linear-gradient(180deg,
-      rgba(6, 18, 10, 0) 34%,
-      rgba(6, 18, 10, 0.28) 66%,
-      rgba(5, 14, 9, 0.62) 88%,
-      rgba(4, 11, 7, 0.78) 100%);
+      rgba(6, 18, 10, 0) 30%,
+      rgba(6, 18, 10, 0.3) 64%,
+      rgba(5, 14, 9, 0.64) 88%,
+      rgba(4, 11, 7, 0.8) 100%);
 }
 
-/* ---- three columns: menu · socials · newsletter --------------------- */
-.footer-cols {
-  display: grid; gap: clamp(2rem, 5vw, 3.5rem);
-  grid-template-columns: 1fr;
+/* ---- the contact invitation — a big serif hello over the field ------- */
+.footer-talk {
+  display: inline-block;
+  font-size: clamp(3rem, 11vw, 8.5rem);
+  line-height: 0.92; letter-spacing: -0.02em;
+  color: #ffffff; text-decoration: none;
+  text-shadow: 0 4px 40px rgba(0, 0, 0, 0.35);
+  transition: opacity 0.3s ease;
 }
-.footer-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.85rem; }
-.footer-h {
-  font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.22em; text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.52); margin: 0 0 1.7rem; font-weight: 400;
+.footer-talk .script {
+  font-family: var(--script); font-weight: 700; font-style: normal;
+  color: var(--ion-glow);
+  font-size: 1.04em; padding: 0 0.03em;
+  text-shadow: 0 0 32px rgba(255, 255, 255, 0.45);
 }
-.footer-col a, .footer-col button {
-  font-size: clamp(0.98rem, 1.4vw, 1.12rem); color: rgba(255, 255, 255, 0.9);
-  background: none; border: none; padding: 0; letter-spacing: 0.005em;
-  cursor: pointer; font-family: inherit; text-align: left; transition: color 0.25s ease; font-weight: 300;
-}
-.footer-col a:hover, .footer-col button:hover { color: var(--ion-glow); }
-.footer-col a[aria-disabled] { color: rgba(255, 255, 255, 0.4); cursor: default; }
-.footer-col a[aria-disabled]:hover { color: rgba(255, 255, 255, 0.4); }
-.footer-note { color: rgba(255, 255, 255, 0.4); }
+.footer-talk:hover { opacity: 0.92; }
 
-/* newsletter — lede + a pill subscribe bar (matches the reference) */
-.footer-news-lede {
-  font-size: clamp(1.15rem, 1.7vw, 1.4rem); line-height: 1.5; color: rgba(255, 255, 255, 0.92);
-  font-weight: 300; letter-spacing: 0.005em; margin: 0 0 1.5rem; max-width: 26ch;
+/* ---- socials (left) · primary nav (right) ---------------------------- */
+.footer-rail {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 1.5rem 2rem;
+  margin-top: clamp(1.6rem, 4vw, 2.6rem);
 }
-.footer-sub {
-  display: flex; align-items: center; gap: 0.5rem;
+.footer-socials { list-style: none; margin: 0; padding: 0; display: flex; gap: 0.7rem; }
+.footer-socials a {
+  display: grid; place-items: center;
+  width: 2.75rem; height: 2.75rem; border-radius: 999px;
+  color: #ffffff;
   background: rgba(255, 255, 255, 0.1);
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  padding: 0.35rem 0.4rem 0.35rem 1.3rem;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease,
+    border-color 0.2s ease, color 0.2s ease;
 }
-.footer-sub:focus-within { border-color: rgba(255, 255, 255, 0.6); background: rgba(255, 255, 255, 0.16); }
-.footer-sub input {
-  flex: 1; min-width: 0; background: none; border: none; outline: none;
-  font-family: inherit; font-size: 0.95rem; color: #ffffff; padding: 0.7rem 0;
+.footer-socials a:hover {
+  transform: translateY(-3px);
+  background: var(--ion-glow); border-color: var(--ion-glow); color: #04121b;
 }
-.footer-sub input::placeholder { color: var(--ink-dim); }
-.footer-sub button {
-  flex: none; display: inline-flex; align-items: center; gap: 0.4rem;
-  background: #13283f; color: #f4f9ff; border: none; cursor: pointer;
-  font-family: inherit; font-size: 0.9rem; font-weight: 500;
-  padding: 0.7rem 1.2rem; border-radius: 999px; transition: background 0.2s ease;
+.footer-socials svg { width: 1.05rem; height: 1.05rem; fill: currentColor; }
+
+.footer-links { display: flex; flex-wrap: wrap; gap: clamp(1.4rem, 3vw, 2.6rem); }
+.footer-links a, .footer-links button {
+  font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.88); text-decoration: none;
+  background: none; border: none; padding: 0; cursor: pointer;
+  transition: color 0.2s ease;
 }
-.footer-sub button:hover { background: var(--ion-700); }
-.footer-sub .arrow { transition: transform 0.2s ease; }
-.footer-sub button:hover .arrow { transform: translateX(3px); }
+.footer-links a:hover, .footer-links button:hover { color: var(--ion-glow); }
+
+/* ---- colophon: instrument readouts on the landing strip -------------- */
+.footer-colophon {
+  margin: clamp(2.4rem, 6vw, 4rem) 0 0;
+  padding-top: clamp(1.4rem, 3vw, 2rem);
+  border-top: 1px solid var(--rule);
+  display: grid; gap: 1.4rem 2rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+.colo-item { display: flex; flex-direction: column; gap: 0.5rem; margin: 0; }
+.colo-k {
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+.colo-v {
+  margin: 0; font-size: clamp(0.9rem, 1.4vw, 1.02rem); font-weight: 300; letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.92);
+}
 
 /* ---- the brand mark, pinned over the open field — the footer's crest ----
    centered horizontally and anchored to the upper field so it floats above the
@@ -1210,7 +1304,13 @@ body.preloading .navbar {
 }
 
 @media (min-width: 740px) {
-  .footer-cols { grid-template-columns: 1fr 1fr 1.6fr; gap: clamp(2rem, 6vw, 5rem); }
+  .footer-colophon { grid-template-columns: repeat(4, 1fr); gap: 2rem clamp(2rem, 5vw, 4rem); }
+}
+
+/* on phones the logo crest sits a touch lower so it clears the top edge and
+   reads as a signature over the field, not pinned to the rim */
+@media (max-width: 640px) {
+  .footer-mark { top: clamp(7rem, 28vh, 13rem); }
 }
 
 /* =================================================================
@@ -1251,7 +1351,7 @@ body.preloading .navbar {
 .band-space .band-title em {
   font-style: italic;
   color: var(--ion-glow);
-  text-shadow: 0 0 28px rgba(90, 209, 238, 0.45);
+  text-shadow: 0 0 28px rgba(255, 255, 255, 0.45);
 }
 .band-space .band-lede { margin-inline: 0; }
 
@@ -1279,8 +1379,8 @@ body.preloading .navbar {
    shows through, but a faint ion sheen + hairline frame (and a large display
    numeral) make each a deliberate aperture, not an empty placeholder box. */
 .band-space .tile {
-  background: radial-gradient(125% 125% at 50% 0%, rgba(43, 182, 214, 0.07), transparent 62%);
-  border-color: rgba(90, 209, 238, 0.18);
+  background: radial-gradient(125% 125% at 50% 0%, rgba(255, 255, 255, 0.07), transparent 62%);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 @media (hover: hover) {
   .band-space .tile:hover { border-color: var(--ion-glow); }
@@ -1395,7 +1495,7 @@ body.preloading .navbar {
 .rail::before {
   content: ""; position: absolute; top: 0.7rem; bottom: 0.7rem;
   left: calc(var(--lane) / 2); width: 1.5px; transform: translateX(-50%);
-  background: linear-gradient(var(--ion-glow), rgba(43, 182, 214, 0.08));
+  background: linear-gradient(var(--ion-glow), rgba(255, 255, 255, 0.08));
 }
 .rail-step {
   display: grid; grid-template-columns: var(--lane) 1fr;
@@ -1405,7 +1505,7 @@ body.preloading .navbar {
 .rail-node {
   width: 10px; height: 10px; border-radius: 50%; position: relative; z-index: 1;
   background: var(--ion-glow);
-  box-shadow: 0 0 0 4px rgba(43, 182, 214, 0.14), 0 0 11px 1px rgba(90, 209, 238, 0.5);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.14), 0 0 11px 1px rgba(255, 255, 255, 0.5);
 }
 .rail-head { display: flex; align-items: baseline; gap: 0.7rem; }
 .rail-n {
@@ -1461,6 +1561,209 @@ body.altitude-ready [data-reveal].in { opacity: 1; transform: none; }
   /* the nav now lives in the bottom dock (mobile-native), so the space zone no
      longer needs the big left inset that once cleared a left-edge rail */
   .zone-space { padding-left: clamp(1.25rem, 5vw, 2rem); }
+}
+
+/* ── Apex black hole ───────────────────────────────────────────────────────
+   The topmost section of the page. The hole's WebGL stage is anchored to the
+   very top edge and lifted so the upper arc bleeds off-screen — a portal you
+   rise into at the apex. Pressing the barricade warps the whole page in. */
+.bh-section {
+  position: relative;
+  width: 100%;
+  min-height: clamp(26rem, 58vh, 46rem);
+  overflow-x: clip;       /* clip the edge-to-edge hazard tape so it can't push
+                             horizontal page scroll; vertical bleed stays visible */
+  overflow-y: visible;
+  isolation: isolate;
+  z-index: 1;
+}
+
+/* small apex label, tucked into the top-left under the nav */
+.bh-eyebrow {
+  position: absolute;
+  top: clamp(0.9rem, 3vw, 1.8rem);
+  left: clamp(1.25rem, 5vw, 3rem);
+  margin: 0;
+  z-index: 3;
+  font-family: var(--mono);
+  font-size: clamp(0.56rem, 1.1vw, 0.68rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-dim, #98a4c4);
+}
+
+/* the WebGL stage: FULL-BLEED so the accretion disk fades into transparency at
+   the viewport sides instead of clipping inside a box. Pinned to the top edge
+   and lifted so the hole's upper arc bleeds off-screen, lower arc emerges.
+   pointer-events:none — only the barricade opts back in. */
+.bh-stage {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 100vw;
+  height: clamp(56rem, 120vh, 100rem);   /* ~2x — a much larger hole */
+  transform: translate(-50%, -42%) rotate(-15deg);  /* tilted -15° */
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* scribbled "don't touch it" note with a hand-drawn arrow curving up to the
+   hole. Sits off to the right under the upper arc; purely decorative. */
+.bh-note {
+  position: absolute;
+  top: clamp(3rem, 10vw, 7rem);
+  right: clamp(3rem, 20vw, 15rem);
+  z-index: 4;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  gap: 0.1rem;
+  color: #f5483a;
+  pointer-events: none;
+  transform: rotate(-4deg);
+  transform-origin: top right;
+}
+.bh-note__text {
+  font-family: var(--script);
+  font-weight: 700;
+  font-size: clamp(1.8rem, 4.4vw, 3rem);
+  line-height: 0.95;
+  text-shadow:
+    0 0 24px rgba(0, 0, 7, 0.7),
+    0 2px 14px rgba(0, 0, 7, 0.6);
+}
+.bh-note__arrow {
+  width: clamp(3.8rem, 10vw, 7rem);
+  height: auto;
+  margin-right: clamp(1.5rem, 5vw, 3.5rem);
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 7, 0.5));
+  transform: scaleX(-1);  /* point the head up-and-left, toward the hole */
+}
+
+@media (max-width: 760px) {
+  .bh-note { top: clamp(2.5rem, 9vw, 5rem); right: clamp(1.5rem, 10vw, 6rem); }
+}
+
+/* ── Black-hole hazard barricade ───────────────────────────────────────────
+   Criss-cross caution tape + sign over the event horizon. The button is the
+   only interactive bit in the (pointer-events:none) hole wrapper, so it opts
+   pointer events back in. Pressing it warps the page (see TopBlackHole.tsx). */
+.bh-caution {
+  position: absolute;
+  top: clamp(12rem, 30vw, 24rem);
+  left: 0;
+  width: 100%;
+  height: clamp(56px, 10vw, 120px);
+  transform: translateY(-50%);
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+.bh-caution:focus-visible { outline: 2px solid #f5c518; outline-offset: 6px; }
+/* invisible hit-area that reaches up from the lowered tape to cover the hole, so
+   the black hole itself stays pressable even though the tape now sits below it */
+.bh-caution::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  width: 100%;
+  height: clamp(14rem, 34vw, 26rem);
+}
+
+/* two hazard bands stretched clear across the page, crossing in a shallow X
+   over the hole. width >100% + small rotation guarantees they run past both
+   viewport edges (edge to edge). */
+.bh-tape {
+  position: absolute;
+  left: -6%;
+  top: 50%;
+  width: 112%;
+  height: clamp(17px, 2.3vw, 30px);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  background: repeating-linear-gradient(
+    -45deg,
+    #111 0 16px,
+    #f5c518 16px 32px
+  );
+  border-top: 2px solid rgba(0, 0, 0, 0.55);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.55);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55), inset 0 0 14px rgba(0, 0, 0, 0.35);
+}
+.bh-tape--a { transform: translateY(-50%) rotate(3.5deg); }
+.bh-tape--b { transform: translateY(-50%) rotate(-3.5deg); }
+/* legend printed on the tape, sitting in a black stripe for contrast */
+.bh-tape__text {
+  flex: none;
+  padding-left: 0.6em;
+  font-family: var(--mono);
+  font-size: clamp(0.46rem, 0.9vw, 0.6rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #f7df6a;
+  mix-blend-mode: difference; /* stays legible over both stripe colours */
+}
+
+/* the sign that names the hazard, hung under the crossing */
+.bh-caution__sign {
+  position: absolute;
+  top: clamp(9rem, 23vw, 15rem);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15em;
+  padding: 0.5em 0.9em;
+  font-family: var(--mono);
+  font-size: clamp(0.7rem, 1.5vw, 0.95rem);
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: #14151a;
+  background: #f5c518;
+  border-radius: 4px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.55);
+  white-space: nowrap;
+}
+.bh-caution__sign small {
+  font-size: 0.5em;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #2a2410;
+}
+.bh-caution__bolt { font-size: 1.05em; line-height: 1; }
+
+/* subtle "live wire" breathing so the barricade reads as active, not decor */
+.bh-caution:hover .bh-tape { filter: brightness(1.12) saturate(1.1); }
+.bh-caution:hover .bh-caution__sign {
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.6);
+}
+.bh-tape,
+.bh-caution__sign { transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease; }
+
+/* PHONES — the hole rendered at desktop scale is bigger than the viewport and
+   gets clipped. The ring scales with canvas height (BlackHoleLaser normalises uv
+   by iResolution.y), so a shorter stage = a smaller hole. The barricade then
+   drops below the hole's lower arc instead of cutting across it. */
+@media (max-width: 760px) {
+  .bh-stage {
+    height: clamp(26rem, 60vh, 38rem);
+    transform: translate(-50%, -30%) rotate(-12deg);
+  }
+  .bh-caution { top: clamp(15rem, 42vh, 22rem); }
+  .bh-caution::before { height: clamp(11rem, 36vh, 18rem); }
+  .bh-section { min-height: clamp(20rem, 56vh, 30rem); }
 }
 
 @media (prefers-reduced-motion: reduce) {

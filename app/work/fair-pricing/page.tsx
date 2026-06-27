@@ -449,11 +449,11 @@ export default function FairPricing() {
 
           {/* NEXT */}
           <nav className="cs-next">
-            <Link href="/work">
-              <span aria-hidden>←</span> All work
-            </Link>
             <Link href="/work/checkout">
-              Next: Checkout, off Shopify <span aria-hidden>→</span>
+              <span aria-hidden>←</span> Prev: Checkout, off Shopify
+            </Link>
+            <Link href="/work/econic">
+              Next: Econic 2025 <span aria-hidden>→</span>
             </Link>
           </nav>
         </main>

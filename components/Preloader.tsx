@@ -7,12 +7,18 @@ import Odometer from '@/components/Odometer';
 // to useEffect during SSR where layout effects can't run.
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
-// The intro plays on a fresh session AND on every reload. Navigating back to the
-// homepage within the same SPA session (no document reload) skips it.
+// The intro plays exactly once — on a visitor's very first ever view of the site.
+// The flag lives in localStorage so it persists across sessions and reloads; once
+// set, ordinary loads/reloads never replay the count.
 const PLAYED_KEY = 'intro:played';
 
-// A hard reload (F5 / Cmd-R) should replay the intro even though the session flag
-// is still set. Navigation Timing L2 reports the type; fall back to the deprecated
+// The black-hole warp asks for a one-shot replay by setting this before it reloads
+// (see blackHoleWarp.ts). It lives in sessionStorage so it survives the reload, and
+// the preloader consumes it on read so the replay happens exactly once.
+const REPLAY_KEY = 'intro:replay';
+
+// A hard reload (F5 / Cmd-R) replays the intro even for a returning visitor.
+// Navigation Timing L2 reports the type; fall back to the deprecated
 // PerformanceNavigation for older engines.
 function isReload(): boolean {
   try {
@@ -53,7 +59,7 @@ function Counter({ onDone }: { onDone: () => void }) {
 
   return (
     <div className="loader-num" aria-label="Loading">
-      <Odometer steps={[0, 15, 36, 52, 87, 99]} jitter={5} onDone={finish} />
+      <Odometer steps={[0, 15, 52, 99]} jitter={5} onDone={finish} />
       <i>%</i>
     </div>
   );
@@ -65,27 +71,34 @@ export default function Preloader() {
   useIsomorphicLayoutEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let played = false;
+    let replay = false;
     try {
-      played = sessionStorage.getItem(PLAYED_KEY) === '1';
+      played = localStorage.getItem(PLAYED_KEY) === '1';
     } catch {}
-    // A reload always replays the intro, regardless of the session flag.
-    if (isReload()) played = false;
+    try {
+      replay = sessionStorage.getItem(REPLAY_KEY) === '1';
+      if (replay) sessionStorage.removeItem(REPLAY_KEY); // one-shot: consume on read
+    } catch {}
 
-    // Already seen this session (or reduced motion): skip straight to the live
-    // page — drop the cover and clear the flag so the nav, clouds and hero all
-    // render at rest. CloudField/SkyHero read the absence of `preloading` and
-    // appear immediately, so no count, no curtain.
-    if (reduced || played) {
+    // Play on the very first ever visit, on any hard reload, or when the
+    // black-hole warp asked for a replay. Only an in-session SPA navigation back
+    // to the homepage (no document reload, already played) skips.
+    const shouldPlay = !reduced && (!played || replay || isReload());
+
+    // Skipping: drop the cover so the nav, clouds and hero all render at rest.
+    // CloudField/SkyHero read the absence of `preloading` and appear immediately,
+    // so no count, no curtain.
+    if (!shouldPlay) {
       document.documentElement.classList.remove('pl-cover', 'pl-reveal');
       document.body.classList.remove('preloading');
       setPhase('done');
       return;
     }
 
-    // First view this session — remember it now (before the count even finishes)
-    // so navigating away mid-intro still counts as played.
+    // Remember the intro as seen for all future visits — set now (before the count
+    // even finishes) so navigating away mid-intro still counts as played.
     try {
-      sessionStorage.setItem(PLAYED_KEY, '1');
+      localStorage.setItem(PLAYED_KEY, '1');
     } catch {}
 
     // Mark the document as "preloading" so chrome that lives ABOVE the intro

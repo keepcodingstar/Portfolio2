@@ -10,8 +10,8 @@ import '../work.css';
 /**
  * Checkout, off Shopify — Virgio's most revenue-critical flow, migrated off a
  * platform that throttled at peak load and rebuilt for control. Same altitude
- * glass chrome as the Fair Pricing study; the screen mockups are rebuilt from
- * divs in Virgio's product palette.
+ * glass chrome as the Fair Pricing study; the screens are the real shipped
+ * designs, exported from Figma.
  */
 
 export default function CheckoutCase() {
@@ -182,117 +182,74 @@ export default function CheckoutCase() {
             </div>
 
             <div className="cs-iters" style={{ gridTemplateColumns: '1fr' }}>
+              {/* Payment */}
+              <div className="cs-iter glass" style={{ display: 'grid', gap: '1.4rem' }}>
+                <img
+                  className="cs-real"
+                  src="/work/checkout/payment-desktop.png"
+                  alt="Checkout payment screen — selected default delivery address, store-credit and gift-card options, online payment methods with an active Pay ₹799 button, cash on delivery, and a live order summary on the right"
+                  width={2560}
+                  height={1788}
+                  loading="lazy"
+                />
+                <div>
+                  <p className="cs-iter-name">Payment — what you’re paying, and how, in one glance</p>
+                  <p className="cs-iter-desc">
+                    Three explorations led here. The final structure builds on the address insight
+                    without adding a single step: everything resolves in one downward read, so the
+                    shopper always sees the amount and the method together before they commit. Store
+                    credits and gift cards surface first — adjust the payable amount, then settle the
+                    rest with UPI, cards, NetBanking, EMI, wallets, BNPL or cash on delivery. An
+                    always-visible order breakdown — item total, discount, the waived shipping fee —
+                    means the number on the pay button is never a mystery. Confidence in, friction out.
+                  </p>
+                  <div className="cs-iter-changes" style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                    <span className="cs-pill">Credits &amp; gift cards first</span>
+                    <span className="cs-pill">Live order breakdown</span>
+                    <span className="cs-pill">One downward glance to confirm</span>
+                    <span className="cs-pill">No added steps</span>
+                  </div>
+                </div>
+              </div>
+
               {/* Address */}
               <div className="cs-iter glass" style={{ display: 'grid', gap: '1.4rem' }}>
-                <div className="iter-screen" style={{ minHeight: 0 }}>
-                  <div className="ck" style={{ maxWidth: 320 }}>
-                    <div className="ck-head">
-                      Delivery address <span className="ck-step">Step 1 of 2</span>
-                    </div>
-                    <div className="ck-addr sel">
-                      <div className="ck-radio" />
-                      <div className="ck-addr-main">
-                        <div className="ck-addr-name">
-                          Home <span className="ck-tag">Default</span>
-                        </div>
-                        <div className="ck-addr-line">
-                          14 Indiranagar, 100ft Road, Bengaluru 560038
-                        </div>
-                        <div className="ck-eta">
-                          <span className="ck-spark" /> Arrives Thu, 14 Mar · Free
-                        </div>
-                      </div>
-                    </div>
-                    <div className="ck-addr">
-                      <div className="ck-radio" />
-                      <div className="ck-addr-main">
-                        <div className="ck-addr-name">Office</div>
-                        <div className="ck-addr-line">
-                          Koramangala 4th Block, Bengaluru 560034
-                        </div>
-                      </div>
-                    </div>
-                    <div className="ck-map" aria-hidden>
-                      <span className="ck-pin" />
-                    </div>
-                    <div className="ck-flag">
-                      <span className="dot" />
-                      Pin looks a little off from your address — drag to re-align for an exact
-                      drop.
-                    </div>
-                    <div className="ck-cta">Continue to payment</div>
-                  </div>
+                <div className="cs-phone-pair">
+                  <img
+                    className="cs-real phone"
+                    src="/work/checkout/address-map.png"
+                    alt="Pick-your-location screen — a full-screen map with a draggable delivery pin, an address search bar, and a Confirm & Proceed action"
+                    width={804}
+                    height={1787}
+                    loading="lazy"
+                  />
+                  <img
+                    className="cs-real phone"
+                    src="/work/checkout/address-mobile.png"
+                    alt="Add-address screen — map-backed location card up top, the address-detail form, and a who-are-you-ordering-for selector above the save button"
+                    width={804}
+                    height={1770}
+                    loading="lazy"
+                  />
                 </div>
                 <div>
                   <p className="cs-iter-name">Address — choices with their consequences attached</p>
                   <p className="cs-iter-desc">
                     Saved addresses come back from Shiprocket after login and land as scannable
                     cards; pick one and the delivery estimate updates on the spot, so the trade-off
-                    is never hidden behind a tap. No address on file? The pay button stays off until
-                    there is one. A map with search and a draggable pin auto-fills the form — less
+                    is never hidden behind a tap. No address on file? A quick “who are you ordering
+                    for — myself or someone else” prompt sends you into a fresh add-address flow, and
+                    the pay button stays off until there’s a valid one. Custom-fit items flag a
+                    prepaid-only notice up front, so the constraint never surprises anyone at the
+                    pay step. A map with search and a draggable pin auto-fills the form — less
                     typing, more precision — and two guardrails catch the edges: a gentle nudge when
                     the pin and address disagree, and a clear stop when an area can’t be served.
                   </p>
                   <div className="cs-iter-changes" style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                     <span className="cs-pill">Instant delivery estimate</span>
                     <span className="cs-pill">Map pin auto-fill</span>
+                    <span className="cs-pill">Custom-fit prepaid notice</span>
                     <span className="cs-pill">Serviceability + mismatch safeguards</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Payment */}
-              <div className="cs-iter glass" style={{ display: 'grid', gap: '1.4rem' }}>
-                <div className="iter-screen" style={{ minHeight: 0 }}>
-                  <div className="ck" style={{ maxWidth: 320 }}>
-                    <div className="ck-head">
-                      Payment <span className="ck-step">Step 2 of 2</span>
-                    </div>
-                    <div className="ck-explore" aria-hidden>
-                      <span className="ck-chip">v1</span>
-                      <span className="ck-chip">v2</span>
-                      <span className="ck-chip on">Final</span>
-                    </div>
-                    <div className="ck-pay first">
-                      <div className="ck-pay-ic">★</div>
-                      <div className="ck-pay-main">
-                        <div className="ck-pay-t">Apply Virgio credits</div>
-                        <div className="ck-pay-s">₹500 available · adjust before you pay</div>
-                      </div>
-                      <div className="ck-pay-amt">−₹500</div>
-                    </div>
-                    <div className="ck-pay">
-                      <div className="ck-pay-ic">▢</div>
-                      <div className="ck-pay-main">
-                        <div className="ck-pay-t">UPI</div>
-                        <div className="ck-pay-s">Pay by any UPI app</div>
-                      </div>
-                      <div className="ck-radio" />
-                    </div>
-                    <div className="ck-pay">
-                      <div className="ck-pay-ic">▭</div>
-                      <div className="ck-pay-main">
-                        <div className="ck-pay-t">Card</div>
-                        <div className="ck-pay-s">Credit / debit</div>
-                      </div>
-                      <div className="ck-radio" />
-                    </div>
-                    <div className="ck-cta">Pay ₹1,090</div>
-                  </div>
-                </div>
-                <div>
-                  <p className="cs-iter-name">Payment — what you’re paying, and how, in one glance</p>
-                  <p className="cs-iter-desc">
-                    Three explorations led here. The final structure builds on the address insight
-                    without adding a single step: everything resolves in one downward read, so the
-                    shopper always sees the amount and the method together before they commit.
-                    Credits and gift cards surface first — adjust the payable amount, then choose how
-                    to settle the rest. Confidence in, friction out.
-                  </p>
-                  <div className="cs-iter-changes" style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <span className="cs-pill">Credits &amp; gift cards first</span>
-                    <span className="cs-pill">One downward glance to confirm</span>
-                    <span className="cs-pill">No added steps</span>
                   </div>
                 </div>
               </div>
@@ -344,11 +301,11 @@ export default function CheckoutCase() {
 
           {/* NEXT */}
           <nav className="cs-next">
-            <Link href="/work/fair-pricing">
-              <span aria-hidden>←</span> Prev: Fair Pricing
+            <Link href="/work/amodira">
+              <span aria-hidden>←</span> Prev: Amodira: Sound of the Scent
             </Link>
-            <Link href="/work">
-              All work <span aria-hidden>→</span>
+            <Link href="/work/fair-pricing">
+              Next: Fair Pricing <span aria-hidden>→</span>
             </Link>
           </nav>
         </main>

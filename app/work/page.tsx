@@ -29,26 +29,15 @@ type Project = {
 
 const PROJECTS: Project[] = [
   {
-    slug: 'amodira',
-    href: '/work/amodira',
-    name: 'Amodira: Sound of the Scent',
+    slug: 'checkout-migration',
+    href: '/work/checkout',
+    name: 'Checkout, off Shopify',
     context:
-      'A 0→1 perfume brand for Virgio. Invented a way to sell a scent online — an original song per fragrance whose layers mirror its notes, so you feel the perfume before you smell it.',
-    tags: ['Virgio', 'Brand 0→1', 'Fragrance', '2025'],
-    metric: '7',
-    unit: '×',
-    label: 'revenue · Econic sale',
-  },
-  {
-    slug: 'econic',
-    href: '/work/econic',
-    name: 'Eco-nic Fair: Preview the Sale',
-    context:
-      'Virgio’s 2nd-anniversary “anti-sale” — every garment at its cost to make. I co-designed the campaign UI, anchored by a Preview toggle that let shoppers see every sale price days before it went live. Won Best Brand Campaign at the e4m RetailEX Awards 2026.',
-    tags: ['Virgio', 'Campaign UI', '2025', 'Award'],
-    metric: '50',
-    unit: '×',
-    label: 'revenue · Eco-nic Fair days',
+      'Migrated the most revenue-critical flow off Shopify to escape peak-load rate limits — and rebuilt address and payment selection around instant feedback.',
+    tags: ['Virgio', 'Conversion', '2024'],
+    metric: '+2.68',
+    unit: '%',
+    label: 'conversion',
   },
   {
     slug: 'fair-pricing',
@@ -62,26 +51,26 @@ const PROJECTS: Project[] = [
     label: 'users reached',
   },
   {
-    slug: 'checkout-migration',
-    href: '/work/checkout',
-    name: 'Checkout, off Shopify',
+    slug: 'econic',
+    href: '/work/econic',
+    name: 'Econic 2025',
     context:
-      'Migrated the most revenue-critical flow off Shopify to escape peak-load rate limits — and rebuilt address and payment selection around instant feedback.',
-    tags: ['Virgio', 'Conversion', '2024'],
-    metric: '+2.68',
-    unit: '%',
-    label: 'conversion',
+      'Virgio’s 2nd-anniversary “anti-sale” — every garment at its cost to make. I co-designed the campaign UI, anchored by a Preview toggle that let shoppers see every sale price days before it went live. Won Best Brand Campaign at the e4m RetailEX Awards 2026.',
+    tags: ['Virgio', 'Campaign UI', '2025', 'Award'],
+    metric: '50',
+    unit: '×',
+    label: 'revenue · Eco-nic Fair days',
   },
   {
-    slug: 'login-auth',
-    name: 'Login & auth revamp',
+    slug: 'amodira',
+    href: '/work/amodira',
+    name: 'Amodira: Sound of the Scent',
     context:
-      'Reworked the Kwikpass → Shiprocket sign-in flow end to end, removing the friction that lost people at the door.',
-    tags: ['Auth', 'Flows', '2024'],
-    metric: '+20',
-    unit: '%',
-    label: 'login success',
-    soon: 'Study in writing',
+      'A 0→1 perfume brand for Virgio. Invented a way to sell a scent online — an original song per fragrance whose layers mirror its notes, so you feel the perfume before you smell it.',
+    tags: ['Virgio', 'Brand 0→1', 'Fragrance', '2025'],
+    metric: '7',
+    unit: '×',
+    label: 'revenue · Econic sale',
   },
 ];
 
@@ -164,15 +153,6 @@ export default function WorkHub() {
           </ul>
         </main>
 
-        <footer className="work-foot glass reveal" data-reveal>
-          <div className="work-foot-l">
-            <h3>Have a number that needs moving?</h3>
-            <p>I take on a small number of product engagements a year. Tell me what’s stuck.</p>
-          </div>
-          <a className="mail" href="mailto:sameerkapildesigns@gmail.com">
-            sameerkapildesigns@gmail.com
-          </a>
-        </footer>
         <SiteFooter />
       </div>
     </>

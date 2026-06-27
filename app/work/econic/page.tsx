@@ -324,11 +324,11 @@ export default function EconicFair() {
 
           {/* NEXT */}
           <nav className="cs-next">
-            <Link href="/work">
-              <span aria-hidden>←</span> All work
-            </Link>
             <Link href="/work/fair-pricing">
-              Next: Fair Pricing — the IP behind it <span aria-hidden>→</span>
+              <span aria-hidden>←</span> Prev: Fair Pricing
+            </Link>
+            <Link href="/work/amodira">
+              Next: Amodira: Sound of the Scent <span aria-hidden>→</span>
             </Link>
           </nav>
         </main>

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import CircularGallery from '@/components/CircularGallery';
+import LinkedInCarousel from '@/components/LinkedInCarousel';
 
 /**
  * The apex of the journey — reached by scrolling UP from the sky. This is the
@@ -55,7 +55,7 @@ const PRINTS: Print[] = [
     w: 'clamp(12rem, 16vw, 15rem)',
     rot: -2.5,
     top: '6%',
-    left: '40%',
+    left: '33%',
     z: 3,
     tape: 'br',
     notePos: 'below',
@@ -81,7 +81,7 @@ const PRINTS: Print[] = [
     w: 'clamp(10rem, 13vw, 12.5rem)',
     rot: 5,
     top: '58%',
-    left: '40%',
+    left: '34%',
     z: 5,
     tape: 'tr',
     notePos: 'below',
@@ -111,19 +111,19 @@ const DOODLES: Doodle[] = [
   { kind: 'star', top: '72%', left: '45%', rot: 12, size: '1.6rem' },
 ];
 
-/* Hidden for now — flip to `true` to bring the Side projects ring back. */
-const SHOW_SIDE_PROJECTS = false;
+/* Flip to `false` to hide the LinkedIn carousel. */
+const SHOW_LINKEDIN = true;
 
-/* The projects ring (CircularGallery). Real screenshots from /public/work.
-   NOTE: these are the shipped case studies (also shown in the work zone). Swap
-   for dedicated side-project shots when available. */
-const SIDE_PROJECTS: { image: string; text: string }[] = [
-  { image: '/work/fair-pricing/widget-v3.png', text: 'Fair Pricing' },
-  { image: '/work/econic/pdp-toggle.png', text: 'Econic' },
-  { image: '/work/amodira/raya-sound.png', text: 'Amodira' },
-  { image: '/work/fair-pricing/widget-v2.png', text: 'Pricing Widget' },
-  { image: '/work/econic/plp-toggle-on.png', text: 'Econic PLP' },
-  { image: '/work/amodira/raya-v1-complex.png', text: 'Raya' },
+/* LinkedIn posts shown in the carousel. `height` is the embed's native height
+   (from the iframe snippet LinkedIn gives you) so each card fits its post
+   exactly — no inner scrollbar. Add more entries as they come in. */
+type LinkedInPost = { src: string; height: number };
+const LINKEDIN_POSTS: LinkedInPost[] = [
+  { src: 'https://www.linkedin.com/embed/feed/update/urn:li:share:7443376111138471937?collapsed=1', height: 670 },
+  { src: 'https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7446922702390738944?collapsed=1', height: 550 }, // trophy
+  { src: 'https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7469722987051630593?collapsed=1', height: 550 },
+  { src: 'https://www.linkedin.com/embed/feed/update/urn:li:share:7389905231989485568?collapsed=1', height: 670 },
+  { src: 'https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7434941930649763840?collapsed=1', height: 874 }, // drawing
 ];
 
 function DoodleSvg({ kind }: { kind: Doodle['kind'] }) {
@@ -175,6 +175,29 @@ export default function SpaceZone() {
         frags.forEach((el) => {
           gsap.set(el, { rotation: Number(el.dataset.rot ?? 0) });
         });
+
+        // the satellite: a slow flyby. It crosses the field left→right, slips
+        // fully out of view, then drifts back the other way (yoyo). A shallow
+        // vertical arc + fixed tilt keep it from reading as a flat conveyor.
+        // The section clips at overflow:hidden, so the wide travel never adds a
+        // scrollbar. Parked at a nice angle when motion is off.
+        const arm = root.current?.querySelector('.sat-arm');
+        const sat = root.current?.querySelector('.sat');
+        if (arm && sat) {
+          if (cond.reduce || !cond.wide) {
+            gsap.set(arm, { x: 0, y: 0 });
+            gsap.set(sat, { rotation: -14 });
+          } else {
+            const reach = window.innerWidth * 0.85;  // far enough to exit both edges
+            gsap.set(sat, { rotation: -14 });
+            gsap.fromTo(
+              arm,
+              { x: -reach, y: 28 },
+              { x: reach, y: -28, duration: 36, ease: 'sine.inOut', repeat: -1, yoyo: true },
+            );
+            gsap.to(sat, { yPercent: 5, duration: 8, ease: 'sine.inOut', repeat: -1, yoyo: true });
+          }
+        }
 
         if (cond.reduce || !cond.wide) {
           gsap.set('.frag', { autoAlpha: 1, scale: 1 });
@@ -236,7 +259,39 @@ export default function SpaceZone() {
 
   return (
     <section id="zone-space" className="zone zone-space" ref={root} aria-labelledby="space-title">
+      {/* LINKEDIN — a draggable rail of embedded posts, sitting ABOVE the
+          scrapbook. Iframes lazy-load as they scroll into view. Hidden via
+          SHOW_LINKEDIN — flip the flag to remove. */}
+      {SHOW_LINKEDIN && (
+        <div className="space-projects" data-reveal>
+          <header className="space-projects-head">
+            <p className="space-eyebrow">
+              <span aria-hidden>&#8627;</span> Out loud, in public
+            </p>
+            <h3 className="display space-projects-title">
+              On <span className="hand-accent">LinkedIn</span>
+            </h3>
+          </header>
+          <div className="space-projects-stage space-projects-stage--li">
+            <LinkedInCarousel posts={LINKEDIN_POSTS} />
+          </div>
+        </div>
+      )}
+
       <div className="scrap">
+        {/* a slow body in high orbit, drifting BEHIND the collage in the
+            exosphere. Decorative; sits below the prints, never takes the pointer. */}
+        <div className="sat-field" aria-hidden>
+          <div className="sat-anchor">
+            <div className="sat-orbit">
+              <div className="sat-arm">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img className="sat" src="/space/satellite.png" alt="" loading="lazy" decoding="async" />
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* hand-drawn red thread that loosely strings the cluster together */}
         <svg className="thread" viewBox="0 0 1000 1400" preserveAspectRatio="none" aria-hidden>
           <path d="M120,120 C300,90 360,300 300,420 C250,520 90,640 150,760 C210,880 520,820 640,900" />
@@ -323,25 +378,6 @@ export default function SpaceZone() {
           </div>
         </div>
       </div>
-
-      {/* SIDE PROJECTS — a curved, draggable ring of personal builds, below the
-          scrapbook. Lazy WebGL: it only spins up once scrolled into view.
-          Hidden via SHOW_SIDE_PROJECTS — flip the flag to restore. */}
-      {SHOW_SIDE_PROJECTS && (
-        <div className="space-projects" data-reveal>
-          <header className="space-projects-head">
-            <p className="space-eyebrow">
-              <span aria-hidden>&#8627;</span> Things I&rsquo;ve built on the side
-            </p>
-            <h3 className="display space-projects-title">
-              Side <span className="hand-accent">projects</span>
-            </h3>
-          </header>
-          <div className="space-projects-stage">
-            <CircularGallery items={SIDE_PROJECTS} bend={3} borderRadius={0.08} scrollEase={0.02} />
-          </div>
-        </div>
-      )}
     </section>
   );
 }

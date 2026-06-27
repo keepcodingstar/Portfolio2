@@ -62,18 +62,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${awesomeSerif.variable} ${caveat.variable}`} suppressHydrationWarning>
-      <body>
+      {/* the pre-paint script below mutates body's className (adds `preloading`)
+          before React hydrates, so suppress the expected attribute mismatch here too */}
+      <body suppressHydrationWarning>
         {/* Run BEFORE the page markup parses. The clouds + loader that cover the
             count, and the rule that hides the nav, are all client-side — they only
             take effect after hydration, so without this the server-rendered site
             (and the bottom nav) flash for a beat on reload. `pl-cover` paints the
             opaque intro cover; `preloading` hides the nav from frame one. Both are
             cleared by <Preloader/> once the React intro has taken over.
-            Cover when the intro will play: a fresh session (no flag) OR a reload
-            (Navigation Timing type), so reloads replay the intro and never flash
-            the bare page first. ONLY the home route mounts a Preloader to clear
-            this — guard on pathname so the other pages aren't left covered. */}
-        <script dangerouslySetInnerHTML={{ __html: "if(location.pathname==='/'){var s=true;try{var p=!!sessionStorage.getItem('intro:played');var n=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];var r=n?n.type==='reload':(performance.navigation&&performance.navigation.type===1);s=!p||r}catch(e){}if(s){document.documentElement.classList.add('pl-cover');document.body.classList.add('preloading')}}" }} />
+            Cover when the intro will play: a visitor's first ever view (no
+            persisted localStorage flag), any hard reload (Navigation Timing
+            type), OR a black-hole replay request (the sessionStorage flag the
+            warp sets before reloading), so the bare page never flashes first.
+            ONLY the home route mounts a Preloader to clear this — guard on
+            pathname so the other pages aren't left covered. */}
+        <script dangerouslySetInnerHTML={{ __html: "if(location.pathname==='/'){var s=true;try{var p=localStorage.getItem('intro:played')==='1';var rp=sessionStorage.getItem('intro:replay')==='1';var n=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];var r=n?n.type==='reload':(performance.navigation&&performance.navigation.type===1);s=!p||rp||r}catch(e){}if(s){document.documentElement.classList.add('pl-cover');document.body.classList.add('preloading')}}" }} />
         {children}
         <script dangerouslySetInnerHTML={{ __html: ANCHOR_SKY }} />
       </body>

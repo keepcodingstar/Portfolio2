@@ -18,21 +18,10 @@
   z-index: -2;
   pointer-events: none;
   background:
-    radial-gradient(120% 78% at 84% -12%, rgba(90, 209, 238, 0.20) 0%, transparent 54%),
-    radial-gradient(96% 64% at 8% 112%, rgba(31, 198, 166, 0.16) 0%, transparent 60%),
+    radial-gradient(120% 78% at 84% -12%, rgba(255, 255, 255, 0.20) 0%, transparent 54%),
+    radial-gradient(96% 64% at 8% 112%, rgba(255, 255, 255, 0.16) 0%, transparent 60%),
     linear-gradient(180deg, #5ea6e3 0%, #84bde9 26%, #abd2ef 52%, #cae3f5 76%, #e2eef8 100%);
 }
-/* a single hairline horizon where the ion wash meets the pale base —
-   the one piece of "weather" left, and the page's quiet signature */
-.work-bg::after {
-  content: "";
-  position: absolute;
-  left: 0; right: 0; top: 62%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(90, 209, 238, 0.5) 22%, rgba(90, 209, 238, 0.5) 78%, transparent);
-  box-shadow: 0 0 22px 1px rgba(43, 182, 214, 0.28);
-}
-
 .work {
   position: relative;
   min-height: 100vh;
@@ -91,10 +80,10 @@
 .work-top-links a:hover { color: var(--ink); background: rgba(255, 255, 255, 0.4); }
 .work-top-links a.cta {
   color: #062430;
-  background: var(--ion);
-  box-shadow: 0 6px 18px -8px rgba(43, 182, 214, 0.9);
+  background: #ffffff;
+  box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.45);
 }
-.work-top-links a.cta:hover { background: var(--ion-glow); }
+.work-top-links a.cta:hover { background: rgba(255, 255, 255, 0.88); }
 
 /* ---- shared page shell ---- */
 .work-main {
@@ -218,7 +207,7 @@ a.proj { cursor: pointer; }
   color: var(--ion-700);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
-  text-shadow: 0 0 22px rgba(43, 182, 214, 0.28);
+  text-shadow: 0 0 22px rgba(255, 255, 255, 0.28);
 }
 .proj-metric .u { color: var(--aurora-teal); }
 .proj-mlabel {
@@ -256,7 +245,7 @@ a.proj { cursor: pointer; }
     box-shadow:
       0 28px 64px -26px rgba(14, 29, 49, 0.55),
       inset 0 1px 0 rgba(255, 255, 255, 0.8),
-      inset 0 0 0 1px rgba(43, 182, 214, 0.22);
+      inset 0 0 0 1px rgba(255, 255, 255, 0.22);
   }
   a.proj:hover .proj-name { color: var(--ion-700); }
   a.proj:hover .proj-go .ar { transform: translateX(4px); }
@@ -283,20 +272,6 @@ a.proj { cursor: pointer; }
   margin: 0;
 }
 .work-foot p { margin: 0.6rem 0 0; font-size: 0.95rem; color: var(--ink-soft); }
-.work-foot a.mail {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.8rem 1.3rem;
-  border-radius: 999px;
-  background: var(--ion);
-  color: #062430;
-  font-weight: 600;
-  font-size: 0.95rem;
-  box-shadow: 0 10px 26px -12px rgba(43, 182, 214, 0.9);
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-.work-foot a.mail:hover { background: var(--ion-glow); transform: translateY(-2px); }
 .work-colophon {
   max-width: var(--maxw);
   margin: clamp(2rem, 4vw, 3rem) auto 0;
@@ -399,7 +374,7 @@ a.proj { cursor: pointer; }
   width: 7px; height: 7px;
   border-radius: 50%;
   background: var(--aurora-teal);
-  box-shadow: 0 0 0 3px rgba(31, 198, 166, 0.2);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
   margin-right: 0.45rem;
 }
 @media (min-width: 880px) {
@@ -430,7 +405,7 @@ a.proj { cursor: pointer; }
   letter-spacing: -0.02em;
   color: var(--ion-700);
   margin-bottom: 0.5rem;
-  text-shadow: 0 0 22px rgba(43, 182, 214, 0.26);
+  text-shadow: 0 0 22px rgba(255, 255, 255, 0.26);
 }
 .cs-stat-label {
   display: block;
@@ -473,7 +448,7 @@ a.proj { cursor: pointer; }
   letter-spacing: -0.02em;
   color: var(--ion-700);
   margin-bottom: 0.6rem;
-  text-shadow: 0 0 22px rgba(43, 182, 214, 0.26);
+  text-shadow: 0 0 22px rgba(255, 255, 255, 0.26);
 }
 .cs-impact-label {
   font-size: 0.9rem;
@@ -539,7 +514,7 @@ a.proj { cursor: pointer; }
   border-radius: var(--r-xl);
   /* full ion hairline instead of the old 3px side-stripe (a banned tell) —
      keeps the frosted-glass language, frames the quote without shouting */
-  border: 1px solid rgba(43, 182, 214, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.32);
 }
 .cs-quote blockquote {
   margin: 0;
@@ -794,107 +769,37 @@ a.proj { cursor: pointer; }
 .w3-total.trad { background: var(--w-red-light); color: var(--w-red); }
 
 /* =================================================================
-   CHECKOUT MOCKUPS — clean neutral product screens, Virgio green
-   accent, scoped under .cs like the widgets. Rebuilt from divs, not
-   screenshots, so they stay crisp at any size.
+   CHECKOUT REAL SCREENS — the shipped designs, exported from Figma.
+   Plain image + soft shadow, no device chrome. The portrait mobile
+   add-address screen is width-capped so it reads phone-scale; the
+   desktop payment screen runs the full width of its card.
    ================================================================= */
-.ck {
-  background: var(--w-white);
-  border-radius: 14px;
-  padding: 1.15rem;
+.cs-real {
+  display: block;
   width: 100%;
-  font-family: var(--sans);
-  color: var(--w-ink);
-  box-shadow: 0 10px 30px -18px rgba(20, 22, 30, 0.4);
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 20px 50px -26px rgba(20, 22, 30, 0.55);
 }
-.ck-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--w-ink);
-  padding-bottom: 0.6rem;
-  border-bottom: 1px solid var(--w-border);
+.cs-real.phone {
+  max-width: 300px;
+  margin-inline: auto;
+  border-radius: 20px;
 }
-.ck-step { font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--w-ink3); font-weight: 500; }
-.ck-addr {
-  border: 1.5px solid var(--w-border);
-  border-radius: 10px;
-  padding: 0.7rem 0.8rem;
+/* two phones side by side (map → form); wraps to a stack when the card narrows */
+.cs-phone-pair {
   display: flex;
-  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: flex-start;
-  transition: border-color 0.2s ease;
+  gap: clamp(1rem, 3vw, 2.2rem);
 }
-.ck-addr.sel { border-color: var(--w-green); background: #f4fbf8; }
-.ck-radio {
-  width: 15px; height: 15px; border-radius: 50%;
-  border: 1.5px solid var(--w-ink3); flex-shrink: 0; margin-top: 2px;
-  display: grid; place-items: center;
+.cs-phone-pair .cs-real.phone {
+  flex: 0 1 270px;
+  max-width: 270px;
+  margin-inline: 0;
 }
-.ck-addr.sel .ck-radio { border-color: var(--w-green); }
-.ck-addr.sel .ck-radio::after {
-  content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--w-green);
-}
-.ck-addr-main { min-width: 0; }
-.ck-addr-name { font-size: 0.78rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; }
-.ck-tag { font-size: 0.54rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--w-green); border: 1px solid #bfe6d6; border-radius: 999px; padding: 0.1rem 0.4rem; }
-.ck-addr-line { font-size: 0.7rem; color: var(--w-ink2); margin-top: 0.2rem; line-height: 1.45; }
-.ck-eta {
-  display: flex; align-items: center; gap: 0.45rem;
-  font-size: 0.68rem; color: var(--w-green); font-weight: 500; margin-top: 0.4rem;
-}
-.ck-eta .ck-spark { width: 6px; height: 6px; border-radius: 50%; background: var(--w-green); box-shadow: 0 0 0 3px rgba(29,158,117,0.16); }
-.ck-map {
-  position: relative; height: 84px; border-radius: 10px; overflow: hidden;
-  background:
-    linear-gradient(0deg, rgba(29,158,117,0.06), rgba(29,158,117,0.06)),
-    repeating-linear-gradient(0deg, #eef1ee 0 1px, transparent 1px 22px),
-    repeating-linear-gradient(90deg, #eef1ee 0 1px, transparent 1px 26px),
-    #f7faf8;
-  border: 1px solid var(--w-border);
-}
-.ck-pin {
-  position: absolute; left: 50%; top: 46%; transform: translate(-50%, -100%);
-  width: 16px; height: 16px; border-radius: 50% 50% 50% 0;
-  background: var(--w-green); rotate: -45deg;
-  box-shadow: 0 4px 10px -3px rgba(29,158,117,0.7);
-}
-.ck-pin::after { content: ""; position: absolute; inset: 4px; background: #fff; border-radius: 50%; }
-.ck-flag {
-  display: flex; gap: 0.5rem; align-items: flex-start;
-  font-size: 0.64rem; line-height: 1.45; color: var(--w-ink2);
-  background: var(--w-off); border-radius: 8px; padding: 0.5rem 0.6rem;
-}
-.ck-flag .dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; background: var(--w-amber); }
-.ck-pay {
-  display: flex; align-items: center; gap: 0.6rem;
-  border: 1.5px solid var(--w-border); border-radius: 10px; padding: 0.6rem 0.75rem;
-  font-size: 0.76rem;
-}
-.ck-pay.first { border-color: var(--w-green); background: #f4fbf8; }
-.ck-pay .ck-pay-ic { width: 22px; height: 22px; border-radius: 6px; background: var(--w-off); display: grid; place-items: center; font-size: 0.7rem; flex-shrink: 0; }
-.ck-pay-main { flex: 1; min-width: 0; }
-.ck-pay-t { font-weight: 500; color: var(--w-ink); }
-.ck-pay-s { font-size: 0.62rem; color: var(--w-ink3); margin-top: 0.1rem; }
-.ck-pay-amt { font-size: 0.74rem; font-weight: 600; color: var(--w-green); }
-.ck-cta {
-  margin-top: 0.3rem; text-align: center;
-  background: var(--w-ink); color: #fff;
-  border-radius: 10px; padding: 0.7rem; font-size: 0.78rem; font-weight: 600;
-}
-.ck-cta.off { background: #e3e3df; color: var(--w-ink3); }
-.ck-explore { display: flex; gap: 0.45rem; margin-bottom: 0.2rem; }
-.ck-chip {
-  font-size: 0.56rem; letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--w-ink3); border: 1px solid var(--w-border); border-radius: 999px;
-  padding: 0.22rem 0.5rem;
-}
-.ck-chip.on { color: var(--w-green); border-color: #bfe6d6; background: #f4fbf8; }
 
 /* =================================================================
    REAL ARTIFACTS — screenshots, framing docs, the award photo shown
@@ -947,7 +852,7 @@ a.proj { cursor: pointer; }
   padding: clamp(1.6rem, 4vw, 2.6rem);
   border-radius: var(--r-xl);
   margin-bottom: clamp(3rem, 7vw, 5rem);
-  border: 1px solid rgba(43, 182, 214, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 @media (min-width: 820px) { .cs-proof { grid-template-columns: 330px 1fr; } }
 .cs-proof-shot { margin: 0; }
@@ -982,7 +887,7 @@ a.proj { cursor: pointer; }
   flex-wrap: wrap;
   margin: clamp(1.4rem, 3vw, 1.9rem) 0 0;
   padding-top: clamp(1.4rem, 3vw, 1.9rem);
-  border-top: 1px solid rgba(43, 182, 214, 0.22);
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
 }
 .cs-proof-metric-num {
   font-family: var(--display);
@@ -991,7 +896,7 @@ a.proj { cursor: pointer; }
   line-height: 1;
   letter-spacing: -0.02em;
   color: var(--ion-700);
-  text-shadow: 0 0 22px rgba(43, 182, 214, 0.26);
+  text-shadow: 0 0 22px rgba(255, 255, 255, 0.26);
 }
 .cs-proof-metric-label {
   font-size: 0.88rem;

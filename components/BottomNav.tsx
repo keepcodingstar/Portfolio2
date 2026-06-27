@@ -15,11 +15,11 @@ import { useAltitude, type ZoneId } from '@/components/AltitudeProvider';
  * on phones.
  */
 
-const STOPS: { id: ZoneId; label: string; sub: string }[] = [
-  { id: 'zone-space', label: 'Space', sub: 'Creative' },
-  { id: 'zone-sky', label: 'Sky', sub: 'You' },
-  { id: 'zone-work', label: 'Work', sub: 'Shipped' },
-  { id: 'zone-ground', label: 'Ground', sub: 'Contact' },
+const STOPS: { id: ZoneId; label: string }[] = [
+  { id: 'zone-space', label: 'About Me' },
+  { id: 'zone-sky', label: 'Home' },
+  { id: 'zone-work', label: 'My Work' },
+  { id: 'zone-ground', label: 'Contact' },
 ];
 
 export default function BottomNav() {
@@ -56,32 +56,9 @@ export default function BottomNav() {
           >
             <span className="nav-dot" aria-hidden />
             <span className="nav-label">{s.label}</span>
-            {/* plain-word meaning, revealed above the dock on hover */}
-            <span className="nav-sub" aria-hidden>
-              {s.sub}
-            </span>
           </button>
         ))}
       </nav>
-
-      <span className="navbar-divider" aria-hidden />
-
-      {/* Route link (not a zone) — the standalone WebGL black-hole page. */}
-      <a className="nav-stop nav-route" href="/black-hole" aria-label="Black hole — WebGL experiment">
-        <span className="nav-dot" aria-hidden />
-        <span className="nav-label">Void</span>
-        <span className="nav-sub" aria-hidden>
-          Shader
-        </span>
-      </a>
-
-      <a
-        className="navbar-cta"
-        href="mailto:sameerkapildesigns@gmail.com"
-        aria-label="Available for work — email Sameer"
-      >
-        <span className="navbar-pulse" aria-hidden />
-      </a>
     </div>
   );
 }

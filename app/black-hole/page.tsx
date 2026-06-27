@@ -11,7 +11,7 @@ export default function BlackHolePage() {
   return (
     <main style={{ height: '100dvh', position: 'relative', overflow: 'hidden', background: '#000' }}>
       <RevealBody />
-      <BlackHoleLaser color="#fff1e6" ringRadius={0.26} thickness={0.05} wispIntensity={7} flowSpeed={0.25} fogIntensity={2} />
+      <BlackHoleLaser color="#f0c886" ringRadius={0.26} thickness={0.05} wispIntensity={7} flowSpeed={0.25} fogIntensity={2} />
 
       <div
         style={{

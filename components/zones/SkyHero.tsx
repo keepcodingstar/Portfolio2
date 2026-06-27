@@ -8,8 +8,7 @@ import { useAltitude } from '@/components/AltitudeProvider';
  * The hinge of the whole site: an editorial THESIS read over a cockpit canopy of
  * live sky. You LAND here, at altitude zero. The fold leads with what Sameer
  * actually does, in a big serif statement whose one hand-written ion word carries
- * the brand voice, and pays it off with two real, verifiable numbers (500K+
- * reached, +2.68% checkout lift) — proof before adjectives.
+ * the brand voice, and pays it off with a glass "View résumé" CTA.
  *
  * The site is BIDIRECTIONAL, so the fold says so on both edges: a glowing ion
  * line runs off the TOP to the creative world and off the BOTTOM to the shipped
@@ -38,7 +37,6 @@ export default function SkyHero() {
         if (ctx.conditions?.reduce) {
           gsap.set('.reveal', { autoAlpha: 1, y: 0 });
           gsap.set('.sky-edge', { autoAlpha: 1 });
-          gsap.set('.fc-line', { autoAlpha: 1, scaleY: 1 });
           gsap.set('.sky-portrait', { autoAlpha: 1 });
           return;
         }
@@ -48,9 +46,6 @@ export default function SkyHero() {
         gsap.set('.sky-edge', { autoAlpha: 0 });
         // portrait fades only (no transform) so it never fights the CSS float
         gsap.set('.sky-portrait', { autoAlpha: 0 });
-        // each edge line collapses, then draws outward to its off-screen stop
-        gsap.set('.fc-line.up', { autoAlpha: 1, scaleY: 0, transformOrigin: 'bottom center' });
-        gsap.set('.fc-line.down', { autoAlpha: 1, scaleY: 0, transformOrigin: 'top center' });
 
         // play AFTER the curtain begins parting; the delay lands the statement as
         // the centre clears (clouds settle to the sides/bottom).
@@ -59,8 +54,7 @@ export default function SkyHero() {
             .timeline({ defaults: { ease: 'power3.out' }, delay: 0.9 })
             .to('.sky-portrait', { autoAlpha: 1, duration: 1.3 }, 0)
             .to('.reveal', { autoAlpha: 1, y: 0, duration: 1, stagger: 0.09 }, 0.15)
-            .to('.fc-line', { scaleY: 1, duration: 0.9, ease: 'power2.inOut' }, 0.55)
-            .to('.sky-edge', { autoAlpha: 1, duration: 0.8 }, '-=0.4');
+            .to('.sky-edge', { autoAlpha: 1, duration: 0.8 }, 0.55);
         };
 
         // if the intro is already gone (remount), play now; else wait for the
@@ -98,7 +92,6 @@ export default function SkyHero() {
         onClick={() => goTo('zone-space')}
         aria-label="Go up to the creative side"
       >
-        <span className="fc-line up" aria-hidden />
         <span className="fc-arrow" aria-hidden>↑</span>
         <span className="fc-dest">The creative side</span>
       </button>
@@ -118,15 +111,16 @@ export default function SkyHero() {
             </span>
           </h1>
 
-          <div className="sky-stats reveal">
-            <div className="sky-stat">
-              <span className="sky-stat-num display">500K+</span>
-              <span className="sky-stat-k">users reached</span>
-            </div>
-            <div className="sky-stat">
-              <span className="sky-stat-num display">+2.68%</span>
-              <span className="sky-stat-k">checkout lift</span>
-            </div>
+          <div className="sky-cta reveal">
+            <a
+              className="sky-resume glass glass--thin"
+              href="https://drive.google.com/file/d/10p_BLhpwUbNwaStiL4AJAZwFRSFM45CA/view?usp=drive_link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="sky-resume-label">View résumé</span>
+              <span className="sky-resume-icon" aria-hidden>↗</span>
+            </a>
           </div>
         </div>
 
@@ -154,11 +148,10 @@ export default function SkyHero() {
         type="button"
         className="sky-edge down"
         onClick={() => goTo('zone-work')}
-        aria-label="Go down to the shipped work"
+        aria-label="Go down to the professional side"
       >
-        <span className="fc-dest">The shipped work</span>
+        <span className="fc-dest">The professional side</span>
         <span className="fc-arrow" aria-hidden>↓</span>
-        <span className="fc-line down" aria-hidden />
       </button>
     </section>
   );

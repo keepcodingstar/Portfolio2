@@ -1,75 +1,89 @@
 'use client';
 
+import { useCallback, useRef, type MouseEvent } from 'react';
 import BlackHoleLaser from '@/components/BlackHoleLaser';
 
 /**
- * The black hole, hosted properly: a full, uncropped stage at the very apex of
- * the journey (the top of the document, reached by scrolling up). It is the
- * backdrop the whole creative world is set against. Sits behind the SPACE
- * content (z-index 0), inert to input; the shader pauses itself off-screen.
+ * The apex section — a dedicated black-hole stage pinned to the very top edge of
+ * the page (above SPACE). The hole bleeds off the top; hazard tape runs clear
+ * across the page barricading it, with a CAUTION sign warning not to approach.
  *
- * The hole is lifted toward the TOP EDGE and tilted 30° anti-clockwise so the
- * accretion disk rakes across the top of the view, with the hero text reading
- * beneath it. A soft radial mask feathers the opaque canvas into the surrounding
- * space so there's no hard rotated-rectangle seam.
- *
- * Below the first screen, a stratosphere descent (black space → deep blue → a
- * cool atmospheric limb) makes falling out of the apex feel like crossing the
- * atmosphere, before it hands off to the global sky-blue crossfade.
+ * Pressing the barricade (ignoring the warning) runs the WebGL warp: the live
+ * viewport is snapshotted and its pixels are swirled + sucked into the hole by a
+ * shader, then it fades to black and reloads — replaying the preloader so the
+ * visitor lands back on the hero. The heavy warp code is loaded on demand.
  */
+
 export default function TopBlackHole() {
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  const onApproach = useCallback(async (_e: MouseEvent<HTMLButtonElement>) => {
+    // converge the warp on the hole's true centre, not the tape we pressed
+    const stage = stageRef.current;
+    const r = stage?.getBoundingClientRect();
+    const cx = r ? r.left + r.width / 2 : window.innerWidth / 2;
+    const cy = r ? r.top + r.height / 2 : 0;
+    const { runWarp } = await import('@/components/blackHoleWarp');
+    runWarp(cx, cy);
+  }, []);
+
   return (
-    <div
-      aria-hidden
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '210vh',
-        overflow: 'hidden',
-        zIndex: 0,
-        pointerEvents: 'none',
-      }}
-    >
-      {/* tilted, top-anchored shader. Centre (the ring) sits near the top edge;
-          rotate(-30deg) rakes the disk; the radial mask feathers the edges. */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '50%',
-          top: '-46vh', // container centre lands at ~14vh → ring near the top edge
-          width: '128vw',
-          height: '120vh',
-          transform: 'translateX(-50%) rotate(-30deg)',
-          transformOrigin: '50% 50%',
-        }}
-      >
+    <section id="zone-blackhole" className="bh-section" aria-label="Apex — black hole">
+      <p className="bh-eyebrow">
+        <span aria-hidden>&#8627;</span> Apex · point of no return
+      </p>
+
+      <div className="bh-stage" ref={stageRef}>
         <BlackHoleLaser
-          color="#fff1e6"
-          ringRadius={0.24}
-          thickness={0.05}
-          wispIntensity={8}
+          color="#f0c886"
+          ringRadius={0.1}
+          thickness={0.022}
+          wispIntensity={10.5}
           flowSpeed={0.22}
           fogIntensity={2.4}
+          zoom={1.15}
         />
       </div>
 
-      {/* dark feather: the canvas dissolves into the unified deep-space gradient
-          below, with no bright atmospheric band of its own. The actual descent
-          into the sky is owned by the altitude crossfade, which now holds this
-          cosmos dark and only resolves to sky-blue late, right at the hinge. */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '100vh',
-          left: 0,
-          width: '100%',
-          height: '110vh',
-          background:
-            'linear-gradient(to bottom, #000005 0%, #01030e 34%, #03091f 64%, rgba(6,17,42,0.55) 86%, transparent 100%)',
-        }}
-      />
-    </div>
+      {/* Scribbled margin note nudging visitors away from the hole, with a
+          hand-drawn arrow curving up toward it. Decorative only. */}
+      <div className="bh-note" aria-hidden>
+        <span className="bh-note__text">don&rsquo;t touch it</span>
+        <svg className="bh-note__arrow" viewBox="0 0 120 90" fill="none" preserveAspectRatio="xMidYMid meet">
+          <path
+            d="M14 84 C 2 52, 22 20, 58 12 C 78 7, 96 12, 110 10"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+          <path
+            d="M110 10 L 97 4 M110 10 L 101 21"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+        </svg>
+      </div>
+
+      {/* Hazard barricade — caution tape stretched edge-to-edge across the page,
+          crossing over the hole. The whole band is the trigger: pressing warps. */}
+      <button
+        type="button"
+        className="bh-caution"
+        onClick={onApproach}
+        aria-label="Caution — do not approach the black hole"
+      >
+        <span className="bh-tape bh-tape--a" aria-hidden>
+          <span className="bh-tape__text">
+            caution · do not approach · caution · do not approach · caution · do not approach · caution · do not approach ·
+          </span>
+        </span>
+        <span className="bh-tape bh-tape--b" aria-hidden>
+          <span className="bh-tape__text">
+            danger · event horizon · danger · event horizon · danger · event horizon · danger · event horizon ·
+          </span>
+        </span>
+      </button>
+    </section>
   );
 }

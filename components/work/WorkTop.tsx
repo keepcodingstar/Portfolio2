@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 
 type NavLink = { href: string; label: string; cta?: boolean };
@@ -5,6 +7,7 @@ type NavLink = { href: string; label: string; cta?: boolean };
 /**
  * The floating glass top bar shared by every /work page: a back affordance on
  * the left, light links on the right, all riding the frosted `.glass` material.
+ * The cta link (Contact) smooth-scrolls to the footer at the bottom of the page.
  */
 export default function WorkTop({
   back,
@@ -21,11 +24,28 @@ export default function WorkTop({
           {back.label}
         </Link>
         <nav className="work-top-links">
-          {links.map((l) => (
-            <Link key={l.href + l.label} href={l.href} className={l.cta ? 'cta' : undefined}>
-              {l.label}
-            </Link>
-          ))}
+          {links.map((l) =>
+            l.cta ? (
+              <a
+                key={l.href + l.label}
+                href={l.href}
+                className="cta"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.scrollTo({
+                    top: document.documentElement.scrollHeight,
+                    behavior: 'smooth',
+                  });
+                }}
+              >
+                {l.label}
+              </a>
+            ) : (
+              <Link key={l.href + l.label} href={l.href}>
+                {l.label}
+              </Link>
+            ),
+          )}
         </nav>
       </div>
     </header>

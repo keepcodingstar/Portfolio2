@@ -32,13 +32,14 @@ uniform float uFlowTime;
 uniform float uFogTime;
 uniform float uRingRadius;     // ring radius, fraction of screen height
 uniform float uThickness;      // ring band thickness
+uniform float uZoom;           // camera focal length — lower = wider FOV = smaller subject
 uniform float uWispIntensity;  // overall brightness of the light
 uniform float uFlowSpeed;      // how fast the wisps travel around the ring
 uniform float uFogIntensity;   // soft glow/haze around the ring
 
 #define PI 3.14159265359
 #define TWO_PI 6.28318530718
-#define FOG_OCTAVES 5
+#define FOG_OCTAVES 4
 
 // --- LaserFlow building blocks (reused) ---
 float g(float x){ return x<=0.00031308 ? 12.92*x : 1.055*pow(x,1.0/2.4)-0.055; }
@@ -71,30 +72,37 @@ vec3 diskColor(vec3 hit, vec3 ro, float flow){
 
   // tangential streaks: high angular frequency, low radial -> stretched wisps
   float a   = ang/TWO_PI;
-  // long tangential filaments: lower angular freq than before (smoother, less
-  // dotty) but keep the contrast that made the disk read brightly.
+  // Long tangential filaments. Threshold the noise with smoothstep so the
+  // troughs fall to pure black: that opens visible dark gaps *between* the
+  // light streaks (the separated-rays look of the Gargantua disk) instead of
+  // smearing everything into one solid glowing band.
   float n1  = fbm2(vec2(a*18.0 - flow,       rr*0.9 + flow*0.2));
   float n2  = fbm2(vec2(a*40.0 + 5.0 - flow*0.7, rr*0.6));
-  float fil = pow(max(n1,0.0),2.0)*1.0 + pow(max(n2,0.0),2.8)*0.55;
+  float fil = smoothstep(0.34, 0.92, n1) + 0.45 * smoothstep(0.50, 1.0, n2);
 
   float heat = pow(1.0 - t, 2.0);                               // hottest inside
   float edge = smoothstep(0.0, 0.08, t) * (1.0 - smoothstep(0.74, 1.0, t));
-  float bright = edge * (0.07 + 1.3*fil) * (0.4 + 2.3*heat);
+  // Near-zero floor so the inter-streak gaps stay genuinely dark; the filament
+  // gain carries the brightness instead of a constant fill.
+  float bright = edge * (0.015 + 1.6*fil) * (0.4 + 2.3*heat);
 
-  vec3 hot  = vec3(1.30, 1.18, 1.02);
+  // Interstellar/Gargantua palette: white-hot inner, warm amber-gold mid,
+  // dusty brown outer rim.
+  vec3 hot  = vec3(1.35, 1.22, 1.05);
   vec3 mid  = uColor;
-  vec3 cool = uColor * vec3(0.55, 0.22, 0.10);
+  vec3 cool = uColor * vec3(0.46, 0.30, 0.16);
   vec3 col  = mix(hot, mid,  smoothstep(0.0, 0.28, t));
   col       = mix(col, cool, smoothstep(0.42, 1.0, t));
 
   // relativistic Doppler beaming — orbital velocity tangential to the ring,
-  // faster toward the inner edge; the approaching side brightens and blue-shifts.
+  // faster toward the inner edge. Nolan dialed the blue-shift right down to keep
+  // the disk reading gold, so we only beam the brightness, barely the hue.
   vec3  vdir  = normalize(vec3(-hit.z, 0.0, hit.x));
   vec3  toCam = normalize(ro - hit);
   float beta  = 0.46 * sqrt(DISK_IN/max(rr, DISK_IN));
   float mu    = dot(vdir, toCam);
   col *= pow(1.0/(1.0 - beta*mu), 3.2);
-  col += col * vec3(0.08,0.14,0.30) * max(mu, 0.0);   // blue-shift approaching side
+  col += col * vec3(0.03,0.05,0.10) * max(mu, 0.0);   // faint blue-shift, approaching side
 
   return col * bright;
 }
@@ -106,13 +114,13 @@ void main(){
   float flow = uFlowTime * uFlowSpeed;
 
   // camera: near edge-on, looking at the hole (smaller elev = more edge-on)
-  float elev = 0.22;
+  float elev = 0.17;
   float D    = 23.0;
   vec3 ro  = vec3(0.0, sin(elev)*D, -cos(elev)*D);
   vec3 fwd = normalize(-ro);
   vec3 rgt = normalize(cross(fwd, vec3(0.0,1.0,0.0)));
   vec3 up  = cross(rgt, fwd);
-  vec3 rd  = normalize(fwd*2.7 + uv.x*rgt + uv.y*up);
+  vec3 rd  = normalize(fwd*uZoom + uv.x*rgt + uv.y*up);
 
   // integrate a light ray, bending it around the hole (GR geodesic term).
   vec3 pos = ro;
@@ -123,6 +131,7 @@ void main(){
 
   vec3 disk = vec3(0.0);
   float captured = 0.0;
+  float rmin = 1e9;                               // closest approach to the hole
 
   for(int i=0;i<STEPS;++i){
     float r2  = dot(pos, pos);
@@ -132,6 +141,7 @@ void main(){
     pos += dir*dt;
 
     float r = length(pos);
+    rmin = min(rmin, r);
     if(r < RS){ captured = 1.0; break; }          // swallowed by the hole
 
     // disk-plane crossing -> emissive gas (multiple crossings = lensed arcs)
@@ -147,15 +157,25 @@ void main(){
 
   vec3 col = disk;
 
+  // Photon ring: light that grazed the photon sphere (~1.5 RS) and escaped wraps
+  // the shadow in a thin, hot halo — the bright rim hugging the black sphere and
+  // arcing over its top, the signature of the Gargantua look.
+  // Narrow window -> a thin photon rim that hugs the shadow instead of a wide
+  // halo blooming over it, so the dark event horizon reads as a prominent
+  // circle (and stays visible behind the bottom of the ring).
+  float photon = (captured > 0.5) ? 0.0 : (1.0 - smoothstep(0.0, 0.28, abs(rmin - 1.5)));
+  col += vec3(1.20, 1.08, 0.96) * photon * photon * 3.0;
+
   col *= uWispIntensity * 0.105;
   col  = vec3(g(col.r), g(col.g), g(col.b));
   col *= uFade;
 
-  // alpha = luminous coverage: black space stays transparent (stars show
-  // through, no opaque box), the disk + its falloff glow composites over the
-  // page. uFogIntensity now widens that glow's reach into the surrounding space.
+  // alpha: the disk + photon-ring glow composite over the page, and the captured
+  // shadow renders as a SOLID black sphere (opaque, no stars showing through) so
+  // the event horizon reads like the Interstellar still.
   float lum = max(col.r, max(col.g, col.b));
-  float a   = clamp(lum * (0.85 + 0.6 * uFogIntensity), 0.0, 1.0);
+  float aGlow = clamp(lum * (0.85 + 0.6 * uFogIntensity), 0.0, 1.0);
+  float a   = clamp(max(aGlow, captured * uFade), 0.0, 1.0);
   gl_FragColor = vec4(col, a);
 }
 `;
@@ -176,6 +196,8 @@ export interface BlackHoleLaserProps {
   flowSpeed?: number;
   /** Soft glow/haze around the ring. */
   fogIntensity?: number;
+  /** Camera focal length — lower zooms out (smaller hole + more margin). Default 2.7. */
+  zoom?: number;
 }
 
 const hexToVec3 = (hex: string): [number, number, number] => {
@@ -196,11 +218,11 @@ export const BlackHoleLaser = ({
   wispIntensity = 5.0,
   flowSpeed = 1.0,
   fogIntensity = 1.0,
+  zoom = 2.7,
 }: BlackHoleLaserProps) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const uniformsRef = useRef<Record<string, THREE.IUniform> | null>(null);
-  const currentDprRef = useRef(1);
-  const baseDprRef = useRef(1);
+  const dprRef = useRef(1);
   const pausedRef = useRef(false);
   const inViewRef = useRef(true);
 
@@ -218,9 +240,11 @@ export const BlackHoleLaser = ({
       stencil: false,
       powerPreference: 'high-performance',
     });
-    baseDprRef.current = Math.min(dpr ?? (window.devicePixelRatio || 1), 2);
-    currentDprRef.current = baseDprRef.current;
-    renderer.setPixelRatio(currentDprRef.current);
+    // Fixed pixel ratio, chosen once. We deliberately do NOT scale this at
+    // runtime: reallocating the backing store flashes the canvas for a frame,
+    // and a settling up/down ramp reads as repeated startup flicker.
+    dprRef.current = Math.min(dpr ?? (window.devicePixelRatio || 1), 1.75);
+    renderer.setPixelRatio(dprRef.current);
     renderer.setClearColor(0x000000, 0);
     const canvas = renderer.domElement;
     canvas.style.width = '100%';
@@ -246,6 +270,7 @@ export const BlackHoleLaser = ({
       uWispIntensity: { value: wispIntensity },
       uFlowSpeed: { value: flowSpeed },
       uFogIntensity: { value: fogIntensity },
+      uZoom: { value: zoom },
     };
     uniformsRef.current = uniforms;
 
@@ -263,7 +288,7 @@ export const BlackHoleLaser = ({
     const setSize = () => {
       const w = mount.clientWidth || 1;
       const h = mount.clientHeight || 1;
-      const pr = currentDprRef.current;
+      const pr = dprRef.current;
       renderer.setPixelRatio(pr);
       renderer.setSize(w, h, false);
       uniforms.iResolution.value.set(w * pr, h * pr, pr);
@@ -289,20 +314,26 @@ export const BlackHoleLaser = ({
     document.addEventListener('visibilitychange', onVis, { passive: true });
 
     const clock = new THREE.Clock();
-    let frameMs: number[] = [];
-    let lastCheck = performance.now();
-    let lastChange = 0;
     let fade = 1;
     let raf = 0;
+    // The disk is a slow ambient swirl, so re-raymarching it at the full display
+    // rate is wasted work. Cap the heavy shader at ~30fps: real elapsed time still
+    // drives the motion (so its speed is unchanged) — we just draw half as many
+    // frames, roughly halving GPU cost with no visible change at this flow speed.
+    // Scrolling stays smooth regardless; the compositor moves the last frame.
+    const minFrameMs = 1000 / 30;
+    let lastDraw = -Infinity;
 
-    const animate = () => {
+    const animate = (now: number) => {
       raf = requestAnimationFrame(animate);
       if (pausedRef.current || !inViewRef.current) return;
+      if (now - lastDraw < minFrameMs) return;
+      lastDraw = now;
 
       const dt = clock.getDelta();
       uniforms.iTime.value = clock.elapsedTime;
 
-      const cdt = Math.min(0.033, Math.max(0.001, dt));
+      const cdt = Math.min(0.05, Math.max(0.001, dt));
       if (!reduceMotion) {
         uniforms.uFlowTime.value += cdt;
         uniforms.uFogTime.value += cdt;
@@ -311,27 +342,8 @@ export const BlackHoleLaser = ({
       uniforms.uFade.value = fade;
 
       renderer.render(scene, camera);
-
-      frameMs.push(dt * 1000);
-      const now = performance.now();
-      if (now - lastCheck > 800 && frameMs.length > 0) {
-        const avg = frameMs.reduce((a, b) => a + b, 0) / frameMs.length;
-        const fps = 1000 / Math.max(1, avg);
-        const cur = currentDprRef.current;
-        const base = baseDprRef.current;
-        let next = cur;
-        if (fps < 50) next = Math.max(0.6, cur * 0.85);
-        else if (fps > 58 && cur < base) next = Math.min(base, cur * 1.1);
-        if (Math.abs(next - cur) > 0.01 && now - lastChange > 2000) {
-          currentDprRef.current = next;
-          lastChange = now;
-          setSize();
-        }
-        frameMs = [];
-        lastCheck = now;
-      }
     };
-    animate();
+    raf = requestAnimationFrame(animate);
 
     return () => {
       cancelAnimationFrame(raf);
@@ -358,7 +370,8 @@ export const BlackHoleLaser = ({
     u.uWispIntensity.value = wispIntensity;
     u.uFlowSpeed.value = flowSpeed;
     u.uFogIntensity.value = fogIntensity;
-  }, [color, ringRadius, thickness, wispIntensity, flowSpeed, fogIntensity]);
+    u.uZoom.value = zoom;
+  }, [color, ringRadius, thickness, wispIntensity, flowSpeed, fogIntensity, zoom]);
 
   return (
     <div
