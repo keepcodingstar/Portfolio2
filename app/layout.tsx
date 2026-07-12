@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { Caveat } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
 /**
@@ -79,6 +80,7 @@ export default function RootLayout({
             pathname so the other pages aren't left covered. */}
         <script dangerouslySetInnerHTML={{ __html: "if(location.pathname==='/'){var s=true;try{var p=localStorage.getItem('intro:played')==='1';var rp=sessionStorage.getItem('intro:replay')==='1';var n=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];var r=n?n.type==='reload':(performance.navigation&&performance.navigation.type===1);s=!p||rp||r}catch(e){}if(s){document.documentElement.classList.add('pl-cover');document.body.classList.add('preloading')}}" }} />
         {children}
+        <Analytics />
         <script dangerouslySetInnerHTML={{ __html: ANCHOR_SKY }} />
       </body>
     </html>
