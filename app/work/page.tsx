@@ -40,6 +40,17 @@ const PROJECTS: Project[] = [
     label: 'conversion',
   },
   {
+    slug: 'amodira',
+    href: '/work/amodira',
+    name: 'Amodira: Sound of the Scent',
+    context:
+      'A 0→1 perfume brand for Virgio. Invented a way to sell a scent online — an original song per fragrance whose layers mirror its notes, so you feel the perfume before you smell it.',
+    tags: ['Virgio', 'Brand 0→1', 'Fragrance', '2025'],
+    metric: '7',
+    unit: '×',
+    label: 'revenue · Econic sale',
+  },
+  {
     slug: 'fair-pricing',
     href: '/work/fair-pricing',
     name: 'Fair Pricing',
@@ -60,17 +71,6 @@ const PROJECTS: Project[] = [
     metric: '50',
     unit: '×',
     label: 'revenue · Eco-nic Fair days',
-  },
-  {
-    slug: 'amodira',
-    href: '/work/amodira',
-    name: 'Amodira: Sound of the Scent',
-    context:
-      'A 0→1 perfume brand for Virgio. Invented a way to sell a scent online — an original song per fragrance whose layers mirror its notes, so you feel the perfume before you smell it.',
-    tags: ['Virgio', 'Brand 0→1', 'Fragrance', '2025'],
-    metric: '7',
-    unit: '×',
-    label: 'revenue · Econic sale',
   },
 ];
 

@@ -301,11 +301,11 @@ export default function CheckoutCase() {
 
           {/* NEXT */}
           <nav className="cs-next">
-            <Link href="/work/amodira">
-              <span aria-hidden>←</span> Prev: Amodira: Sound of the Scent
+            <Link href="/work/econic">
+              <span aria-hidden>←</span> Prev: Econic 2025
             </Link>
-            <Link href="/work/fair-pricing">
-              Next: Fair Pricing <span aria-hidden>→</span>
+            <Link href="/work/amodira">
+              Next: Amodira: Sound of the Scent <span aria-hidden>→</span>
             </Link>
           </nav>
         </main>

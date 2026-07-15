@@ -100,6 +100,9 @@ html {
   -webkit-text-size-adjust: 100%;
   /* always reserve the scrollbar's space so it can't shift the layout */
   scrollbar-gutter: stable;
+  /* Stop any horizontal bleed (e.g. the black hole's oversized WebGL stage)
+     from producing sideways page scroll. Vertical scroll is untouched. */
+  overflow-x: clip;
   /* MAGNET: a gentle scroll-snap on the document scroller. `proximity` (not
      `mandatory`) means it only pulls when you're already near a snap point and
      never traps you mid-scroll — only the hero opts in (.sky-hero below), so the
@@ -126,7 +129,13 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: visible;
+  /* Horizontal lock, part two: html clips too (above), but iOS Safari only
+     reliably stops touch-panning sideways when BOTH roots clip. `clip` (not
+     `hidden`) so body never becomes a scroll container — hidden would coerce
+     overflow-y to auto and break the sticky card deck + the html scroll-snap.
+     overflow-y stays visible: clip+visible is the one mix the spec allows. */
+  overflow-x: clip;
+  overflow-y: visible;
   /* No opacity fade-in: the inline pre-paint script (app/layout.tsx) anchors the
      scroll to the sky BEFORE the first paint, so there's no mid-page jump to
      mask. The page renders already on the sky — no black-to-content reveal. */
@@ -833,7 +842,6 @@ body.preloading .zone-space { overflow-y: clip; }
    SKY HERO — the hinge: you land here
    ================================================================= */
 .sky-hero {
-  overflow: hidden;
   /* the magnet's only snap point — its centre pulls to the viewport centre, so
      the page softly settles on the hero as you scroll past it (see the
      scroll-snap-type on html). scroll-margin keeps the snap target at the true
@@ -847,11 +855,13 @@ body.preloading .zone-space { overflow-y: clip; }
 /* The hero sits ABOVE the cloud layer (CloudField is fixed at z-index 40): the
    type floats over the live clouds rather than peering through a hole in them.
    Padding keeps the fold clear of the right-edge altimeter rail.
-   overflow: clip clips both axes WITHOUT making the hero a scroll container —
-   sprites (portrait + cloud bank) can overhang for a soft feather, but they
-   never push page scroll or leak into the adjacent zones. */
+   overflow-x: clip stops horizontal sprite bleed from pushing scroll, while
+   overflow-y: visible lets the portrait + cloud bank feather naturally past
+   the top/bottom edges — otherwise the sprite bounding boxes cut a hard
+   rectangle through the cloud shapes at the seams to the neighboring zones. */
 .sky-hero {
-  overflow: clip;
+  overflow-x: clip;
+  overflow-y: visible;
   padding: clamp(4.4rem, 11vh, 6.4rem) clamp(5rem, 10vw, 8.5rem) clamp(3.6rem, 9vh, 5rem);
 }
 
@@ -1179,8 +1189,8 @@ body.preloading .zone-space { overflow-y: clip; }
   font: inherit; cursor: pointer; color: var(--ink);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.sky-edge.up { top: clamp(7.5rem, 20vh, 12rem); transform: translateX(-50%); }
-.sky-edge.down { bottom: clamp(6.5rem, 18vh, 11rem); transform: translateX(-50%); }
+.sky-edge.up { top: clamp(2.5rem, 6vh, 4.5rem); transform: translateX(-50%); }
+.sky-edge.down { bottom: clamp(2rem, 5vh, 4rem); transform: translateX(-50%); }
 .sky-edge.up:hover { transform: translateX(-50%) translateY(-3px); }
 .sky-edge.down:hover { transform: translateX(-50%) translateY(3px); }
 .sky-edge:active { transform: translateX(-50%) scale(0.98); }
@@ -1195,7 +1205,7 @@ body.preloading .zone-space { overflow-y: clip; }
    set in the brand serif. */
 .fc-dest {
   font-family: var(--display); font-size: 1rem; line-height: 1; letter-spacing: 0.01em;
-  color: var(--ink); text-shadow: 0 1px 12px rgba(255, 255, 255, 0.7);
+  color: var(--ink);
 }
 .sky-edge { gap: 0.4rem; }
 @keyframes bob {
@@ -1591,7 +1601,7 @@ body.preloading .zone-space { overflow-y: clip; }
    figure's head, reading as a quiet maker's signature over the scene. */
 .footer-mark {
   position: absolute; z-index: 2;
-  left: 0; right: 0; top: clamp(7rem, 24vh, 16rem);
+  left: 0; right: 0; top: clamp(5rem, 16vh, 11rem);
   display: flex; justify-content: center;
   pointer-events: none;
 }
@@ -1616,7 +1626,7 @@ body.preloading .zone-space { overflow-y: clip; }
    footer zone (not vh) so it lands consistently across mobile browsers /
    Windows / Mac regardless of viewport chrome. */
 @media (max-width: 640px) {
-  .footer-mark { top: clamp(11rem, 36%, 20rem); }
+  .footer-mark { top: clamp(8rem, 28%, 15rem); }
 }
 
 /* =================================================================
@@ -1877,9 +1887,10 @@ body.altitude-ready [data-reveal].in { opacity: 1; transform: none; }
   position: relative;
   width: 100%;
   min-height: clamp(26rem, 58vh, 46rem);
-  overflow-x: clip;       /* clip the edge-to-edge hazard tape so it can't push
-                             horizontal page scroll; vertical bleed stays visible */
-  overflow-y: visible;
+  /* Do NOT clip horizontally — the accretion disk needs to bleed past the
+     section edges to render whole on narrow (mobile) canvases. Horizontal page
+     scroll is instead stopped at the document root (html { overflow-x: clip }). */
+  overflow: visible;
   isolation: isolate;
   z-index: 1;
 }
@@ -2058,12 +2069,19 @@ body.altitude-ready [data-reveal].in { opacity: 1; transform: none; }
 .bh-tape,
 .bh-caution__sign { transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease; }
 
-/* PHONES — the hole rendered at desktop scale is bigger than the viewport and
-   gets clipped. The ring scales with canvas height (BlackHoleLaser normalises uv
-   by iResolution.y), so a shorter stage = a smaller hole. The barricade then
-   drops below the hole's lower arc instead of cutting across it. */
-@media (max-width: 760px) {
+/* PHONES + TABLETS — the hole rendered at desktop scale is bigger than the
+   viewport and gets clipped. The ring scales with canvas height (BlackHoleLaser
+   normalises uv by iResolution.y), so a shorter stage = a smaller hole. The
+   barricade then drops below the hole's lower arc instead of cutting across
+   it. Applied up to 1024px so tablet-portrait / small-landscape sizes get the
+   same treatment as phones — desktop scale only kicks in above that. */
+@media (max-width: 1024px) {
   .bh-stage {
+    /* the ring's size is proportional to canvas HEIGHT (shader normalises uv
+       by iResolution.y). On tall narrow canvases the ring is wider than the
+       viewport and gets cropped by the canvas edge; widen the stage past
+       100vw so the disk renders whole. Page scroll is clipped at html. */
+    width: max(100vw, 46rem);
     height: clamp(26rem, 60vh, 38rem);
     transform: translate(-50%, -30%) rotate(-12deg);
   }

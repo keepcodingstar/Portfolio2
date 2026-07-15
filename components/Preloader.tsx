@@ -7,28 +7,28 @@ import Odometer from '@/components/Odometer';
 // to useEffect during SSR where layout effects can't run.
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
-// The intro plays exactly once — on a visitor's very first ever view of the site.
-// The flag lives in localStorage so it persists across sessions and reloads; once
-// set, ordinary loads/reloads never replay the count.
-const PLAYED_KEY = 'intro:played';
+// The intro comes in two paces:
+//   FULL  — the slow ceremonial 0→100 count. Reserved for the black-hole warp,
+//           which asks for it via the one-shot sessionStorage flag below.
+//   QUICK — the same count time-scaled to ~1.5s. Plays on every ordinary
+//           document load of the homepage (first visit, hard reload, bookmark),
+//           so the page never pops in raw but loading never feels like a toll.
+// In-session SPA returns to the homepage play NOTHING — the `pl-cover` class
+// (added once per document load by layout.tsx's pre-paint script) is the marker
+// that an intro is owed; once it's gone, remounts skip.
 
-// The black-hole warp asks for a one-shot replay by setting this before it reloads
-// (see blackHoleWarp.ts). It lives in sessionStorage so it survives the reload, and
-// the preloader consumes it on read so the replay happens exactly once.
+// The black-hole warp asks for a one-shot full replay by setting this before it
+// reloads (see blackHoleWarp.ts). It lives in sessionStorage so it survives the
+// reload, and the preloader consumes it on read so the replay happens exactly once.
 const REPLAY_KEY = 'intro:replay';
 
-// A hard reload (F5 / Cmd-R) replays the intro even for a returning visitor.
-// Navigation Timing L2 reports the type; fall back to the deprecated
-// PerformanceNavigation for older engines.
-function isReload(): boolean {
-  try {
-    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
-    if (nav) return nav.type === 'reload';
-    return (performance as unknown as { navigation?: { type: number } }).navigation?.type === 1;
-  } catch {
-    return false;
-  }
-}
+// The replay flag is consumed exactly once per document; cache the result at
+// module scope so React StrictMode's dev double-mount (which re-runs the effect)
+// re-reads the same answer instead of finding the flag already gone.
+let replayConsumed: boolean | null = null;
+
+// How much faster the QUICK count runs than the FULL one.
+const QUICK_SPEED = 1.15;
 
 /**
  * Intro only — the number counting 0 → 100 over a faint haze, with the page's
@@ -44,7 +44,15 @@ const REVEAL_MS = 700; // number + haze lift away, then the layer unmounts
 
 /** The loader number is an <Odometer /> rolling 0 → 100. A safety timeout
  *  guarantees the intro proceeds even if the odometer's completion never fires. */
-function Counter({ onDone }: { onDone: () => void }) {
+function Counter({
+  onDone,
+  speed,
+  timeoutMs,
+}: {
+  onDone: () => void;
+  speed: number;
+  timeoutMs: number;
+}) {
   const done = useRef(false);
   const finish = useCallback(() => {
     if (done.current) return;
@@ -53,13 +61,13 @@ function Counter({ onDone }: { onDone: () => void }) {
   }, [onDone]);
 
   useEffect(() => {
-    const id = window.setTimeout(finish, 6000);
+    const id = window.setTimeout(finish, timeoutMs);
     return () => clearTimeout(id);
-  }, [finish]);
+  }, [finish, timeoutMs]);
 
   return (
     <div className="loader-num" aria-label="Loading">
-      <Odometer steps={[0, 15, 52, 99]} jitter={5} onDone={finish} />
+      <Odometer steps={[0, 15, 52, 99]} jitter={5} speed={speed} onDone={finish} />
       <i>%</i>
     </div>
   );
@@ -67,23 +75,26 @@ function Counter({ onDone }: { onDone: () => void }) {
 
 export default function Preloader() {
   const [phase, setPhase] = useState<'count' | 'reveal' | 'done'>('count');
+  const [mode, setMode] = useState<'full' | 'quick'>('quick');
 
   useIsomorphicLayoutEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let played = false;
-    let replay = false;
-    try {
-      played = localStorage.getItem(PLAYED_KEY) === '1';
-    } catch {}
-    try {
-      replay = sessionStorage.getItem(REPLAY_KEY) === '1';
-      if (replay) sessionStorage.removeItem(REPLAY_KEY); // one-shot: consume on read
-    } catch {}
+    if (replayConsumed === null) {
+      let replay = false;
+      try {
+        replay = sessionStorage.getItem(REPLAY_KEY) === '1';
+        if (replay) sessionStorage.removeItem(REPLAY_KEY); // one-shot: consume on read
+      } catch {}
+      replayConsumed = replay;
+    }
 
-    // Play on the very first ever visit, on any hard reload, or when the
-    // black-hole warp asked for a replay. Only an in-session SPA navigation back
-    // to the homepage (no document reload, already played) skips.
-    const shouldPlay = !reduced && (!played || replay || isReload());
+    // Play only once per real document load: FULL when the black-hole warp asked
+    // for it, QUICK on any other load. `html.pl-cover` is the once-per-document
+    // marker — the pre-paint script in layout.tsx adds it on every document load
+    // of the homepage, and this component removes it when the intro clears. So an
+    // in-session SPA navigation back to the homepage (Preloader remounts, same
+    // document, cover long gone) skips entirely — as does reduced motion.
+    const shouldPlay = !reduced && document.documentElement.classList.contains('pl-cover');
 
     // Skipping: drop the cover so the nav, clouds and hero all render at rest.
     // CloudField/SkyHero read the absence of `preloading` and appear immediately,
@@ -95,11 +106,7 @@ export default function Preloader() {
       return;
     }
 
-    // Remember the intro as seen for all future visits — set now (before the count
-    // even finishes) so navigating away mid-intro still counts as played.
-    try {
-      localStorage.setItem(PLAYED_KEY, '1');
-    } catch {}
+    setMode(replayConsumed ? 'full' : 'quick');
 
     // Mark the document as "preloading" so chrome that lives ABOVE the intro
     // (the side-nav) can stay hidden until the loader clears. Added here, before
@@ -179,7 +186,11 @@ export default function Preloader() {
         <>
           <div className={`pl-sky${phase === 'reveal' ? ' hide' : ''}`} aria-hidden />
           <div className={`loader-core${phase === 'reveal' ? ' hide' : ''}`}>
-            <Counter onDone={handleCountDone} />
+            <Counter
+              onDone={handleCountDone}
+              speed={mode === 'quick' ? QUICK_SPEED : 0.5}
+              timeoutMs={mode === 'quick' ? 5000 : 12000}
+            />
           </div>
         </>
       )}

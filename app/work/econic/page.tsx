@@ -327,8 +327,8 @@ export default function EconicFair() {
             <Link href="/work/fair-pricing">
               <span aria-hidden>←</span> Prev: Fair Pricing
             </Link>
-            <Link href="/work/amodira">
-              Next: Amodira: Sound of the Scent <span aria-hidden>→</span>
+            <Link href="/work/checkout">
+              Next: Checkout, off Shopify <span aria-hidden>→</span>
             </Link>
           </nav>
         </main>

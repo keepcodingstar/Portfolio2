@@ -27,11 +27,12 @@ const HOLD = 0.2; // beat held on each checkpoint
 const LEAD = 0.35; // beat before the first wheels turn
 const TAIL = 0.36; // beat the final reading sits before handing off
 
-type Props = { steps?: number[]; jitter?: number; onDone?: () => void };
+type Props = { steps?: number[]; jitter?: number; speed?: number; onDone?: () => void };
 
 export default function Odometer({
   steps = [0, 15, 52, 87, 99],
   jitter = 0,
+  speed = 1,
   onDone,
 }: Props) {
   const wrapRef = useRef<HTMLSpanElement>(null);
@@ -109,10 +110,11 @@ export default function Odometer({
             { scale: 1, duration: 0.5, ease: 'back.out(2.4)' },
           );
         }
-        const id = window.setTimeout(() => onDone?.(), TAIL * 1000);
+        const id = window.setTimeout(() => onDone?.(), (TAIL * 1000) / speed);
         cleanups.push(() => clearTimeout(id));
       },
     });
+    tl.timeScale(speed);
     cleanups.push(() => tl.kill());
 
     let at = LEAD;
@@ -136,7 +138,7 @@ export default function Odometer({
 
     return () => cleanups.forEach((fn) => fn());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sig, digits, jitter, onDone]);
+  }, [sig, digits, jitter, speed, onDone]);
 
   return (
     <span className="odo" ref={wrapRef} aria-hidden>

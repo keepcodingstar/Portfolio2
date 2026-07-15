@@ -326,11 +326,11 @@ export default function Amodira() {
 
           {/* NEXT */}
           <nav className="cs-next">
-            <Link href="/work/econic">
-              <span aria-hidden>←</span> Prev: Econic 2025
-            </Link>
             <Link href="/work/checkout">
-              Next: Checkout, off Shopify <span aria-hidden>→</span>
+              <span aria-hidden>←</span> Prev: Checkout, off Shopify
+            </Link>
+            <Link href="/work/fair-pricing">
+              Next: Fair Pricing <span aria-hidden>→</span>
             </Link>
           </nav>
         </main>

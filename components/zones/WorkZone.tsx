@@ -37,6 +37,14 @@ const CASES: Case[] = [
     img: { src: '/work/checkout/thumb.jpg', alt: 'Virgio in-house checkout — payment, map address pin, and add-address screens' },
   },
   {
+    name: 'Amodira: Sound of the Scent',
+    context:
+      'A 0→1 perfume brand for Virgio. An original song per fragrance whose layers mirror its notes — you hear the perfume before you smell it.',
+    meta: 'Brand 0→1 · Virgio',
+    href: '/work/amodira',
+    img: { src: '/work/amodira/thumb.jpg', alt: 'Amodira fragrance with its sound layers' },
+  },
+  {
     name: 'Fair Pricing',
     context:
       'A price-transparency widget shipped on day one that went viral, won best e-commerce feature, and became registered company IP.',
@@ -51,14 +59,6 @@ const CASES: Case[] = [
     meta: '50× revenue · sale days',
     href: '/work/econic',
     img: { src: '/work/econic/thumb.jpg', alt: 'Eco-nic Fair price preview toggle' },
-  },
-  {
-    name: 'Amodira: Sound of the Scent',
-    context:
-      'A 0→1 perfume brand for Virgio. An original song per fragrance whose layers mirror its notes — you hear the perfume before you smell it.',
-    meta: 'Brand 0→1 · Virgio',
-    href: '/work/amodira',
-    img: { src: '/work/amodira/thumb.jpg', alt: 'Amodira fragrance with its sound layers' },
   },
 ];
 
