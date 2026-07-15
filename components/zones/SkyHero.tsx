@@ -26,6 +26,34 @@ export default function SkyHero() {
   const root = useRef<HTMLElement>(null);
   const { goTo } = useAltitude();
 
+  // WEAK MAGNET — replaces the old CSS scroll-snap (y proximity), whose pull
+  // radius is browser-defined and grabbed the hero from half a screen away.
+  // This only settles when scrolling comes to REST already close to the hero:
+  // within SNAP_RADIUS of centre. Everywhere else the page scrolls free.
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const SNAP_RADIUS = 0.1; // fraction of viewport height
+    let timer = 0;
+    const settle = () => {
+      const el = root.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const offset = rect.top + rect.height / 2 - window.innerHeight / 2;
+      if (Math.abs(offset) > 2 && Math.abs(offset) < window.innerHeight * SNAP_RADIUS) {
+        window.scrollBy({ top: offset, behavior: 'smooth' });
+      }
+    };
+    const onScroll = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(settle, 160);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, []);
+
   useEffect(() => {
     const mm = gsap.matchMedia();
     mm.add(

@@ -103,12 +103,9 @@ html {
   /* Stop any horizontal bleed (e.g. the black hole's oversized WebGL stage)
      from producing sideways page scroll. Vertical scroll is untouched. */
   overflow-x: clip;
-  /* MAGNET: a gentle scroll-snap on the document scroller. `proximity` (not
-     `mandatory`) means it only pulls when you're already near a snap point and
-     never traps you mid-scroll — only the hero opts in (.sky-hero below), so the
-     screen "sticks a little" as you pass the hinge and scrolls free everywhere
-     else. */
-  scroll-snap-type: y proximity;
+  /* NOTE: no scroll-snap here. The hero's soft magnet is a small JS settle in
+     SkyHero.tsx — CSS `proximity` snapping has a browser-defined pull radius
+     that grabbed from way too far out, especially on mobile. */
   /* bright base canvas: if anything shows in the instant before <body> paints,
      it's a pale sky tone, not the body's black-space base — so load never flashes
      dark. The space zone keeps its black via its own .space layer on top. */
@@ -132,7 +129,7 @@ body {
   /* Horizontal lock, part two: html clips too (above), but iOS Safari only
      reliably stops touch-panning sideways when BOTH roots clip. `clip` (not
      `hidden`) so body never becomes a scroll container — hidden would coerce
-     overflow-y to auto and break the sticky card deck + the html scroll-snap.
+     overflow-y to auto and break the sticky card deck.
      overflow-y stays visible: clip+visible is the one mix the spec allows. */
   overflow-x: clip;
   overflow-y: visible;
@@ -853,17 +850,8 @@ body.preloading .zone-space { overflow-y: clip; }
 /* =================================================================
    SKY HERO — the hinge: you land here
    ================================================================= */
-.sky-hero {
-  /* the magnet's only snap point — its centre pulls to the viewport centre, so
-     the page softly settles on the hero as you scroll past it (see the
-     scroll-snap-type on html). scroll-margin keeps the snap target at the true
-     zone centre regardless of the fixed chrome. */
-  scroll-snap-align: center;
-}
-/* don't fight assistive / reduced-motion scrolling — drop the magnet entirely */
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-snap-type: none; }
-}
+/* (the hero's soft magnet lives in SkyHero.tsx — a narrow JS settle, not CSS
+   scroll-snap; reduced motion opts out there) */
 /* The hero sits ABOVE the cloud layer (CloudField is fixed at z-index 40): the
    type floats over the live clouds rather than peering through a hole in them.
    Padding keeps the fold clear of the right-edge altimeter rail.
@@ -2003,6 +1991,17 @@ body.altitude-ready [data-reveal].in { opacity: 1; transform: none; }
   width: 100%;
   height: clamp(14rem, 34vw, 26rem);
 }
+/* …and DOWN past the tape as well: on desktop the tape cuts across the hole, so
+   the lower arc emerging beneath it was dead to clicks. The whole apex now reads
+   as one big target. */
+.bh-caution::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 100%;
+  height: clamp(8rem, 18vw, 14rem);
+}
 
 /* two hazard bands stretched clear across the page, crossing in a shallow X
    over the hole. width >100% + small rotation guarantees they run past both
@@ -2099,6 +2098,9 @@ body.altitude-ready [data-reveal].in { opacity: 1; transform: none; }
   }
   .bh-caution { top: clamp(15rem, 42vh, 22rem); }
   .bh-caution::before { height: clamp(11rem, 36vh, 18rem); }
+  /* mobile drops the tape BELOW the hole, so only a little forgiveness is
+     needed underneath — keep it short so taps meant for the scrapbook miss it */
+  .bh-caution::after { height: 4rem; }
   .bh-section { min-height: clamp(20rem, 56vh, 30rem); }
 }
 

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { Caveat } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
 /**
@@ -79,6 +80,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: "if(location.pathname==='/'){document.documentElement.classList.add('pl-cover');document.body.classList.add('preloading')}" }} />
         {children}
         <script dangerouslySetInnerHTML={{ __html: ANCHOR_SKY }} />
+        <Analytics />
       </body>
     </html>
   );
