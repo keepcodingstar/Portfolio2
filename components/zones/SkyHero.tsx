@@ -38,21 +38,25 @@ export default function SkyHero() {
           gsap.set('.reveal', { autoAlpha: 1, y: 0 });
           gsap.set('.sky-edge', { autoAlpha: 1 });
           gsap.set('.sky-portrait', { autoAlpha: 1 });
+          gsap.set('.sky-cloud-bank', { autoAlpha: 1 });
           return;
         }
 
         // hide first so nothing flashes under the white preloader field
         gsap.set('.reveal', { autoAlpha: 0, y: 26 });
         gsap.set('.sky-edge', { autoAlpha: 0 });
-        // portrait fades only (no transform) so it never fights the CSS float
+        // portrait + cloud bank fade only (no transform) so they never fight the
+        // CSS drift/float animations on their sprites
         gsap.set('.sky-portrait', { autoAlpha: 0 });
+        gsap.set('.sky-cloud-bank', { autoAlpha: 0 });
 
         // play AFTER the curtain begins parting; the delay lands the statement as
         // the centre clears (clouds settle to the sides/bottom).
         const play = () => {
           gsap
             .timeline({ defaults: { ease: 'power3.out' }, delay: 0.9 })
-            .to('.sky-portrait', { autoAlpha: 1, duration: 1.3 }, 0)
+            .to('.sky-cloud-bank', { autoAlpha: 1, duration: 1.6 }, 0)
+            .to('.sky-portrait', { autoAlpha: 1, duration: 1.3 }, 0.1)
             .to('.reveal', { autoAlpha: 1, y: 0, duration: 1, stagger: 0.09 }, 0.15)
             .to('.sky-edge', { autoAlpha: 1, duration: 0.8 }, 0.55);
         };
@@ -96,51 +100,69 @@ export default function SkyHero() {
         <span className="fc-dest">The creative side</span>
       </button>
 
-      {/* the thesis fold */}
+      {/* Background cloud bank — beds the hero inside a real weather system so
+          Sameer reads as sitting IN clouds, not on top of a single perched puff.
+          Four soft sprites at low z-index: two upper billows in the corners, one
+          wide horizon bank running the full width under the figure, and a mid
+          drift wisp behind the fold text to soften the sky mid-height. All are
+          reveal-timed so nothing pops in ahead of the portrait. */}
+      <div className="sky-cloud-bank" aria-hidden>
+        <span className="sky-bank sky-bank--tl" />
+        <span className="sky-bank sky-bank--tr" />
+        <span className="sky-bank sky-bank--shoulder" />
+        <span className="sky-bank sky-bank--base" />
+      </div>
+
+      {/* Sameer, sitting on a cloud, reading — staged as ATMOSPHERE, not as a
+          right-column asset. The figure floats behind the fold text at the same
+          conceptual layer as the CloudField clouds: soft mask into the sky, three
+          drifting puffs to blend the base. The type reads over the top; on
+          desktop he sits offset to the right so the copy has clean air. */}
+      <figure className="sky-portrait" aria-hidden>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          className="sky-portrait-img"
+          src="/hero/sameer-cloud.png"
+          alt=""
+          width={1800}
+          height={1013}
+          decoding="async"
+        />
+        <span className="sky-puff sky-puff--a" aria-hidden />
+        <span className="sky-puff sky-puff--b" aria-hidden />
+        <span className="sky-puff sky-puff--c" aria-hidden />
+        <span className="sky-puff sky-puff--d" aria-hidden />
+        <span className="sky-puff sky-puff--e" aria-hidden />
+      </figure>
+
+      {/* the thesis fold — a single text column that reads over the sky scene */}
       <div className="sky-fold">
-        <div className="sky-statement-col">
-          <p className="sky-eyebrow reveal">
-            <span className="dia" aria-hidden>◆</span> Hello
-          </p>
+        <p className="sky-eyebrow reveal">
+          <span className="dia" aria-hidden>◆</span> Hello, I&rsquo;m Sameer.
+        </p>
 
-          <h1 id="sky-title" className="display sky-statement reveal">
-            Hi, I&rsquo;m Sameer &mdash; an innovation-driven product designer.
-            <span className="sky-tail">
-              {' '}I don&rsquo;t just design &mdash; I move{' '}
-              <span className="script">ideas</span>.
-            </span>
-          </h1>
+        <h1 id="sky-title" className="display sky-statement reveal">
+          <span className="sky-line">
+            I&rsquo;ll be a <span className="script">1%</span> product designer.
+          </span>
+          <span className="sky-tail">Soon.</span>
+        </h1>
 
-          <div className="sky-cta reveal">
-            <a
-              className="sky-resume glass glass--thin"
-              href="https://drive.google.com/file/d/10p_BLhpwUbNwaStiL4AJAZwFRSFM45CA/view?usp=drive_link"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span className="sky-resume-label">View résumé</span>
-              <span className="sky-resume-icon" aria-hidden>↗</span>
-            </a>
-          </div>
+        <p className="sky-role reveal">
+          <span className="sky-role-em">Innovation-first</span> product designer.
+        </p>
+
+        <div className="sky-cta reveal">
+          <a
+            className="sky-resume glass glass--thin"
+            href="https://drive.google.com/file/d/10p_BLhpwUbNwaStiL4AJAZwFRSFM45CA/view?usp=drive_link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="sky-resume-label">View résumé</span>
+            <span className="sky-resume-icon" aria-hidden>↗</span>
+          </a>
         </div>
-
-        {/* the portrait, framed in a glass viewfinder — corner ticks echo the
-            work-zone instrument readout. Fades in; CSS owns its slow drift. */}
-        <figure className="sky-portrait">
-          <span className="vf-tick tl" aria-hidden />
-          <span className="vf-tick tr" aria-hidden />
-          <span className="vf-tick bl" aria-hidden />
-          <span className="vf-tick br" aria-hidden />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            className="sky-portrait-img"
-            src="/hero/sameer-portrait.png"
-            alt="Sameer Kapil"
-            width={1200}
-            height={1600}
-            decoding="async"
-          />
-        </figure>
       </div>
 
       {/* ↓ the shipped work — a real button, line drawn off the bottom edge */}

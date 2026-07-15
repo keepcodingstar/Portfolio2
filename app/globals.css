@@ -423,7 +423,7 @@ body.preloading .navbar {
   .navbar-brand, .navbar-divider { display: none; }
   .navbar {
     left: 50%; right: auto; top: auto;
-    bottom: calc(0.7rem + env(safe-area-inset-bottom, 0px));
+    bottom: calc(1.6rem + env(safe-area-inset-bottom, 0px));
     transform: translateX(-50%);
     flex-direction: row; align-items: center;
     gap: 0.1rem; padding: 0.4rem 0.55rem;
@@ -846,10 +846,13 @@ body.preloading .zone-space { overflow-y: clip; }
 }
 /* The hero sits ABOVE the cloud layer (CloudField is fixed at z-index 40): the
    type floats over the live clouds rather than peering through a hole in them.
-   Padding keeps the fold clear of the right-edge altimeter rail. */
+   Padding keeps the fold clear of the right-edge altimeter rail.
+   overflow: clip clips both axes WITHOUT making the hero a scroll container —
+   sprites (portrait + cloud bank) can overhang for a soft feather, but they
+   never push page scroll or leak into the adjacent zones. */
 .sky-hero {
-  overflow: visible;
-  padding: clamp(4.4rem, 11vh, 6.4rem) clamp(3.4rem, 7vw, 6rem) clamp(3.6rem, 9vh, 5rem);
+  overflow: clip;
+  padding: clamp(4.4rem, 11vh, 6.4rem) clamp(5rem, 10vw, 8.5rem) clamp(3.6rem, 9vh, 5rem);
 }
 
 /* --- corner metadata: two mono ticks pinned to the top corners of the fold.
@@ -866,40 +869,77 @@ body.preloading .zone-space { overflow-y: clip; }
 .sky-corner-k { color: var(--ink-soft); font-weight: 600; }
 .sky-corner-arrow { color: var(--ion-700); margin: 0 0.15em; }
 
-/* --- the statement fold: copy left, portrait right (asymmetric editorial) --- */
+/* --- the statement fold: a single text column that READS OVER the sky scene.
+   The cloud figure is now atmosphere (see .sky-portrait below), not a right
+   column, so the type gets the whole width to breathe. --- */
 .sky-fold {
   position: relative; z-index: 45;
-  width: 100%; max-width: 66rem;
-  display: grid; grid-template-columns: 1.55fr 0.8fr;
-  gap: clamp(1.8rem, 5vw, 4rem); align-items: center;
+  width: 100%; max-width: 64rem;
+  margin-right: auto;                /* left-anchored — Sameer floats to the right */
   text-align: left;
 }
-
-.sky-eyebrow {
-  margin: 0 0 clamp(1rem, 2.6vw, 1.7rem);
-  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.24em;
-  text-transform: uppercase; color: var(--ink-soft);
-  display: inline-flex; align-items: center; gap: 0.65rem;
+/* line 1 of the thesis stays on one line on desktop so the statement lands as a
+   two-beat cadence: full sentence, then the soft "Soon." payoff underneath. */
+.sky-line { display: block; }
+@media (min-width: 901px) {
+  .sky-line { white-space: nowrap; }
 }
-.sky-eyebrow .dia { color: var(--ion); font-size: 0.72em; }
 
-/* the thesis — big serif statement. One hand-written ion word, faded tail. */
+/* the identity beat — sits at its own hierarchy tier (medium serif italic) so
+   the person introduces himself before the thesis lands. Italic is synthesized
+   from AwesomeSerif Regular; swap in a true italic .otf if refinement is
+   needed. Paired with a soft italic "Soon." below to bookend the upright H1. */
+.sky-eyebrow {
+  margin: 0 0 clamp(0.9rem, 2.2vw, 1.4rem);
+  font-family: var(--display);
+  font-style: italic;
+  font-size: clamp(1.15rem, 2.2vw, 1.65rem);
+  line-height: 1.1; letter-spacing: -0.005em;
+  color: var(--ink-soft);
+  display: inline-flex; align-items: baseline; gap: 0.6rem;
+}
+.sky-eyebrow .dia {
+  color: var(--ion);
+  font-family: var(--mono); font-style: normal;
+  font-size: 0.7em;
+  transform: translateY(-0.1em);
+}
+
+/* the thesis — big serif statement. Dark ink, no halo. Letting the type sit
+   clean against the sky reads sharper than any glow could; the cloud figure
+   provides its own contrast where the H1 crosses it. */
 .sky-statement {
   margin: 0;
-  font-size: clamp(2rem, 4.7vw, 3.75rem);
-  line-height: 1.1; letter-spacing: -0.012em;
+  font-size: clamp(2.4rem, 6vw, 4.8rem);
+  line-height: 1.08; letter-spacing: -0.014em;
   color: var(--ink);
-  text-shadow: 0 1px 30px rgba(255, 255, 255, 0.4);
 }
 .sky-statement .script {
   font-family: var(--script); font-style: normal; font-weight: 700;
   color: var(--ion-700);
   font-size: 1.14em; line-height: 1; padding: 0 0.04em;
 }
-.sky-tail { display: block; color: var(--ink-dim); opacity: 0.5; }
+/* the tail line — "Soon." fades back into the sky, cloud-soft, so it reads as
+   a distant promise rather than a second headline shouting at the same volume.
+   Italic echoes the greeting above, bookending the upright thesis. */
+.sky-tail {
+  display: block;
+  font-style: italic;
+  color: rgba(120, 140, 170, 0.42);
+}
+
+/* plain-language role line under the statement — the poetic headline says the
+   vibe, this line says the job. Mono/small so it reads as a caption, not a
+   competing headline. */
+.sky-role {
+  margin: clamp(0.9rem, 2.4vw, 1.3rem) 0 0;
+  font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-soft);
+}
+.sky-role-em { color: var(--ion-700); font-weight: 600; }
 
 /* the primary CTA — a glass pill that drops the recruiter straight into the résumé */
-.sky-cta { margin: clamp(1.8rem, 4.5vw, 2.7rem) 0 0; }
+.sky-cta { margin: clamp(1.4rem, 3.6vw, 2.2rem) 0 0; }
 .sky-resume {
   display: inline-flex; align-items: center; gap: 0.6rem;
   padding: 0.85rem 1.5rem;
@@ -926,39 +966,207 @@ body.preloading .zone-space { overflow-y: clip; }
   outline: 2px solid var(--ion-700); outline-offset: 3px;
 }
 
-/* --- portrait: the headshot in a glass viewfinder, pushed to the right --- */
+/* --- cloud figure: staged as ATMOSPHERE, not a figure in a column. The image
+   floats absolutely inside the hero at the same conceptual depth as the
+   CloudField clouds (behind fold text, above the fixed sky/starfield). A soft
+   mask dissolves the base into the sky; the drifting puffs finish the blend. --- */
 .sky-portrait {
-  position: relative; margin: 0; z-index: 45;
-  width: 100%; max-width: 15.5rem; justify-self: end;
-  padding: 7px;
-  border-radius: var(--r-lg);
-  background: linear-gradient(to bottom,
-    rgb(var(--glass-rgb) / 0.34), rgb(var(--glass-rgb) / 0.16));
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-edge);
+  position: absolute; margin: 0; pointer-events: none;
+  /* between the CloudField (fixed, z-index -1) and the fold text (z-index 45) */
+  z-index: 2;
+  /* the figure LIVES in the same territory as the text — pushed inward and
+     scaled up so his cloud spreads under the assertion. The type sits ON TOP
+     (z-index 45) so overlap is intentional, not a collision. bottom-anchoring
+     keeps the transform slot free for the drift animation (no centring math). */
+  right: clamp(-3rem, -1vw, 1rem);
+  bottom: clamp(-2rem, 2vh, 3rem);
+  /* large enough that the cloud reaches back under the headline; the mask fades
+     the base into sky so the sprawl reads as weather, not as a giant PNG. */
+  width: min(80vw, 84rem);
   /* slow drift — opacity-only reveal in GSAP so the two transforms never fight */
-  animation: skyPortraitFloat 11s ease-in-out infinite;
+  animation: skyPortraitFloat 14s ease-in-out infinite;
   will-change: transform;
 }
 .sky-portrait-img {
   display: block; width: 100%; height: auto;
-  aspect-ratio: 3 / 4; object-fit: cover; object-position: 50% 18%;
-  border-radius: calc(var(--r-lg) - 5px);
+  /* soft diffuse shadow under the cloud so it feels grounded in the sky */
+  filter: drop-shadow(0 24px 40px rgba(70, 110, 160, 0.18));
+  /* dissolve the bottom edge into the sky so the PNG's hard cutoff disappears
+     — the puffs below sit on top of the fade and complete the illusion */
+  -webkit-mask-image: linear-gradient(to bottom,
+    #000 0%, #000 78%, rgba(0,0,0,0.6) 90%, rgba(0,0,0,0) 100%);
+          mask-image: linear-gradient(to bottom,
+    #000 0%, #000 78%, rgba(0,0,0,0.6) 90%, rgba(0,0,0,0) 100%);
 }
 @keyframes skyPortraitFloat {
   0%, 100% { transform: translateY(0) rotate(0deg); }
-  50%      { transform: translateY(-9px) rotate(-0.5deg); }
+  50%      { transform: translateY(-12px) rotate(-0.4deg); }
 }
-/* viewfinder corner ticks bracketing the face */
-.vf-tick {
-  position: absolute; width: 14px; height: 14px; z-index: 3; pointer-events: none;
-  border: 1.5px solid #fff; opacity: 0.9;
-  filter: drop-shadow(0 1px 2px rgba(14, 29, 49, 0.55));
+
+/* --- cloud puffs over the character's lower half. Each is the same soft
+   /hero/cloud.png sprite the WebGL bank uses, sized and offset to overlap the
+   base of the figure so the PNG edge dissolves into real cloud. Three copies
+   with different sizes / positions / drift phases avoid a stamped-tile look. --- */
+.sky-puff {
+  position: absolute; pointer-events: none;
+  background: url('/hero/cloud.png') center / contain no-repeat;
+  opacity: 0.85;
+  filter: drop-shadow(0 6px 10px rgba(150, 175, 205, 0.18));
+  will-change: transform;
 }
-.vf-tick.tl { top: 15px; left: 15px; border-right: 0; border-bottom: 0; }
-.vf-tick.tr { top: 15px; right: 15px; border-left: 0; border-bottom: 0; }
-.vf-tick.bl { bottom: 15px; left: 15px; border-right: 0; border-top: 0; }
-.vf-tick.br { bottom: 15px; right: 15px; border-left: 0; border-top: 0; }
+/* the wide low puff — the main cover, rides up over his shins + waist so the
+   character reads as sitting INSIDE the bank, not perched on top of it. Larger
+   than before so the base of the figure fully dissolves into cloud. */
+.sky-puff--a {
+  left: -4%; right: -4%;
+  bottom: -10%;
+  height: 58%;
+  opacity: 1;
+  animation: puffDrift 13s ease-in-out infinite;
+}
+/* a broad puff nudged left, covering his shins and forward foot — denser and
+   wider so the leading knee reads as sitting inside cloud, not on top of it */
+.sky-puff--b {
+  left: -10%;
+  bottom: -2%;
+  width: 62%; height: 54%;
+  opacity: 0.95;
+  animation-name: puffDriftFlip;
+  animation-duration: 17s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+/* a soft wisp drifting across his forearm, just under the book — sells the
+   "he is inside a moving bank" idea without hiding his face or the book */
+.sky-puff--c {
+  right: -2%;
+  bottom: 36%;
+  width: 46%; height: 34%;
+  opacity: 0.72;
+  animation: puffDrift 21s ease-in-out infinite;
+  animation-delay: -6s;
+}
+/* two little surface wisps — small, thin, tucked into the lap / under-arm
+   region so they read as clouds PASSING OVER the cloud he's sitting on rather
+   than blanketing the figure. Different sizes, drift phases and durations so
+   they never lockstep. Horizontal drift is a hair wider than the base puffs. */
+.sky-puff--d {
+  right: 14%;
+  bottom: 32%;
+  width: 22%; height: 14%;
+  opacity: 0.6;
+  filter: blur(0.4px) drop-shadow(0 3px 6px rgba(150, 175, 205, 0.14));
+  animation: puffGlide 19s ease-in-out infinite;
+  animation-delay: -4s;
+}
+.sky-puff--e {
+  right: 30%;
+  bottom: 26%;
+  width: 16%; height: 10%;
+  opacity: 0.5;
+  filter: blur(0.6px);
+  animation: puffGlide 24s ease-in-out infinite;
+  animation-delay: -11s;
+  animation-direction: reverse;
+}
+@keyframes puffDrift {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50%      { transform: translate3d(-6px, 4px, 0) rotate(-1deg); }
+}
+/* wider horizontal travel + slight scale breath — reads as a wisp riding
+   across the cloud surface, not just bobbing in place */
+@keyframes puffGlide {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(-14px, -2px, 0) scale(1.04); }
+}
+/* mirrored variant for puffs that want to face the other way */
+@keyframes puffDriftFlip {
+  0%, 100% { transform: scaleX(-1) translate3d(0, 0, 0) rotate(0deg); }
+  50%      { transform: scaleX(-1) translate3d(-6px, 4px, 0) rotate(1deg); }
+}
+
+/* reduced motion: kill the puff drift, keep them in their resting pose */
+@media (prefers-reduced-motion: reduce) {
+  .sky-puff { animation: none; }
+}
+
+/* --- HERO CLOUD BANK: background clouds packed tight around Sameer so he sits
+   INSIDE the bank rather than on top of a lone perched puff. Two soft ambient
+   billows in the corners keep the sky feeling weather-filled; two dense sprites
+   sit RIGHT BEHIND the character (head-level and shoulder-level) so his back
+   never reads against blank sky. All live at z-index 1 — behind the portrait
+   (z:2) but above the fixed sky. Sprites overhang the hero edges by a hair; the
+   parent hero uses overflow-x: clip to keep them from pushing scroll. --- */
+.sky-cloud-bank {
+  position: absolute; inset: 0; pointer-events: none;
+  z-index: 1;
+  /* NO overflow clip here — sprites need to feather naturally past the container
+     edges. The parent .sky-hero uses overflow: clip to catch any bleed. Clipping
+     the sprites here would show a hard rectangular cut through the cloud shape. */
+}
+/* Each sprite is a cloud PNG with soft alpha edges, feathered further by a
+   radial mask so the bounding box edges never show even if the sprite gets
+   clipped by the hero at extreme viewports. */
+.sky-bank {
+  position: absolute; display: block;
+  background: url('/hero/cloud.png') center / contain no-repeat;
+  /* mask feather starts much earlier (45%) so sprites don't show a hard edge
+     when the hero's overflow:clip chops them at the viewport bounds */
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 45%, transparent 92%);
+          mask-image: radial-gradient(ellipse at center, #000 45%, transparent 92%);
+  will-change: transform;
+}
+/* upper-left ambient billow — soft cumulus above the fold text, low opacity so
+   the type never fights it. Kept fully inside the hero so it never cuts. */
+.sky-bank--tl {
+  top: 2%; left: 2%;
+  width: 44%; height: 42%;
+  opacity: 0.7;
+  animation: bankDriftA 24s ease-in-out infinite;
+}
+/* upper-right billow — CLOSE behind the character's head so his hair reads
+   against soft cloud instead of blank sky. Larger + denser than the left. */
+.sky-bank--tr {
+  top: 2%; right: 1%;
+  width: 52%; height: 52%;
+  opacity: 0.95;
+  animation: bankDriftB 28s ease-in-out infinite;
+}
+/* shoulder cloud — the key "clouds at my back" sprite. Sits tight behind the
+   character's torso, dense and opaque, so the shoulders/jacket dissolve into
+   cloud instead of standing out against sky. */
+.sky-bank--shoulder {
+  top: 24%; right: 8%;
+  width: 44%; height: 46%;
+  opacity: 1;
+  animation: bankDriftC 22s ease-in-out infinite;
+  animation-delay: -4s;
+}
+/* wide horizon strip — the CHARACTER sits inside this bank; runs edge-to-edge
+   under the figure so the composition reads as a full cloud sea rather than
+   one puff on the right. Pulled inside the hero bottom so the sprite mask
+   fully feathers before the overflow clip. */
+.sky-bank--base {
+  bottom: -2%; left: -2%; right: -2%;
+  height: 56%;
+  opacity: 0.98;
+  animation: bankDriftC 32s ease-in-out infinite;
+}
+@keyframes bankDriftA {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(-14px, 6px, 0); }
+}
+@keyframes bankDriftB {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(12px, -8px, 0); }
+}
+@keyframes bankDriftC {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(-8px, -4px, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sky-bank { animation: none; }
+}
 
 /* --- THE TWO EDGE MARKERS: the bidirectional spine. A glowing ion line runs off
    the TOP of the fold to the creative world and off the BOTTOM to the shipped
@@ -971,8 +1179,8 @@ body.preloading .zone-space { overflow-y: clip; }
   font: inherit; cursor: pointer; color: var(--ink);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.sky-edge.up { top: clamp(2.8rem, 8vh, 4.6rem); transform: translateX(-50%); }
-.sky-edge.down { bottom: clamp(1rem, 3.2vh, 2.2rem); transform: translateX(-50%); }
+.sky-edge.up { top: clamp(7.5rem, 20vh, 12rem); transform: translateX(-50%); }
+.sky-edge.down { bottom: clamp(6.5rem, 18vh, 11rem); transform: translateX(-50%); }
 .sky-edge.up:hover { transform: translateX(-50%) translateY(-3px); }
 .sky-edge.down:hover { transform: translateX(-50%) translateY(3px); }
 .sky-edge:active { transform: translateX(-50%) scale(0.98); }
@@ -996,16 +1204,112 @@ body.preloading .zone-space { overflow-y: clip; }
 }
 
 /* short viewports: tighten the lines so the markers never crowd the statement */
-/* tablet: collapse to one column, face first as a warm intro */
+/* tablet: the cloud figure ENLARGES so it dominates the fold as atmosphere;
+   his cloud spreads back under the assertion and the text sits on top. This
+   deliberately breaks the two-column grid — the fold is one composed scene,
+   not text-here / figure-there. */
 @media (max-width: 900px) {
-  .sky-hero { padding-left: clamp(1.4rem, 6vw, 3rem); padding-right: clamp(3rem, 9vw, 4.4rem); }
-  .sky-fold { grid-template-columns: 1fr; gap: clamp(1.4rem, 4vw, 2rem); justify-items: start; }
-  .sky-portrait { order: -1; max-width: 12.5rem; justify-self: start; }
+  .sky-hero { padding-left: clamp(2.4rem, 9vw, 5rem); padding-right: clamp(2.4rem, 9vw, 5rem); }
+  .sky-edge.up { top: clamp(6rem, 17vh, 10rem); }
+  .sky-edge.down { bottom: clamp(5rem, 15vh, 9rem); }
+  .sky-fold { max-width: 100%; }
+  .sky-statement { font-size: clamp(2.2rem, 7.4vw, 4rem); line-height: 1.05; }
+  .sky-portrait {
+    right: clamp(-4rem, -3vw, -1rem);
+    bottom: clamp(-3rem, -1vh, 1rem);
+    width: min(96vw, 52rem);
+    /* softer on tablet so the headline never fights the figure for legibility */
+    opacity: 0.9;
+  }
+  /* tablet: shrink the corner billows so they don't crowd the fold text,
+     but keep the shoulder cloud dense — it's the "clouds at my back" beat */
+  .sky-bank--tl { width: 58%; height: 40%; opacity: 0.55; }
+  .sky-bank--tr { width: 60%; height: 46%; opacity: 0.82; }
+  .sky-bank--shoulder { width: 52%; height: 40%; opacity: 0.9; }
 }
-/* phone: stats wrap, corners tuck in */
+/* phone: the whole fold is retuned. Type scales down to phone-native reading
+   sizes (headline can wrap, eyebrow is a proper intro line, "Soon." lifts a
+   touch so it stays readable against sky+portrait, mono utility shrinks). The
+   portrait tucks into the bottom-right corner as ATMOSPHERE so copy leads. */
 @media (max-width: 540px) {
+  .sky-hero {
+    padding-left: 2rem; padding-right: 2rem;
+    /* nudge the fold down so it starts under the top corner meta and leaves
+       room for the up-edge marker + eyebrow to breathe */
+    padding-top: 0;
+  }
   .sky-corner { font-size: 0.55rem; letter-spacing: 0.14em; }
-  .sky-portrait { max-width: 10.5rem; }
+  .sky-corner.tr { max-width: 46vw; text-align: right; line-height: 1.3; }
+
+  /* one composed scene on phone — NOT two columns. Text takes the width it
+     wants and sits ON TOP of Sameer's cloud; the figure spreads behind and
+     under the assertion as atmosphere. */
+  .sky-fold {
+    max-width: 100%;
+    margin-right: auto;
+  }
+
+  .sky-eyebrow {
+    font-size: 1.05rem;
+    margin-bottom: 0.7rem;
+    gap: 0.5rem;
+  }
+
+  .sky-statement {
+    font-size: clamp(1.9rem, 9.6vw, 2.6rem);
+    line-height: 1.04;
+    letter-spacing: -0.018em;
+  }
+  /* on phone: "Soon." flows INLINE after "designer." so the tail no longer
+     eats its own line. Both spans go inline; the H1 wraps as one paragraph
+     and the browser breaks at the natural word boundary, landing "designer.
+     Soon." together where width allows. */
+  .sky-line { display: inline; }
+  .sky-tail {
+    display: inline;
+    margin: 0 0 0 0.3em;
+  }
+
+  .sky-role {
+    font-size: 0.62rem; letter-spacing: 0.12em;
+    margin-top: 0.9rem;
+  }
+  .sky-cta { margin-top: 1.2rem; }
+  .sky-resume {
+    padding: 0.7rem 1.15rem;
+    font-size: 0.66rem; letter-spacing: 0.12em;
+  }
+
+  /* Sameer sits BEHIND the fold text on phone — vertically centered so the
+     headline lands ON him, not above him. The fold is z:45 and the portrait
+     is z:2, so the copy reads on top; opacity trimmed so the text stays crisp
+     over the character's shirt/jeans mid-tones. */
+  .sky-portrait {
+    right: -2.5rem;
+    bottom: clamp(22vh, 28vh, 34vh);
+    width: 108vw;
+    max-width: none;
+    opacity: 0.72;
+  }
+
+  /* phone: drop the shoulder cloud (character shifts full-width on phone so
+     the framing is different), tighten corner billows so type wins */
+  .sky-bank--shoulder { display: none; }
+  .sky-bank--tl { width: 64%; height: 34%; opacity: 0.5; }
+  .sky-bank--tr { width: 62%; height: 38%; opacity: 0.7; }
+  .sky-bank--base { bottom: -12%; height: 66%; opacity: 0.92; }
+
+  /* pull the edge markers slightly inward so they read as bracketing the fold */
+  .sky-edge.up { top: clamp(5rem, 13vh, 8rem); }
+  .sky-edge.down { bottom: clamp(4rem, 11vh, 7rem); }
+  .fc-dest { font-size: 0.88rem; }
+}
+/* very narrow phones (SE-class, ~360px): one more step down on the assertion
+   so "I'll be a 1% product designer." doesn't hyphenate awkwardly. */
+@media (max-width: 380px) {
+  .sky-statement { font-size: 1.85rem; }
+  .sky-eyebrow { font-size: 0.98rem; }
+  .sky-corner { font-size: 0.5rem; }
 }
 
 /* =================================================================
@@ -1287,7 +1591,7 @@ body.preloading .zone-space { overflow-y: clip; }
    figure's head, reading as a quiet maker's signature over the scene. */
 .footer-mark {
   position: absolute; z-index: 2;
-  left: 0; right: 0; top: clamp(3.75rem, 20vh, 14rem);
+  left: 0; right: 0; top: clamp(7rem, 24vh, 16rem);
   display: flex; justify-content: center;
   pointer-events: none;
 }
@@ -1308,9 +1612,11 @@ body.preloading .zone-space { overflow-y: clip; }
 }
 
 /* on phones the logo crest sits a touch lower so it clears the top edge and
-   reads as a signature over the field, not pinned to the rim */
+   reads as a signature over the field, not pinned to the rim. Uses % of the
+   footer zone (not vh) so it lands consistently across mobile browsers /
+   Windows / Mac regardless of viewport chrome. */
 @media (max-width: 640px) {
-  .footer-mark { top: clamp(7rem, 28vh, 13rem); }
+  .footer-mark { top: clamp(11rem, 36%, 20rem); }
 }
 
 /* =================================================================
