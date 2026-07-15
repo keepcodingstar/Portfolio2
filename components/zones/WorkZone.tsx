@@ -8,6 +8,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import GlowCard from '@/components/GlowCard';
 
 gsap.registerPlugin(ScrollTrigger);
+// mobile URL-bar show/hide fires resize events mid-scroll; a full ScrollTrigger
+// refresh then recalculates every trigger and visibly shifts the pinned deck
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 /**
  * The "down" world — the shipped work, presented as a sticky stack of glass

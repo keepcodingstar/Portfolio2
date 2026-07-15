@@ -460,7 +460,16 @@ body.preloading .navbar {
    SEAMLESS ALTITUDE BACKGROUND — three fixed gradient layers
    cross-fade by scroll altitude (vars set by AltitudeProvider).
    ================================================================= */
-.altitude-bg { position: fixed; inset: 0; z-index: -3; pointer-events: none; }
+/* Sized to the LARGE viewport (100lvh), not inset: 0 — on mobile the URL bar
+   collapsing on scroll resizes the layout viewport, and inset-anchored fixed
+   layers resize with it: the freshly revealed strip flashes the body's black
+   base and every backdrop canvas re-renders mid-scroll. lvh is constant, so
+   these layers always cover the tallest the viewport can get. */
+.altitude-bg {
+  position: fixed; top: 0; left: 0; width: 100%;
+  height: 100vh; height: 100lvh;
+  z-index: -3; pointer-events: none;
+}
 .altitude-bg .layer { position: absolute; inset: 0; will-change: opacity; }
 /* SPACE — literal black space at the apex (hosts the black hole). ONE
    continuous deep-cosmos gradient that holds its darkness the whole way down;
@@ -489,9 +498,12 @@ body.preloading .navbar {
     linear-gradient(180deg, #a7d2f4 0%, #8cc4f0 44%, #abd8f6 74%, #cbe8fb 100%);
 }
 
-/* fixed atmospheric canvases */
+/* fixed atmospheric canvases — 100lvh for the same URL-bar reason as .altitude-bg
+   above; also keeps the WebGL canvases from resizing (and flashing) on scroll */
 .starfield, .cloudfield {
-  position: fixed; inset: 0; pointer-events: none; will-change: opacity;
+  position: fixed; top: 0; left: 0; width: 100%;
+  height: 100vh; height: 100lvh;
+  pointer-events: none; will-change: opacity;
 }
 /* cosmos sits above the gradient. A radial mask clears stars out of the
    top-centre, where the black hole's ring + glow sit at the apex — its light

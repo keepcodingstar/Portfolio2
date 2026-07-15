@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Clouds, Cloud } from '@react-three/drei';
 
 /**
@@ -136,6 +136,12 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
   // away smoothly. Handful of clouds → the always-render cost is negligible.
   const culledOff = useRef(false);
 
+  // px→world conversion uses the CANVAS height, not window.innerHeight: the
+  // canvas is what the camera actually sees, and (fixed at 100lvh) it holds
+  // still while mobile URL-bar show/hide wobbles innerHeight — re-deriving the
+  // conversion from innerHeight made the whole cloud world jump mid-scroll.
+  const viewH = useThree((s) => s.size.height);
+
   useEffect(() => {
     const measure = () => {
       const sky = document.getElementById('zone-sky');
@@ -144,14 +150,16 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
       anchor.current.skyMid = skyMid;
       // local-y that lands the work clouds at screen centre when #zone-work is
       // centred (cancels the group's 1:1 scroll at that moment)
-      const workMid = work ? work.offsetTop + work.offsetHeight / 2 : skyMid + window.innerHeight * 2;
-      anchor.current.workOffsetY = -(workMid - skyMid) * (VIEW_WORLD_H / window.innerHeight);
+      const workMid = work ? work.offsetTop + work.offsetHeight / 2 : skyMid + viewH * 2;
+      anchor.current.workOffsetY = -(workMid - skyMid) * (VIEW_WORLD_H / viewH);
     };
     const onScroll = () => {
-      const eye = window.scrollY + window.innerHeight / 2;
+      const eye = window.scrollY + viewH / 2;
       // 1:1 with the page: px offset from the sky mid → world units (same as bg)
-      pRef.current = (eye - anchor.current.skyMid) * (VIEW_WORLD_H / window.innerHeight);
+      pRef.current = (eye - anchor.current.skyMid) * (VIEW_WORLD_H / viewH);
     };
+    // real resizes (orientation, desktop window) re-run this whole effect via
+    // the viewH dep; the listener catches document reflows at a constant height
     const onResize = () => { measure(); onScroll(); };
     measure();
     onScroll();
@@ -161,7 +169,7 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
     };
-  }, []);
+  }, [viewH]);
 
   useFrame((state) => {
     const g = group.current;

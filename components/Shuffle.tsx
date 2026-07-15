@@ -6,6 +6,8 @@ import { useGSAP } from '@gsap/react';
 import { JSX } from 'react';
 
 gsap.registerPlugin(ScrollTrigger, GSAPSplitText);
+// skip full refreshes on mobile URL-bar resizes (they shift triggers mid-scroll)
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 export interface ShuffleProps {
   text: string;

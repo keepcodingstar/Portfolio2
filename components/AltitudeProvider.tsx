@@ -57,6 +57,11 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 export default function AltitudeProvider({ children }: { children: ReactNode }) {
   const [active, setActive] = useState<ZoneId>('zone-sky');
   const activeRef = useRef<ZoneId>('zone-sky');
+  // stable viewport height: mobile URL-bar show/hide fires resize events with a
+  // height-only delta, and chasing the new innerHeight mid-scroll makes the
+  // atmosphere cross-fade and active zone jump. Refreshed only on width change
+  // (real resize / orientation flip) — see the resize handler below.
+  const vhRef = useRef(0);
 
   // measure each zone's document-Y midpoint
   function mids(): { id: ZoneId; mid: number }[] {
@@ -70,7 +75,7 @@ export default function AltitudeProvider({ children }: { children: ReactNode }) 
   }
 
   function update() {
-    const y = window.scrollY + window.innerHeight / 2;
+    const y = window.scrollY + vhRef.current / 2;
     const ms = mids();
 
     // find bracketing zones for the current altitude
@@ -128,7 +133,7 @@ export default function AltitudeProvider({ children }: { children: ReactNode }) 
     if (!el) return 0;
     const rect = el.getBoundingClientRect();
     const top = rect.top + window.scrollY;
-    return top + rect.height / 2 - window.innerHeight / 2;
+    return top + rect.height / 2 - vhRef.current / 2;
   }
 
   function goTo(zone: ZoneId) {
@@ -141,6 +146,16 @@ export default function AltitudeProvider({ children }: { children: ReactNode }) 
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
     }
+
+    vhRef.current = window.innerHeight;
+    let vw = window.innerWidth;
+    const onResize = () => {
+      // height-only delta = the mobile URL bar, not a real resize — ignore it
+      if (window.innerWidth === vw) return;
+      vw = window.innerWidth;
+      vhRef.current = window.innerHeight;
+      update();
+    };
 
     let raf = 0;
     const onScroll = () => {
@@ -160,11 +175,11 @@ export default function AltitudeProvider({ children }: { children: ReactNode }) 
     requestAnimationFrame(() => requestAnimationFrame(anchor));
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', update);
+    window.addEventListener('resize', onResize);
     return () => {
       if (raf) cancelAnimationFrame(raf);
       window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', update);
+      window.removeEventListener('resize', onResize);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
