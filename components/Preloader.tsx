@@ -7,28 +7,13 @@ import Odometer from '@/components/Odometer';
 // to useEffect during SSR where layout effects can't run.
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
-// The intro comes in two paces:
-//   FULL  — the slow ceremonial 0→100 count. Reserved for the black-hole warp,
-//           which asks for it via the one-shot sessionStorage flag below.
-//   QUICK — the same count time-scaled to ~1.5s. Plays on every ordinary
-//           document load of the homepage (first visit, hard reload, bookmark),
-//           so the page never pops in raw but loading never feels like a toll.
-// In-session SPA returns to the homepage play NOTHING — the `pl-cover` class
-// (added once per document load by layout.tsx's pre-paint script) is the marker
-// that an intro is owed; once it's gone, remounts skip.
+// Every document load of the homepage plays the same brief 0→100 count (first
+// visit, hard reload, bookmark, black-hole reload). In-session SPA returns play
+// NOTHING — the `pl-cover` class (added once per document load by layout.tsx's
+// pre-paint script) is the marker that an intro is owed; once it's gone,
+// remounts skip.
 
-// The black-hole warp asks for a one-shot full replay by setting this before it
-// reloads (see blackHoleWarp.ts). It lives in sessionStorage so it survives the
-// reload, and the preloader consumes it on read so the replay happens exactly once.
-const REPLAY_KEY = 'intro:replay';
-
-// The replay flag is consumed exactly once per document; cache the result at
-// module scope so React StrictMode's dev double-mount (which re-runs the effect)
-// re-reads the same answer instead of finding the flag already gone.
-let replayConsumed: boolean | null = null;
-
-// How much faster the QUICK count runs than the FULL one.
-const QUICK_SPEED = 1.15;
+const COUNT_SPEED = 1.15;
 
 /**
  * Intro only — the number counting 0 → 100 over a faint haze, with the page's
@@ -75,25 +60,16 @@ function Counter({
 
 export default function Preloader() {
   const [phase, setPhase] = useState<'count' | 'reveal' | 'done'>('count');
-  const [mode, setMode] = useState<'full' | 'quick'>('quick');
 
   useIsomorphicLayoutEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (replayConsumed === null) {
-      let replay = false;
-      try {
-        replay = sessionStorage.getItem(REPLAY_KEY) === '1';
-        if (replay) sessionStorage.removeItem(REPLAY_KEY); // one-shot: consume on read
-      } catch {}
-      replayConsumed = replay;
-    }
 
-    // Play only once per real document load: FULL when the black-hole warp asked
-    // for it, QUICK on any other load. `html.pl-cover` is the once-per-document
-    // marker — the pre-paint script in layout.tsx adds it on every document load
-    // of the homepage, and this component removes it when the intro clears. So an
-    // in-session SPA navigation back to the homepage (Preloader remounts, same
-    // document, cover long gone) skips entirely — as does reduced motion.
+    // Play only once per real document load. `html.pl-cover` is the
+    // once-per-document marker — the pre-paint script in layout.tsx adds it on
+    // every document load of the homepage, and this component removes it when
+    // the intro clears. So an in-session SPA navigation back to the homepage
+    // (Preloader remounts, same document, cover long gone) skips entirely — as
+    // does reduced motion.
     const shouldPlay = !reduced && document.documentElement.classList.contains('pl-cover');
 
     // Skipping: drop the cover so the nav, clouds and hero all render at rest.
@@ -105,8 +81,6 @@ export default function Preloader() {
       setPhase('done');
       return;
     }
-
-    setMode(replayConsumed ? 'full' : 'quick');
 
     // Mark the document as "preloading" so chrome that lives ABOVE the intro
     // (the side-nav) can stay hidden until the loader clears. Added here, before
@@ -188,8 +162,8 @@ export default function Preloader() {
           <div className={`loader-core${phase === 'reveal' ? ' hide' : ''}`}>
             <Counter
               onDone={handleCountDone}
-              speed={mode === 'quick' ? QUICK_SPEED : 0.5}
-              timeoutMs={mode === 'quick' ? 5000 : 12000}
+              speed={COUNT_SPEED}
+              timeoutMs={5000}
             />
           </div>
         </>

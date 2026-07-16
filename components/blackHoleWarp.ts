@@ -97,21 +97,16 @@ export async function runWarp(holeX: number, holeY: number): Promise<void> {
     'position:fixed;inset:0;background:#000;opacity:0;z-index:2147483647;pointer-events:none';
   html.appendChild(veil);
 
-  // Ask the preloader to replay on the load that follows: the intro normally
-  // fires only once ever, but pressing the hole is an explicit "do it again".
-  const reload = () => {
-    try { sessionStorage.setItem('intro:replay', '1'); } catch {}
-    window.location.reload();
-  };
+  const reload = () => window.location.reload();
 
   const fadeAndReload = (duration: number) =>
     gsap
       .timeline({ onComplete: reload })
       .to(veil, { opacity: 1, duration, ease: 'power2.in' })
-      .to({}, { duration: 0.45 });
+      .to({}, { duration: 0.25 });
 
   if (reduce) {
-    fadeAndReload(0.6);
+    fadeAndReload(0.45);
     return;
   }
 
@@ -136,7 +131,7 @@ export async function runWarp(holeX: number, holeY: number): Promise<void> {
 
   if (!snap) {
     // capture failed (some browsers/CSS) — still give a clean fade-out
-    fadeAndReload(0.8);
+    fadeAndReload(0.5);
     return;
   }
 
@@ -191,19 +186,19 @@ export async function runWarp(holeX: number, holeY: number): Promise<void> {
 
   gsap.to(uniforms.uProgress, {
     value: 1,
-    duration: 1.7,
+    duration: 0.95,
     ease: 'power2.in',
     onUpdate: draw,
     onComplete: () => {
-      // collapse to solid black, hold in the dark, then a slow dawn from black to
+      // collapse to solid black, brief hold, then a quick dawn from black to
       // white — reload lands on the preloader's white field, so the count begins
       // straight out of the white with no flash.
       gsap
-        .timeline({ onComplete: () => { cleanup(); gsap.delayedCall(0.15, reload); } })
-        .to(veil, { opacity: 1, duration: 0.5, ease: 'power2.in' })
-        .to({}, { duration: 0.3 })
-        .to(veil, { backgroundColor: '#ffffff', duration: 0.95, ease: 'power1.inOut' })
-        .to({}, { duration: 0.2 });
+        .timeline({ onComplete: () => { cleanup(); reload(); } })
+        .to(veil, { opacity: 1, duration: 0.28, ease: 'power2.in' })
+        .to({}, { duration: 0.12 })
+        .to(veil, { backgroundColor: '#ffffff', duration: 0.4, ease: 'power1.inOut' })
+        .to({}, { duration: 0.08 });
     },
   });
 }
