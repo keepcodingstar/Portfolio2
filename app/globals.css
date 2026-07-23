@@ -98,6 +98,12 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  /* Wide-viewport scale-up: on monitors > ~1400px the site would otherwise
+     look small — clamp caps on headings hit early, and 72rem = 1296px in a
+     2560px screen reads cramped. Scaling the root font-size gently lifts
+     every rem-based measurement (type clamps, --maxw, spacings) together.
+     Stays at 18px up to ~1400px viewport, grows to 22px by ~1850px. */
+  font-size: clamp(18px, 0.9vw + 5.4px, 22px);
   /* always reserve the scrollbar's space so it can't shift the layout */
   scrollbar-gutter: stable;
   /* Stop any horizontal bleed (e.g. the black hole's oversized WebGL stage)
@@ -122,7 +128,7 @@ body {
   isolation: isolate;
   color: var(--ink);
   font-family: var(--sans);
-  font-size: 18px;
+  font-size: 1rem; /* inherit the html clamp so body copy scales on wide monitors */
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
