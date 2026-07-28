@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Preloader from '@/components/Preloader';
 import Starfield from '@/components/Starfield';
 import CloudField from '@/components/CloudField'; // a few sky clouds on the descent to the ground
@@ -18,9 +19,33 @@ import GroundFooter from '@/components/zones/GroundFooter';
  * AltitudeProvider): scrolling up rises into space (the creative side),
  * scrolling down descends through the colours of the sky to the ground.
  */
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
+
+const PERSON_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Sameer Kapil',
+  url: 'https://sameerkapil.vercel.app',
+  jobTitle: 'Product Designer',
+  worksFor: { '@type': 'Organization', name: 'Virgio' },
+  description:
+    'Product designer working on checkout, pricing and trust flows — outcomes over applause.',
+  sameAs: [
+    'https://www.linkedin.com/in/sameerkapil/',
+    'https://dribbble.com/SameerKapil',
+    'https://www.behance.net/sameerkapil7',
+  ],
+} as const;
+
 export default function Home() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON_JSONLD) }}
+      />
       <Preloader />
 
       {/* fixed atmospheric layers, altitude-gated by CSS vars */}

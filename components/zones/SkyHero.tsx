@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { gsap } from 'gsap';
 import { useAltitude } from '@/components/AltitudeProvider';
 
@@ -147,14 +148,15 @@ export default function SkyHero() {
           drifting puffs to blend the base. The type reads over the top; on
           desktop he sits offset to the right so the copy has clean air. */}
       <figure className="sky-portrait" aria-hidden>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           className="sky-portrait-img"
           src="/hero/sameer-cloud.png"
           alt=""
           width={1800}
           height={1013}
-          decoding="async"
+          priority
+          fetchPriority="high"
+          sizes="(max-width: 1680px) 80vw, 1344px"
         />
         <span className="sky-puff sky-puff--a" aria-hidden />
         <span className="sky-puff sky-puff--b" aria-hidden />

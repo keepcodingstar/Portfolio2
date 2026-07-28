@@ -30,10 +30,65 @@ const caveat = Caveat({
   display: 'swap',
 });
 
+const SITE_URL = 'https://sameerkapil.vercel.app';
+const SITE_DESCRIPTION =
+  'Sameer Kapil is a product designer who designs for outcomes, not applause — checkout, pricing and trust flows that move real numbers. 500K+ users reached.';
+
 export const metadata: Metadata = {
-  title: 'Sameer Kapil — Product Designer',
-  description:
-    'Sameer Kapil is a product designer who designs for outcomes, not applause — checkout, pricing and trust flows that move real numbers. 500K+ users reached.',
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: 'Sameer Kapil — Product Designer',
+    template: '%s — Sameer Kapil',
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: 'Sameer Kapil — Portfolio',
+  authors: [{ name: 'Sameer Kapil', url: SITE_URL }],
+  creator: 'Sameer Kapil',
+  keywords: [
+    'Sameer Kapil',
+    'product designer',
+    'UX designer',
+    'checkout design',
+    'pricing UX',
+    'Virgio',
+    'fair pricing',
+    'portfolio',
+  ],
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: SITE_URL,
+    siteName: 'Sameer Kapil',
+    title: 'Sameer Kapil — Product Designer',
+    description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: '/brand/logo.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Sameer Kapil — Product Designer',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Sameer Kapil — Product Designer',
+    description: SITE_DESCRIPTION,
+    images: ['/brand/logo.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   icons: {
     icon: '/brand/logo-mark.jpg',
     shortcut: '/brand/logo-mark.jpg',

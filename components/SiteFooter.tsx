@@ -9,7 +9,7 @@ import type { ZoneId } from '@/components/AltitudeProvider';
  * plain `/#zone-x` anchors back to the homepage zones. Same markup either way.
  */
 
-const EMAIL = 'sameerkapildesigns@email.com';
+const EMAIL = 'sameerkapildesigns@gmail.com';
 const RESUME =
   'https://drive.google.com/file/d/10p_BLhpwUbNwaStiL4AJAZwFRSFM45CA/view?usp=drive_link';
 

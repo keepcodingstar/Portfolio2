@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { gsap } from 'gsap';
 import LinkedInCarousel from '@/components/LinkedInCarousel';
 
@@ -27,6 +28,10 @@ import LinkedInCarousel from '@/components/LinkedInCarousel';
 type Print = {
   src: string;
   alt: string;
+  /** intrinsic pixel width of the source image (for next/image aspect + srcset) */
+  iw: number;
+  /** intrinsic pixel height of the source image */
+  ih: number;
   /** red handwritten note pinned to the print */
   note: string;
   /** mono kicker under the note */
@@ -50,6 +55,8 @@ const PRINTS: Print[] = [
   {
     src: '/sessions/fontober.png',
     alt: 'Sameer at FONTOBER 2025, the Designare font festival',
+    iw: 2000,
+    ih: 1125,
     note: 'top 21 — fontober ’25',
     kind: 'Designare',
     w: 'clamp(12rem, 16vw, 15rem)',
@@ -63,6 +70,8 @@ const PRINTS: Print[] = [
   {
     src: '/sessions/virgio-hackathon.png',
     alt: 'Sameer heads-down building a project at the Virgio hackathon',
+    iw: 1280,
+    ih: 1919,
     note: 'built it. won it.',
     kind: 'Virgio Hackathon',
     w: 'clamp(12rem, 17vw, 15.5rem)',
@@ -76,6 +85,8 @@ const PRINTS: Print[] = [
   {
     src: '/sessions/design-session.png',
     alt: 'Sameer talking through an idea over his laptop at a design session',
+    iw: 2000,
+    ih: 1333,
     note: 'always in the room',
     kind: 'Design session',
     w: 'clamp(10rem, 13vw, 12.5rem)',
@@ -89,6 +100,8 @@ const PRINTS: Print[] = [
   {
     src: '/sessions/myx-2025.png',
     alt: 'Sameer at MYX, the Myntra design conference',
+    iw: 800,
+    ih: 533,
     note: 'myntra design conf',
     kind: 'MYX 2025',
     w: 'clamp(11rem, 15vw, 14.5rem)',
@@ -285,8 +298,15 @@ export default function SpaceZone() {
           <div className="sat-anchor">
             <div className="sat-orbit">
               <div className="sat-arm">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="sat" src="/space/satellite.png" alt="" loading="lazy" decoding="async" />
+                <Image
+                  className="sat"
+                  src="/space/satellite.png"
+                  alt=""
+                  width={1114}
+                  height={512}
+                  sizes="(min-width: 1025px) 18vw, 17rem"
+                  loading="lazy"
+                />
               </div>
             </div>
           </div>
@@ -317,12 +337,13 @@ export default function SpaceZone() {
           {/* the moon — a self-portrait framed in the lunar surface, floating in
               the cosmos (no print frame/tape; it IS the sky). Anchors the cluster. */}
           <figure className="frag scrap-moon" data-rot="-2" style={{ top: '4%', left: '1%' }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src="/hero/moon-window.png"
               alt="Sameer leaning out of a window cut into the moon"
+              width={1628}
+              height={1626}
+              sizes="(min-width: 1025px) 19vw, 78vw"
               loading="lazy"
-              decoding="async"
             />
             <figcaption className="print-note">
               <span className="note-hand">this is me, mid-idea</span>
@@ -339,8 +360,14 @@ export default function SpaceZone() {
               style={{ top: p.top, left: p.left, zIndex: p.z, ['--pw' as string]: p.w }}
             >
               <span className="print-frame">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={p.src} alt={p.alt} loading="lazy" decoding="async" />
+                <Image
+                  src={p.src}
+                  alt={p.alt}
+                  width={p.iw}
+                  height={p.ih}
+                  sizes="(min-width: 1025px) 17vw, 40vw"
+                  loading="lazy"
+                />
               </span>
               <figcaption className="print-note">
                 <span className="note-hand">{p.note}</span>

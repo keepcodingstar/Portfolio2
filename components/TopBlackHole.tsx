@@ -1,7 +1,12 @@
 'use client';
 
-import { useCallback, useRef, type MouseEvent } from 'react';
+import { useCallback, useEffect, useRef, type MouseEvent } from 'react';
 import BlackHoleLaser from '@/components/BlackHoleLaser';
+import {
+  captureWarpSource,
+  invalidateWarpCache,
+  preloadWarpSource,
+} from '@/components/blackHoleWarp';
 
 /**
  * The apex section — a dedicated black-hole stage pinned to the very top edge of
@@ -16,6 +21,55 @@ import BlackHoleLaser from '@/components/BlackHoleLaser';
 
 export default function TopBlackHole() {
   const stageRef = useRef<HTMLDivElement>(null);
+
+  // warm the pre-baked warp source into the browser cache the moment the apex
+  // mounts, so the shader has its texture in memory by the time the visitor
+  // reaches the barricade. Silent no-op if the JPG isn't in /public/warp/.
+  useEffect(() => {
+    preloadWarpSource();
+  }, []);
+
+  // Speculative capture: the moment the apex is fully in view, snapshot the
+  // page. That's what the visitor would be staring at if they pressed the
+  // barricade, so it's the correct warp source — captured once, cached in
+  // module scope, and used by runWarp() with zero wait. Idle-scheduled so the
+  // 500-1500ms html-to-image work doesn't fight the scroll that triggered it.
+  // Cache is invalidated on resize (dimensions in the snap wouldn't match).
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    if (typeof IntersectionObserver === 'undefined') return;
+
+    const runCapture = () => {
+      const w = window as Window & { requestIdleCallback?: (cb: () => void) => number };
+      if (typeof w.requestIdleCallback === 'function') {
+        w.requestIdleCallback(() => captureWarpSource());
+      } else {
+        setTimeout(() => captureWarpSource(), 120);
+      }
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.intersectionRatio >= 0.99) {
+            runCapture();
+            io.disconnect(); // one-shot: cache stays fresh until resize
+            break;
+          }
+        }
+      },
+      { threshold: [0.99] },
+    );
+    io.observe(stage);
+
+    const onResize = () => invalidateWarpCache();
+    window.addEventListener('resize', onResize);
+    return () => {
+      io.disconnect();
+      window.removeEventListener('resize', onResize);
+    };
+  }, []);
 
   const onApproach = useCallback(async (_e: MouseEvent<HTMLButtonElement>) => {
     // converge the warp on the hole's true centre, not the tape we pressed
