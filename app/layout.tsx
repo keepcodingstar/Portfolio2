@@ -33,27 +33,34 @@ const caveat = Caveat({
 
 const SITE_URL = 'https://sameerkapil.vercel.app';
 const SITE_DESCRIPTION =
-  'Sameer Kapil is a product designer who designs for outcomes, not applause — checkout, pricing and trust flows that move real numbers. 500K+ users reached.';
+  'Sameer Kapil Designs — the UX and product design portfolio of Sameer Kapil (Sameer UX), designer at Virgio. Checkout, pricing and trust flows that move real numbers. 500K+ users reached.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Sameer Kapil — Product Designer',
-    template: '%s — Sameer Kapil',
+    default: 'Sameer Kapil Designs — Product Designer (UX/UI) Portfolio',
+    template: '%s — Sameer Kapil Designs',
   },
   description: SITE_DESCRIPTION,
-  applicationName: 'Sameer Kapil — Portfolio',
+  applicationName: 'Sameer Kapil Designs — Portfolio',
   authors: [{ name: 'Sameer Kapil', url: SITE_URL }],
   creator: 'Sameer Kapil',
   keywords: [
+    'Sameer UX',
     'Sameer Kapil',
+    'Sameer Kapil Designs',
+    'Sameer Kapil portfolio',
+    'Sameer Kapil designer',
+    'Sameer UX designer',
+    'Sameer product designer',
     'product designer',
     'UX designer',
+    'UI designer',
     'checkout design',
     'pricing UX',
-    'Virgio',
+    'Virgio designer',
     'fair pricing',
-    'portfolio',
+    'design portfolio',
   ],
   alternates: {
     canonical: '/',
@@ -62,21 +69,21 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: SITE_URL,
-    siteName: 'Sameer Kapil',
-    title: 'Sameer Kapil — Product Designer',
+    siteName: 'Sameer Kapil Designs',
+    title: 'Sameer Kapil Designs — Product Designer (UX/UI) Portfolio',
     description: SITE_DESCRIPTION,
     images: [
       {
         url: '/brand/logo.jpg',
         width: 1200,
         height: 630,
-        alt: 'Sameer Kapil — Product Designer',
+        alt: 'Sameer Kapil Designs — Product Designer',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Sameer Kapil — Product Designer',
+    title: 'Sameer Kapil Designs — Product Designer (UX/UI)',
     description: SITE_DESCRIPTION,
     images: ['/brand/logo.jpg'],
   },

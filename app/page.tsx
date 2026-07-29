@@ -27,16 +27,40 @@ const PERSON_JSONLD = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: 'Sameer Kapil',
+  alternateName: ['Sameer UX', 'Sameer Kapil Designs', 'Sameer Kapil Portfolio'],
   url: 'https://sameerkapil.vercel.app',
+  image: 'https://sameerkapil.vercel.app/brand/logo.jpg',
   jobTitle: 'Product Designer',
   worksFor: { '@type': 'Organization', name: 'Virgio' },
   description:
     'Product designer working on checkout, pricing and trust flows — outcomes over applause.',
+  disambiguatingDescription:
+    'Product designer (UX/UI) at Virgio. Not to be confused with Kapil Sharma or the Kapil Sharma Show.',
+  knowsAbout: [
+    'Product Design',
+    'UX Design',
+    'UI Design',
+    'Checkout UX',
+    'Pricing UX',
+    'Design Systems',
+    'Interaction Design',
+    'Conversion Optimisation',
+  ],
   sameAs: [
     'https://www.linkedin.com/in/sameerkapil/',
     'https://dribbble.com/SameerKapil',
     'https://www.behance.net/sameerkapil7',
   ],
+} as const;
+
+const WEBSITE_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Sameer Kapil',
+  alternateName: ['Sameer UX', 'Sameer Kapil Designs', 'Sameer Kapil Portfolio'],
+  url: 'https://sameerkapil.vercel.app',
+  inLanguage: 'en',
+  publisher: { '@type': 'Person', name: 'Sameer Kapil' },
 } as const;
 
 export default function Home() {
@@ -45,6 +69,10 @@ export default function Home() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON_JSONLD) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSONLD) }}
       />
       <Preloader />
 
