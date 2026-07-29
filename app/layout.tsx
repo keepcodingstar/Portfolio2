@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { Caveat } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import Clarity from '@/components/Clarity';
 import './globals.css';
 
@@ -137,6 +138,7 @@ export default function RootLayout({
         {children}
         <script dangerouslySetInnerHTML={{ __html: ANCHOR_SKY }} />
         <Analytics />
+        <SpeedInsights />
         <Clarity />
       </body>
     </html>
