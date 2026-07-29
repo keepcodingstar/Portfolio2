@@ -31,7 +31,7 @@ const caveat = Caveat({
   display: 'swap',
 });
 
-const SITE_URL = 'https://sameerkapil.vercel.app';
+const SITE_URL = 'https://sameerkapil.com';
 const SITE_DESCRIPTION =
   'Sameer Kapil Designs — the UX and product design portfolio of Sameer Kapil (Sameer UX), designer at Virgio. Checkout, pricing and trust flows that move real numbers. 500K+ users reached.';
 

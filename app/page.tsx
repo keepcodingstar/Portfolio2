@@ -28,8 +28,8 @@ const PERSON_JSONLD = {
   '@type': 'Person',
   name: 'Sameer Kapil',
   alternateName: ['Sameer UX', 'Sameer Kapil Designs', 'Sameer Kapil Portfolio'],
-  url: 'https://sameerkapil.vercel.app',
-  image: 'https://sameerkapil.vercel.app/brand/logo.jpg',
+  url: 'https://sameerkapil.com',
+  image: 'https://sameerkapil.com/brand/logo.jpg',
   jobTitle: 'Product Designer',
   worksFor: { '@type': 'Organization', name: 'Virgio' },
   description:
@@ -58,7 +58,7 @@ const WEBSITE_JSONLD = {
   '@type': 'WebSite',
   name: 'Sameer Kapil',
   alternateName: ['Sameer UX', 'Sameer Kapil Designs', 'Sameer Kapil Portfolio'],
-  url: 'https://sameerkapil.vercel.app',
+  url: 'https://sameerkapil.com',
   inLanguage: 'en',
   publisher: { '@type': 'Person', name: 'Sameer Kapil' },
 } as const;

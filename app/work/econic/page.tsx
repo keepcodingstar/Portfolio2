@@ -31,7 +31,7 @@ const CASE_JSONLD = {
   name: 'Econic 2025',
   headline: TITLE,
   description: DESCRIPTION,
-  url: `https://sameerkapil.vercel.app${URL_PATH}`,
+  url: `https://sameerkapil.com${URL_PATH}`,
   author: { '@type': 'Person', name: 'Sameer Kapil' },
   creator: { '@type': 'Person', name: 'Sameer Kapil' },
   about: 'Campaign UI, price transparency, e-commerce',
