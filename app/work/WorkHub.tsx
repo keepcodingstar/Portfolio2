@@ -36,7 +36,7 @@ const PROJECTS: Project[] = [
     name: 'Faster Checkout Through an In-House Redesign',
     context:
       'Bringing VIRGIO’s checkout in-house after sale traffic exposed a bottleneck, with simpler address and payment decisions.',
-    tags: ['Virgio', 'Conversion', '2024'],
+    tags: ['Virgio', 'Conversion', '2025'],
     metric: '+2.68',
     unit: '%',
     label: 'conversion',
@@ -58,7 +58,7 @@ const PROJECTS: Project[] = [
     name: 'Fair Pricing',
     context:
       'A price-transparency widget built on day one that went viral, won best e-commerce feature, and became registered company IP.',
-    tags: ['Virgio', 'E-commerce', '2023', 'Live · Company IP'],
+    tags: ['Virgio', 'E-commerce', '2024', 'Live · Company IP'],
     metric: '500',
     unit: 'K+',
     label: 'users reached',
