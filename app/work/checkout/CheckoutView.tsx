@@ -103,7 +103,6 @@ export default function CheckoutCase() {
             <div className={styles.tableWrap}>
               <table className={styles.scopeTable}>
                 <caption className="sr-only">Checkout redesign goals, design scope, success measures, boundaries and constraints</caption>
-                <thead><tr><th scope="col">Part</th><th scope="col">What this meant for checkout</th></tr></thead>
                 <tbody>{scope.map(([part, description]) => <tr key={part}><th scope="row">{part}</th><td>{description}</td></tr>)}</tbody>
               </table>
             </div>
