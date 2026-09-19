@@ -1,321 +1,217 @@
-'use client';
-
-import RevealBody from '@/components/RevealBody';
-import WorkTop from '@/components/work/WorkTop';
-import SiteFooter from '@/components/SiteFooter';
-import { useReveal } from '@/components/work/useReveal';
 import Image from 'next/image';
 import Link from 'next/link';
-import '../work.css';
+import { CheckoutArrival } from '@/components/work/CheckoutTransition';
+import { CheckoutHeader, EconicMention, Screenshot } from './CheckoutInteractions';
+import { checkoutOutcomes, checkoutTitle, checkoutTitleAccent, combinedScreens, desktopAnnotations, explorations, finalScreens, scope, story, type ScreenAnnotation, type StudyScreen } from './checkout-content';
+import styles from './checkout.module.css';
 
-/**
- * Checkout, off Shopify — Virgio's most revenue-critical flow, migrated off a
- * platform that throttled at peak load and rebuilt for control. Same altitude
- * glass chrome as the Fair Pricing study; the screens are the real shipped
- * designs, exported from Figma.
- */
+const ASSETS = '/work/checkout/redesign';
+
+function AnnotationNotes({ annotations }: { annotations: ScreenAnnotation[] }) {
+  return (
+    <ol className={styles.annotationNotes} aria-label="Design annotations">
+      {annotations.map((annotation) => (
+        <li key={annotation.number} value={annotation.number}>
+          <span className={styles.annotationNumber} aria-hidden="true">{annotation.number}</span>
+          <div><strong>{annotation.title}</strong><p>{annotation.body}</p></div>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function ScreenGallery({ screens, label, four = false, showHint = false }: { screens: StudyScreen[]; label: string; four?: boolean; showHint?: boolean }) {
+  return (
+    <div className={styles.galleryBlock}>
+      {showHint && <p className={`${styles.galleryHint} ${styles.galleryHintAbove}`}><span className={styles.swipeHint}>Swipe to explore. </span>Select a screen to enlarge ↗</p>}
+      <div className={`${styles.screenGallery} ${four ? styles.fourScreens : ''}`} role="group" aria-label={label} tabIndex={0}>
+        {screens.map((screen) => (
+          <figure key={screen.file} className={styles.screenItem}>
+            <div className={styles.screenMat}>
+              <Screenshot src={`${ASSETS}/${screen.file}.webp`} label={screen.label} alt={screen.alt}
+                width={screen.width} height={screen.height} annotations={screen.annotations} phone />
+            </div>
+            <figcaption>{screen.annotations ? <AnnotationNotes annotations={screen.annotations} /> : screen.caption}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function CheckoutCase() {
-  useReveal();
+  const [contextBefore, contextAfter] = story.context.body.split('Econic 25');
+  const [problemBefore, problemAfter] = story.before.body.split('UI felt disconnected');
 
   return (
-    <>
-      <RevealBody />
-      <div className="work-bg" aria-hidden />
-      <WorkTop
-        back={{ href: '/work', label: 'Work' }}
-        links={[
-          { href: '/', label: 'Home' },
-          { href: 'mailto:sameerkapildesigns@gmail.com', label: 'Contact', cta: true },
-        ]}
-      />
+    <div className={styles.page}>
+      <CheckoutArrival />
+      <CheckoutHeader />
+      <main id="case-study" tabIndex={-1} className={styles.main}>
+        <section className={styles.hero} aria-labelledby="checkout-title">
+          <h1 id="checkout-title">
+            <span className={styles.projectNumber}>Project 1:</span>
+            <span className={styles.heroAccent}>{checkoutTitleAccent}</span>{checkoutTitle.slice(checkoutTitleAccent.length)}
+          </h1>
+          <figure className={styles.heroFrame}>
+            <Image data-checkout-hero className={styles.heroImage} src="/work/checkout/thumb.jpg"
+              alt="VIRGIO in-house checkout: payment, map address pin, and add-address screens"
+              width={1056} height={660} sizes="(max-width: 600px) 90vw, (max-width: 1232px) 88vw, 1094px" priority />
+          </figure>
+        </section>
 
-      <div className="work cs">
-        <main className="work-main">
-          {/* HERO */}
-          <section className="cs-hero reveal" data-reveal>
+        <section id="overview" tabIndex={-1} aria-labelledby="overview-title">
+          <div className={styles.storyOpening}>
+            <h2 id="overview-title" className={styles.overviewLabel}>Overview</h2>
+            <div className={styles.overviewContent}>
+              <p className={styles.openingCopy}>{contextBefore}<EconicMention />{contextAfter}</p>
+              <p className={styles.openingCopy}>Following the in-house migration and redesign, we saw <strong>2.68% higher conversion</strong> and <strong>25.7% less time to complete checkout</strong>.</p>
+              <dl className={styles.metadata}>
+                <div><dt>Role</dt><dd>Product design</dd></div>
+                <div><dt>Platform</dt><dd>Mobile &amp; desktop</dd></div>
+                <div><dt>Timeline</dt><dd>2 weeks</dd></div>
+                <div><dt>Status</dt><dd>Live in production</dd></div>
+              </dl>
+            </div>
+          </div>
+
+          <section className={styles.section} aria-labelledby="before-title">
+            <h2 id="before-title">{story.before.title}</h2>
+            <p className={styles.prose}>{problemBefore}<strong>UI felt disconnected</strong>{problemAfter}</p>
+            <figure>
+              <div className={`${styles.mediaStage} ${styles.beforeStage}`}>
+                <Screenshot src={`${ASSETS}/shopify-checkout.webp`} label="Original Shopify checkout"
+                  width={3024} height={2300} alt="VIRGIO’s original Shopify checkout, with shipping and payment on the left and the order summary on the right. Personal account details are hidden." />
+              </div>
+              <figcaption className={styles.mediaCaption}><span>Before · Shopify checkout</span><span>Select image to enlarge ↗</span></figcaption>
+            </figure>
+            <div className={styles.critiqueGrid}>
+              <div><p className={styles.issueLabel}>Migration trigger</p><h3>Capacity we couldn’t directly scale</h3><p>The sale exposed a dependency on Shopify checkout capacity, even when our other systems could handle the traffic. This prompted the move in-house.</p></div>
+              <div><p className={styles.issueLabel}>UX issue</p><h3>Limited control over the experience</h3><p>The Shopify checkout gave us less flexibility to tailor address entry, payment choices and checkout behaviour to VIRGIO’s needs.</p></div>
+              <div><p className={styles.issueLabel}>UX issue</p><h3>Inconsistent with VIRGIO’s design system</h3><p>Checkout didn’t fully align with VIRGIO’s new design system, making the final step feel separate from the rest of the shopping journey.</p></div>
+            </div>
+          </section>
+
+          <aside className={styles.principleCard} aria-label="Reducing hesitation at checkout">
+            <p className={styles.principleLead}><span className={styles.heroAccent}>{story.hesitation.accent}</span>{story.hesitation.lead.slice(story.hesitation.accent.length)}</p>
+            <p className={styles.designPrinciple}>{story.hesitation.body}</p>
+          </aside>
+
+          <section className={`${styles.section} ${styles.goalsSection}`} aria-labelledby="goals-title">
+            <h2 id="goals-title">{story.goals.title}</h2>
+            <p className={styles.prose}>{story.goals.description}</p>
+            <div className={styles.tableWrap}>
+              <table className={styles.scopeTable}>
+                <caption className="sr-only">Checkout redesign goals, design scope, success measures, boundaries and constraints</caption>
+                <thead><tr><th scope="col">Part</th><th scope="col">What this meant for checkout</th></tr></thead>
+                <tbody>{scope.map(([part, description]) => <tr key={part}><th scope="row">{part}</th><td>{description}</td></tr>)}</tbody>
+              </table>
+            </div>
+            <p className={styles.question}><strong>{story.goals.lead}</strong> {story.goals.body}</p>
+          </section>
+        </section>
+
+        <section id="design" tabIndex={-1} aria-labelledby="concept-title">
+          <section className={styles.section} aria-labelledby="concept-title">
+            <p className={styles.statusLabel}>Explored · Not shipped</p>
+            <h2 id="concept-title">{story.concept.title}</h2>
+            <p className={styles.prose}>{story.concept.body}</p>
+            <ScreenGallery screens={combinedScreens} label="Combined checkout concept: four screens" four showHint />
+            <p className={styles.conceptNote}>The combined concept was not taken forward. The shipped direction kept checkout focused on verifying delivery details and completing payment.</p>
+          </section>
+
+          <section id="explorations" className={`${styles.section} ${styles.explorationSection}`} aria-labelledby="explorations-title">
+            <p className={styles.statusLabel}>Further explorations · Not shipped</p>
+            <h2 id="explorations-title">Other directions along the way</h2>
+            <p className={styles.prose}>Three alternatives for organising saved cards, payment modes and the order summary.</p>
+            <div className={styles.galleryBlock}>
+              <p className={`${styles.galleryHint} ${styles.galleryHintAbove}`}>Select a screen to enlarge ↗</p>
+              <div className={styles.explorationGrid}>
+                {explorations.map((screen) => (
+                  <article key={screen.file}>
+                    <div className={`${styles.screenMat} ${styles.explorationMat}`}>
+                      <Screenshot src={`${ASSETS}/${screen.file}.webp`} label={screen.label} alt={screen.alt}
+                        width={screen.width} height={screen.height} phone />
+                    </div>
+                    <div>
+                      <h3>{screen.title}</h3>
+                      <p>{screen.observation}</p>
+                      <p className={styles.tradeoff}><span>{screen.noteLabel ?? 'Trade-off'}</span>{screen.consideration}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className={styles.section} aria-labelledby="final-title">
+            <p className={styles.statusLabel}>Final design</p>
+            <h2 id="final-title">{story.final.title}</h2>
+            <p className={styles.prose}>{story.final.body}</p>
+            <figure>
+              <div className={styles.mediaStage}>
+                <Screenshot src="/work/checkout/payment-desktop.png" label="Final desktop checkout" width={2560} height={1788}
+                  annotations={desktopAnnotations}
+                  alt="Final desktop checkout with a selected delivery address, credits and gift cards, payment options and a visible order summary." />
+              </div>
+              <figcaption>
+                <p className={styles.mediaCaption}>Final checkout · Desktop</p>
+                <AnnotationNotes annotations={desktopAnnotations} />
+              </figcaption>
+            </figure>
+            <ScreenGallery screens={finalScreens} label="Final mobile checkout: saved address, empty address and editing states" />
+          </section>
+
+          <section className={styles.section} aria-labelledby="address-title">
+            <h2 id="address-title">{story.address.title}</h2>
+            <p className={styles.prose}>{story.address.body}</p>
+            <figure>
+              <div className={`${styles.mediaStage} ${styles.phoneStage}`}>
+                <Screenshot src={`${ASSETS}/final-map-location.webp`} label="Final map location screen" width={804} height={1787} phone
+                  alt="Map search and a draggable delivery pin, with a located address and a Confirm and Proceed action." />
+                <Screenshot src="/work/checkout/address-mobile.png" label="Final address details form" width={804} height={1770} phone
+                  alt="Editable address form with a map-backed location card, address fields and a selector for who the order is for." />
+              </div>
+              <figcaption className={styles.mediaCaption}><span>Locate the delivery point, then review the address.</span><span>Select a screen to enlarge ↗</span></figcaption>
+            </figure>
+          </section>
+        </section>
+
+        <section id="impact" tabIndex={-1} aria-labelledby="measurement-title">
+          <section className={`${styles.section} ${styles.measurementLayout}`} aria-labelledby="measurement-title">
             <div>
-              <p className="cs-eyebrow">Virgio · Product Design · 2024</p>
-              <h1>
-                Moving checkout <em>off Shopify</em> — and making it quicker on the way out
-              </h1>
-              <p className="cs-hero-desc">
-                At peak sale traffic, our checkout leaned on a platform we didn’t fully
-                control — and it showed. I helped move the highest-stakes screen in the funnel
-                in-house, then rebuilt address and payment around one idea: show the consequence
-                of every choice the moment it’s made.
-              </p>
+              <h2 id="measurement-title">{story.measurement.title}</h2>
+              <p className={styles.prose}>{story.measurement.body}</p>
             </div>
-            <div className="cs-meta glass">
-              <div className="cs-meta-row">
-                <span className="cs-meta-label">Role</span>
-                <span className="cs-meta-value">Research + Design</span>
-              </div>
-              <div className="cs-meta-row">
-                <span className="cs-meta-label">Timeline</span>
-                <span className="cs-meta-value">2 weeks</span>
-              </div>
-              <div className="cs-meta-row">
-                <span className="cs-meta-label">Team</span>
-                <span className="cs-meta-value">Designer, PM, Engineer</span>
-              </div>
-              <div className="cs-meta-row">
-                <span className="cs-meta-label">Status</span>
-                <span className="cs-meta-value">
-                  <span className="live" aria-hidden />
-                  Live · In production
-                </span>
-              </div>
+            <aside className={styles.insight} aria-label="Post-launch finding">
+              <Image className={styles.heatmap} src={`${ASSETS}/dead-click-detail.webp`}
+                alt="Heatmap detail showing clicks clustered near the close button."
+                width={206} height={188} sizes="52px" />
+              <p><strong>Caught within days of launch.</strong> Microsoft Clarity heatmaps and session recordings revealed a close button’s tiny click target.</p>
+            </aside>
+          </section>
+
+          <section className={styles.section} aria-labelledby="results-title">
+            <h2 id="results-title">{story.results.title}</h2>
+            <p className={styles.prose}>{story.results.body}</p>
+            <div className={styles.resultPair}>
+              {checkoutOutcomes.map(({ value, label }) => (
+                <div key={label}><span className={styles.resultValue}>{value}</span><p>{label}</p></div>
+              ))}
             </div>
           </section>
 
-          {/* IMPACT */}
-          <section className="cs-impact reveal" data-reveal>
-            <div className="cs-impact-cell glass">
-              <div className="cs-impact-num">+2.68%</div>
-              <div className="cs-impact-label">Checkout conversion uplift — to 76.7% overall</div>
-            </div>
-            <div className="cs-impact-cell glass">
-              <div className="cs-impact-num">25.7%</div>
-              <div className="cs-impact-label">Faster to complete — down to about two minutes</div>
-            </div>
-            <div className="cs-impact-cell glass">
-              <div className="cs-impact-num">94%</div>
-              <div className="cs-impact-label">Address completion in the normal flow</div>
-            </div>
+          <section className={styles.reflectionStory} aria-labelledby="reflection-title">
+            <h2 id="reflection-title">{story.reflection.title}</h2>
+            <p>{story.reflection.body}</p>
           </section>
+        </section>
 
-          {/* 01 PROBLEM */}
-          <section className="cs-section reveal" data-reveal>
-            <div className="cs-sec-head">
-              <span className="cs-sec-num">01</span>
-              <h2 className="cs-sec-title">Why we left the platform</h2>
-            </div>
-            <p className="hub-lede" style={{ margin: '0 0 2rem' }}>
-              The trigger was infrastructure, not pixels. During high-traffic events, checkout
-              fired enough API calls per session to brush up against the platform’s rate limits.
-              Past that line, calls got throttled — responses slowed, the flow wobbled, exactly
-              when the most carts were in play. Underneath it sat a harder truth: we didn’t own
-              the surface where our revenue actually lands.
-            </p>
-            <div className="cs-grid two">
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">System</p>
-                <p>
-                  Rate limits at peak load throttled API calls, dragging response times and
-                  destabilising checkout at the worst possible moment — <strong>the sale
-                  event itself</strong>.
-                </p>
-              </div>
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">Experience</p>
-                <p>
-                  Limited control over the UI meant no real brand alignment and{' '}
-                  <strong>slow, expensive iteration</strong> on the flows that mattered most.
-                </p>
-              </div>
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">Observability</p>
-                <p>
-                  No funnel instrumentation. Drop-offs were invisible — we couldn’t see{' '}
-                  <strong>where people left, or why</strong>, so we couldn’t fix it.
-                </p>
-              </div>
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">Business risk</p>
-                <p>
-                  Owning none of the infrastructure on a <strong>revenue-critical
-                  touchpoint</strong> was the real exposure. So checkout became step one of
-                  the migration.
-                </p>
-              </div>
-            </div>
-
-            <div className="cs-quote glass">
-              <blockquote>
-                “Hesitation at the final step is the most expensive hesitation there is. We
-                weren’t losing people on price — we were losing them to lag.”
-              </blockquote>
-            </div>
-          </section>
-
-          {/* 02 DIRECTION */}
-          <section className="cs-section reveal" data-reveal>
-            <div className="cs-sec-head">
-              <span className="cs-sec-num">02</span>
-              <h2 className="cs-sec-title">Where to aim</h2>
-            </div>
-            <p className="hub-lede" style={{ margin: '0 0 2rem' }}>
-              Rebuilding from scratch is a licence to redesign everything — and a trap. I started
-              by asking what a shopper actually weighs at checkout: <strong>what it costs, when
-              it arrives, and what comes off the top</strong>. That narrowed a whole screen down
-              to the two decisions that carry the drop-off — picking an address, and picking a
-              way to pay.
-            </p>
-            <div className="cs-grid two">
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">Goal 01</p>
-                <p>Cut drop-off at the single most critical step in the purchase.</p>
-              </div>
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">Goal 02</p>
-                <p>Lower the friction and the thinking required to choose how to pay.</p>
-              </div>
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">Goal 03</p>
-                <p>Shorten the path from “this one” to “confirmed” — fewer screens, no detours.</p>
-              </div>
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">Principle</p>
-                <p>
-                  <strong>Make every consequence visible at the moment of choice.</strong> No
-                  surprises waiting on the next screen.
-                </p>
-              </div>
-            </div>
-          </section>
-
-          {/* 03 THE REDESIGN */}
-          <section className="cs-section reveal" data-reveal>
-            <div className="cs-sec-head">
-              <span className="cs-sec-num">03</span>
-              <h2 className="cs-sec-title">The redesign</h2>
-            </div>
-
-            <div className="cs-iters" style={{ gridTemplateColumns: '1fr' }}>
-              {/* Payment */}
-              <div className="cs-iter glass" style={{ display: 'grid', gap: '1.4rem' }}>
-                <Image
-                  className="cs-real"
-                  src="/work/checkout/payment-desktop.png"
-                  alt="Checkout payment screen — selected default delivery address, store-credit and gift-card options, online payment methods with an active Pay ₹799 button, cash on delivery, and a live order summary on the right"
-                  width={2560}
-                  height={1788}
-                  sizes="(min-width: 900px) 800px, 92vw"
-                  loading="lazy"
-                />
-                <div>
-                  <p className="cs-iter-name">Payment — what you’re paying, and how, in one glance</p>
-                  <p className="cs-iter-desc">
-                    Three explorations led here. The final structure builds on the address insight
-                    without adding a single step: everything resolves in one downward read, so the
-                    shopper always sees the amount and the method together before they commit. Store
-                    credits and gift cards surface first — adjust the payable amount, then settle the
-                    rest with UPI, cards, NetBanking, EMI, wallets, BNPL or cash on delivery. An
-                    always-visible order breakdown — item total, discount, the waived shipping fee —
-                    means the number on the pay button is never a mystery. Confidence in, friction out.
-                  </p>
-                  <div className="cs-iter-changes" style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <span className="cs-pill">Credits &amp; gift cards first</span>
-                    <span className="cs-pill">Live order breakdown</span>
-                    <span className="cs-pill">One downward glance to confirm</span>
-                    <span className="cs-pill">No added steps</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Address */}
-              <div className="cs-iter glass" style={{ display: 'grid', gap: '1.4rem' }}>
-                <div className="cs-phone-pair">
-                  <Image
-                    className="cs-real phone"
-                    src="/work/checkout/address-map.png"
-                    alt="Pick-your-location screen — a full-screen map with a draggable delivery pin, an address search bar, and a Confirm & Proceed action"
-                    width={804}
-                    height={1787}
-                    sizes="(min-width: 900px) 300px, 45vw"
-                    loading="lazy"
-                  />
-                  <Image
-                    className="cs-real phone"
-                    src="/work/checkout/address-mobile.png"
-                    alt="Add-address screen — map-backed location card up top, the address-detail form, and a who-are-you-ordering-for selector above the save button"
-                    width={804}
-                    height={1770}
-                    sizes="(min-width: 900px) 300px, 45vw"
-                    loading="lazy"
-                  />
-                </div>
-                <div>
-                  <p className="cs-iter-name">Address — choices with their consequences attached</p>
-                  <p className="cs-iter-desc">
-                    Saved addresses come back from Shiprocket after login and land as scannable
-                    cards; pick one and the delivery estimate updates on the spot, so the trade-off
-                    is never hidden behind a tap. No address on file? A quick “who are you ordering
-                    for — myself or someone else” prompt sends you into a fresh add-address flow, and
-                    the pay button stays off until there’s a valid one. Custom-fit items flag a
-                    prepaid-only notice up front, so the constraint never surprises anyone at the
-                    pay step. A map with search and a draggable pin auto-fills the form — less
-                    typing, more precision — and two guardrails catch the edges: a gentle nudge when
-                    the pin and address disagree, and a clear stop when an area can’t be served.
-                  </p>
-                  <div className="cs-iter-changes" style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <span className="cs-pill">Instant delivery estimate</span>
-                    <span className="cs-pill">Map pin auto-fill</span>
-                    <span className="cs-pill">Custom-fit prepaid notice</span>
-                    <span className="cs-pill">Serviceability + mismatch safeguards</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* 04 OUTCOMES */}
-          <section className="cs-section reveal" data-reveal>
-            <div className="cs-sec-head">
-              <span className="cs-sec-num">04</span>
-              <h2 className="cs-sec-title">What moved</h2>
-            </div>
-            <div className="cs-outcomes">
-              <div className="cs-outcome glass">
-                <div className="cs-outcome-num">+2.68%</div>
-                <p className="cs-outcome-title">Conversion, up</p>
-                <p className="cs-outcome-desc">
-                  Checkout conversion climbed to 76.7% overall — a meaningful lift on a flow where
-                  every fraction of a point is real revenue.
-                </p>
-              </div>
-              <div className="cs-outcome glass">
-                <div className="cs-outcome-num">25.7%</div>
-                <p className="cs-outcome-title">Faster, end to end</p>
-                <p className="cs-outcome-desc">
-                  Average completion dropped to roughly two minutes. Owning the stack let us tune
-                  the path instead of working around the platform.
-                </p>
-              </div>
-              <div className="cs-outcome glass">
-                <div className="cs-outcome-num">55.7%</div>
-                <p className="cs-outcome-title">Recovered at the map</p>
-                <p className="cs-outcome-desc">
-                  Over half of the people who backed out of the map step came back and finished —
-                  evidence the map was a moment of hesitation, not a wall.
-                </p>
-              </div>
-            </div>
-          </section>
-
-          {/* REFLECTION */}
-          <section className="cs-reflect glass reveal" data-reveal>
-            <div className="cs-reflect-label">Takeaway</div>
-            <p className="cs-reflect-text">
-              “The migration bought us control; the design spent it well. Once we could see the
-              funnel and shape the screen, the wins came from removing doubt — not adding features.”
-            </p>
-          </section>
-
-          {/* NEXT */}
-          <nav className="cs-next">
-            <Link href="/work/econic">
-              <span aria-hidden>←</span> Prev: Econic 2025
-            </Link>
-            <Link href="/work/amodira">
-              Next: Amodira: Sound of the Scent <span aria-hidden>→</span>
-            </Link>
-          </nav>
-        </main>
-
-        <SiteFooter />
-      </div>
-    </>
+        <nav className={styles.next} aria-label="More case studies">
+          <Link href="/work/econic"><span aria-hidden>←</span><span><small>Previous project</small>Econic 25</span></Link>
+          <Link href="/work/amodira"><span><small>Next project</small>Amodira: Sound of the Scent</span><span aria-hidden>→</span></Link>
+        </nav>
+      </main>
+    </div>
   );
 }

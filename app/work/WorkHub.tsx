@@ -3,9 +3,11 @@
 import Link from 'next/link';
 import RevealBody from '@/components/RevealBody';
 import WorkTop from '@/components/work/WorkTop';
+import { CheckoutProjectLink } from '@/components/work/CheckoutTransition';
 import SiteFooter from '@/components/SiteFooter';
 import { useReveal } from '@/components/work/useReveal';
 import './work.css';
+import '../portfolio-type.css';
 
 /**
  * THE HANGAR — /work
@@ -31,9 +33,9 @@ const PROJECTS: Project[] = [
   {
     slug: 'checkout-migration',
     href: '/work/checkout',
-    name: 'Checkout, off Shopify',
+    name: 'Faster Checkout Through an In-House Redesign',
     context:
-      'Migrated the most revenue-critical flow off Shopify to escape peak-load rate limits — and rebuilt address and payment selection around instant feedback.',
+      'Bringing VIRGIO’s checkout in-house after sale traffic exposed a bottleneck, with simpler address and payment decisions.',
     tags: ['Virgio', 'Conversion', '2024'],
     metric: '+2.68',
     unit: '%',
@@ -76,6 +78,7 @@ const PROJECTS: Project[] = [
 
 function Card({ p, i }: { p: Project; i: number }) {
   const idx = String(i + 1).padStart(2, '0');
+  const ProjectLink = p.href === '/work/checkout' ? CheckoutProjectLink : Link;
   const inner = (
     <>
       <span className="proj-idx">{idx}</span>
@@ -108,9 +111,9 @@ function Card({ p, i }: { p: Project; i: number }) {
   return (
     <li data-reveal className="reveal" style={{ transitionDelay: `${i * 0.07}s` }}>
       {p.href ? (
-        <Link href={p.href} className="proj glass" aria-label={`${p.name} — read case study`}>
+        <ProjectLink href={p.href} className="proj glass" aria-label={`${p.name} — read case study`}>
           {inner}
-        </Link>
+        </ProjectLink>
       ) : (
         <div className="proj glass">{inner}</div>
       )}
@@ -122,7 +125,7 @@ export default function WorkHub() {
   useReveal();
 
   return (
-    <>
+    <div className="portfolio-type">
       <RevealBody />
       <div className="work-bg" aria-hidden />
       <WorkTop
@@ -155,6 +158,6 @@ export default function WorkHub() {
 
         <SiteFooter />
       </div>
-    </>
+    </div>
   );
 }

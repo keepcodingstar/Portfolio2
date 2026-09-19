@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import CheckoutView from './CheckoutView';
+import { checkoutTitle, story } from './checkout-content';
 
 const URL_PATH = '/work/checkout';
-const TITLE = 'Checkout, off Shopify — +2.68% conversion, 25.7% faster';
-const DESCRIPTION =
-  'Migrated Virgio’s revenue-critical checkout off Shopify to escape peak-load throttling, then rebuilt address and payment around one idea: show the consequence of every choice the moment it’s made.';
+const TITLE = checkoutTitle;
+const DESCRIPTION = story.results.body;
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 const CASE_JSONLD = {
   '@context': 'https://schema.org',
   '@type': 'CreativeWork',
-  name: 'Checkout, off Shopify',
+  name: TITLE,
   headline: TITLE,
   description: DESCRIPTION,
   url: `https://sameerkapil.com${URL_PATH}`,

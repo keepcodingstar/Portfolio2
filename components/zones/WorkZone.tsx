@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import GlowCard from '@/components/GlowCard';
+import { CheckoutProjectLink } from '@/components/work/CheckoutTransition';
 
 gsap.registerPlugin(ScrollTrigger);
 // mobile URL-bar show/hide fires resize events mid-scroll; a full ScrollTrigger
@@ -31,9 +32,9 @@ type Case = {
 
 const CASES: Case[] = [
   {
-    name: 'Checkout, off Shopify',
+    name: 'Faster Checkout Through an In-House Redesign',
     context:
-      'Migrated the most revenue-critical flow off Shopify to escape peak-load rate limits, rebuilding address and payment selection around instant feedback.',
+      'Bringing VIRGIO’s checkout in-house after sale traffic exposed a bottleneck, with simpler address and payment decisions.',
     meta: '+2.68% conversion',
     href: '/work/checkout',
     metric: '+2.68%',
@@ -67,12 +68,14 @@ const CASES: Case[] = [
 
 function CardInner({ c, i }: { c: Case; i: number }) {
   const idx = String(i + 1).padStart(2, '0');
+  const ProjectLink = c.href === '/work/checkout' ? CheckoutProjectLink : Link;
   return (
     <GlowCard>
       {c.img ? (
         <div className="gc-media">
           <Image
             className="gc-img"
+            data-checkout-cover={c.href === '/work/checkout' ? '' : undefined}
             src={c.img.src}
             alt={c.img.alt}
             width={720}
@@ -101,7 +104,7 @@ function CardInner({ c, i }: { c: Case; i: number }) {
         </div>
       </div>
       {c.href && (
-        <Link
+        <ProjectLink
           href={c.href}
           className="gc-stretch"
           aria-label={`${c.name}: read case study`}
@@ -151,6 +154,7 @@ export default function WorkZone() {
             <div
               key={c.name}
               className="gcard"
+              data-checkout-card={c.href === '/work/checkout' ? '' : undefined}
               style={{
                 top: `calc(clamp(7rem, 15vh, 9.5rem) + ${i} * 0.85rem)`,
                 zIndex: i + 1,

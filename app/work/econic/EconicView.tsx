@@ -335,7 +335,7 @@ export default function EconicFair() {
               <span aria-hidden>←</span> Prev: Fair Pricing
             </Link>
             <Link href="/work/checkout">
-              Next: Checkout, off Shopify <span aria-hidden>→</span>
+              Next: Faster Checkout <span aria-hidden>→</span>
             </Link>
           </nav>
         </main>

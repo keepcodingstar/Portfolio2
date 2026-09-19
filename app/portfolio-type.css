@@ -1,0 +1,139 @@
+/* Opt in on the Work index only. The homepage and case studies keep their own type. */
+.portfolio-type {
+  --portfolio-copy-gap: 12px;
+  font-kerning: normal;
+}
+
+.portfolio-type :is(.hub-hero h1, .sky-statement, .space-title, .space-projects-title, .think-title, .section-head h2, .footer-talk) {
+  font-family: var(--sans);
+  font-weight: 400;
+  line-height: 1.16;
+  letter-spacing: -.02em;
+}
+
+/* One serif phrase per headline; size it by visible letter height. */
+.portfolio-type :is(.hub-hero h1 em, .sky-statement .script, .think-title em, .footer-talk .script) {
+  font-family: var(--display);
+  font-style: normal;
+  font-weight: 400;
+  font-size: .96em;
+  line-height: inherit;
+  letter-spacing: 0;
+  word-spacing: .12em;
+  padding: 0;
+}
+
+.portfolio-type .hub-hero { max-width: 880px; }
+.portfolio-type .hub-hero h1 {
+  max-width: 800px;
+  font-size: clamp(38px, 5.2vw, 68px);
+  text-wrap: pretty;
+}
+.portfolio-type .hub-hero h1 em { white-space: nowrap; }
+.portfolio-type .hub-lede {
+  margin-top: var(--portfolio-copy-gap);
+  font-size: clamp(17px, 1.5vw, 19px);
+  line-height: 1.65;
+}
+
+.portfolio-type :is(.proj-name, .gc-title) {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: clamp(24px, 2.5vw, 34px);
+  line-height: 1.22;
+  letter-spacing: -.025em;
+  text-wrap: pretty;
+}
+.portfolio-type :is(.proj-ctx, .gc-ctx) {
+  margin-top: var(--portfolio-copy-gap);
+  font-size: 16px;
+  line-height: 1.65;
+}
+.portfolio-type :is(.proj-metric, .gc-bigmetric) {
+  font-family: var(--sans);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -.025em;
+}
+.portfolio-type .proj-metric { font-size: clamp(36px, 4.2vw, 54px); }
+
+.portfolio-type .sky-eyebrow {
+  font-family: var(--sans);
+  font-style: normal;
+  font-size: clamp(17px, 1.6vw, 20px);
+  line-height: 1.5;
+  letter-spacing: 0;
+  margin-bottom: var(--portfolio-copy-gap);
+}
+.portfolio-type .sky-statement { font-size: clamp(36px, 5vw, 68px); }
+.portfolio-type .sky-line { white-space: normal; }
+.portfolio-type .sky-tail {
+  font-size: .72em;
+  font-style: normal;
+  line-height: 1.3;
+  letter-spacing: -.015em;
+  margin-top: 8px;
+}
+.portfolio-type .sky-role {
+  margin-top: var(--portfolio-copy-gap);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.portfolio-type .sky-role-em { font-weight: 500; }
+.portfolio-type .fc-dest {
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+.portfolio-type .space-title {
+  max-width: none;
+  font-size: clamp(32px, 3.4vw, 48px);
+  line-height: 1.2;
+}
+.portfolio-type .space-projects-title { line-height: 1.2; }
+.portfolio-type .scrap-copy { gap: var(--portfolio-copy-gap); }
+.portfolio-type .space-lede { line-height: 1.65; }
+.portfolio-type .think-title {
+  font-size: clamp(30px, 4.1vw, 52px);
+  line-height: 1.2;
+  word-spacing: normal;
+  text-wrap: balance;
+}
+.portfolio-type .think-card h3 {
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: clamp(20px, 2vw, 24px);
+  line-height: 1.3;
+  letter-spacing: -.02em;
+  margin-bottom: var(--portfolio-copy-gap);
+}
+.portfolio-type .think-card p { line-height: 1.65; }
+
+.portfolio-type :is(.work-back, .work-top-links a, .sky-resume, .footer-links a, .footer-links button) {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+@media (max-width: 600px) {
+  .portfolio-type { --portfolio-copy-gap: 10px; }
+  .portfolio-type :is(.hub-hero h1, .sky-statement, .think-title) {
+    line-height: 1.2;
+    letter-spacing: -.015em;
+  }
+  .portfolio-type .hub-hero h1 { font-size: clamp(34px, 8vw, 42px); }
+  .portfolio-type .sky-statement { font-size: clamp(30px, 8.5vw, 42px); }
+  .portfolio-type .sky-role { font-size: 14px; }
+  .portfolio-type .space-title { font-size: clamp(28px, 7.5vw, 38px); }
+  .portfolio-type :is(.proj-name, .gc-title) { font-size: 24px; }
+  .portfolio-type :is(.proj-ctx, .gc-ctx) { font-size: 16px; }
+  .portfolio-type :is(.work-back, .work-top-links a) { font-size: 13px; }
+}

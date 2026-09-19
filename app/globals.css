@@ -1,5 +1,29 @@
 @import "tailwindcss";
 
+/* The checkout case study carries its existing project image into the lighter
+   sky. Scoped to this entry transition; other routes retain their behaviour. */
+html[data-checkout-transition]::view-transition-group(checkout-cover) {
+  animation-duration: 450ms;
+  animation-timing-function: cubic-bezier(.22, 1, .36, 1);
+}
+html[data-checkout-transition]::view-transition-old(root),
+html[data-checkout-transition]::view-transition-new(root) {
+  animation-duration: 350ms;
+}
+html[data-checkout-transition]::view-transition-old(checkout-cover),
+html[data-checkout-transition]::view-transition-new(checkout-cover) {
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-checkout-transition]::view-transition-group(*),
+  html[data-checkout-transition]::view-transition-old(*),
+  html[data-checkout-transition]::view-transition-new(*) {
+    animation-duration: 0s;
+  }
+}
+
 /* =================================================================
    SAMEER KAPIL — the altitude journey
    One continuous atmosphere: SPACE (up · creative) · SKY (land · you) ·
