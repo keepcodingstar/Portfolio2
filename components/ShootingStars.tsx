@@ -1,23 +1,9 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
-
-/**
- * Aceternity "Shooting Stars" — a single animated streak that periodically
- * crosses the field. Ported self-contained (no shadcn / cn dependency): pure
- * SVG + requestAnimationFrame, no framer-motion.
- */
-interface ShootingStar {
-  id: number;
-  x: number;
-  y: number;
-  angle: number;
-  scale: number;
-  speed: number;
-  distance: number;
-}
+import { useEffect, useId, useRef } from 'react';
 
 interface ShootingStarsProps {
+  paused?: boolean;
   minSpeed?: number;
   maxSpeed?: number;
   minDelay?: number;
@@ -29,25 +15,10 @@ interface ShootingStarsProps {
   className?: string;
 }
 
-const getRandomStartPoint = () => {
-  const side = Math.floor(Math.random() * 4);
-  const offset = Math.random() * window.innerWidth;
-
-  switch (side) {
-    case 0:
-      return { x: offset, y: 0, angle: 45 };
-    case 1:
-      return { x: window.innerWidth, y: offset, angle: 135 };
-    case 2:
-      return { x: offset, y: window.innerHeight, angle: 225 };
-    case 3:
-      return { x: 0, y: offset, angle: 315 };
-    default:
-      return { x: 0, y: 0, angle: 45 };
-  }
-};
-
-export const ShootingStars: React.FC<ShootingStarsProps> = ({
+/** One decorative streak. DOM transforms avoid a React render every frame;
+ * its timer and animation both stop when hidden or unmounted. */
+export default function ShootingStars({
+  paused = false,
   minSpeed = 10,
   maxSpeed = 30,
   minDelay = 1200,
@@ -57,95 +28,62 @@ export const ShootingStars: React.FC<ShootingStarsProps> = ({
   starWidth = 10,
   starHeight = 1,
   className,
-}) => {
-  const [star, setStar] = useState<ShootingStar | null>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
+}: ShootingStarsProps) {
+  const streak = useRef<SVGRectElement>(null);
+  const gradient = useId();
 
   useEffect(() => {
+    const element = streak.current;
+    if (!element || paused) return;
+    let timer = 0;
+    let frame = 0;
     const createStar = () => {
-      const { x, y, angle } = getRandomStartPoint();
-      const newStar: ShootingStar = {
-        id: Date.now(),
-        x,
-        y,
-        angle,
-        scale: 1,
-        speed: Math.random() * (maxSpeed - minSpeed) + minSpeed,
-        distance: 0,
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const side = Math.floor(Math.random() * 4);
+      let x = side === 1 ? width : side === 3 ? 0 : Math.random() * width;
+      let y = side === 0 ? 0 : side === 2 ? height : Math.random() * height;
+      const angle = 45 + side * 90;
+      const radians = angle * Math.PI / 180;
+      const speed = minSpeed + Math.random() * (maxSpeed - minSpeed);
+      let distance = 0;
+      let previous = 0;
+      const move = (now: number) => {
+        const step = speed * (previous ? Math.min(now - previous, 32) / (1000 / 60) : 1);
+        previous = now;
+        x += step * Math.cos(radians);
+        y += step * Math.sin(radians);
+        distance += step;
+        if (x < -20 || x > width + 20 || y < -20 || y > height + 20) {
+          element.style.opacity = '0';
+          timer = window.setTimeout(createStar, minDelay + Math.random() * (maxDelay - minDelay));
+          return;
+        }
+        element.setAttribute('transform', `translate(${x} ${y}) rotate(${angle}) scale(${1 + distance / 100} 1)`);
+        element.style.opacity = '1';
+        frame = requestAnimationFrame(move);
       };
-      setStar(newStar);
-
-      const randomDelay = Math.random() * (maxDelay - minDelay) + minDelay;
-      setTimeout(createStar, randomDelay);
+      frame = requestAnimationFrame(move);
     };
-
-    createStar();
-
-    return () => {};
-  }, [minSpeed, maxSpeed, minDelay, maxDelay]);
-
-  useEffect(() => {
-    const moveStar = () => {
-      if (star) {
-        setStar((prevStar) => {
-          if (!prevStar) return null;
-          const newX =
-            prevStar.x +
-            prevStar.speed * Math.cos((prevStar.angle * Math.PI) / 180);
-          const newY =
-            prevStar.y +
-            prevStar.speed * Math.sin((prevStar.angle * Math.PI) / 180);
-          const newDistance = prevStar.distance + prevStar.speed;
-          const newScale = 1 + newDistance / 100;
-          if (
-            newX < -20 ||
-            newX > window.innerWidth + 20 ||
-            newY < -20 ||
-            newY > window.innerHeight + 20
-          ) {
-            return null;
-          }
-          return {
-            ...prevStar,
-            x: newX,
-            y: newY,
-            distance: newDistance,
-            scale: newScale,
-          };
-        });
-      }
+    timer = window.setTimeout(createStar, minDelay);
+    return () => {
+      window.clearTimeout(timer);
+      cancelAnimationFrame(frame);
+      element.style.opacity = '0';
     };
-
-    const animationFrame = requestAnimationFrame(moveStar);
-    return () => cancelAnimationFrame(animationFrame);
-  }, [star]);
+  }, [paused, minSpeed, maxSpeed, minDelay, maxDelay]);
 
   return (
-    <svg
-      ref={svgRef}
-      className={`w-full h-full absolute inset-0${className ? ` ${className}` : ''}`}
-    >
-      {star && (
-        <rect
-          key={star.id}
-          x={star.x}
-          y={star.y}
-          width={starWidth * star.scale}
-          height={starHeight}
-          fill="url(#gradient)"
-          transform={`rotate(${star.angle}, ${
-            star.x + (starWidth * star.scale) / 2
-          }, ${star.y + starHeight / 2})`}
-        />
-      )}
+    <svg className={`w-full h-full absolute inset-0${className ? ` ${className}` : ''}`}>
+      <rect ref={streak} width={starWidth} height={starHeight} fill={`url(#${gradient})`} style={{ opacity: 0 }} />
       <defs>
-        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <linearGradient id={gradient} x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor={trailColor} stopOpacity={0} />
           <stop offset="100%" stopColor={starColor} stopOpacity={1} />
         </linearGradient>
       </defs>
     </svg>
   );
-};
+}
 
-export default ShootingStars;
+export { ShootingStars };

@@ -1,0 +1,182 @@
+{
+  "listing-price-on": {
+    "width": 706,
+    "height": 98
+  },
+  "campaign-counters": {
+    "width": 812,
+    "height": 218
+  },
+  "amodira-variants": {
+    "width": 682,
+    "height": 899
+  },
+  "non-returnable-choice": {
+    "width": 765,
+    "height": 179
+  },
+  "fair-pricing-breakdown": {
+    "width": 750,
+    "height": 539
+  },
+  "announcement-date": {
+    "width": 724,
+    "height": 173
+  },
+  "cart-preview-price": {
+    "width": 497,
+    "height": 313
+  },
+  "desktop-preview-summary": {
+    "width": 620,
+    "height": 670
+  },
+  "recap-thank-you": {
+    "width": 435,
+    "height": 268
+  },
+  "listing-price-off": {
+    "width": 706,
+    "height": 98
+  },
+  "preview-toggle-off": {
+    "width": 750,
+    "height": 112
+  },
+  "cart-end-preview": {
+    "width": 572,
+    "height": 577
+  },
+  "amodira-cart-widget": {
+    "width": 720,
+    "height": 840
+  },
+  "sale-checkout": {
+    "width": 720,
+    "height": 266
+  },
+  "recap-new-returning": {
+    "width": 571,
+    "height": 148
+  },
+  "preview-toggle-on": {
+    "width": 750,
+    "height": 112
+  },
+  "announcement-sheet": {
+    "width": 751,
+    "height": 1130
+  },
+  "announcement-listing": {
+    "width": 750,
+    "height": 1570
+  },
+  "preview-off": {
+    "width": 750,
+    "height": 1650
+  },
+  "preview-on": {
+    "width": 750,
+    "height": 1650
+  },
+  "cart-preview": {
+    "width": 720,
+    "height": 1558
+  },
+  "cart-desktop": {
+    "width": 2045,
+    "height": 1605
+  },
+  "amodira-cart": {
+    "width": 720,
+    "height": 1670
+  },
+  "sale-cart-item": {
+    "width": 720,
+    "height": 655
+  },
+  "fair-pricing": {
+    "width": 750,
+    "height": 1188
+  },
+  "brand-banner": {
+    "width": 748,
+    "height": 452
+  },
+  "brand-logo": {
+    "width": 545,
+    "height": 167
+  },
+  "brand-type-refined": {
+    "width": 1138,
+    "height": 770
+  },
+  "countdown-promise": {
+    "width": 510,
+    "height": 264
+  },
+  "brand-crowd": {
+    "width": 519,
+    "height": 779
+  },
+  "recap-community": {
+    "width": 520,
+    "height": 779
+  },
+  "recap-cities": {
+    "width": 519,
+    "height": 778
+  },
+  "recap-final": {
+    "width": 625,
+    "height": 625
+  },
+  "wire-announcement": {
+    "width": 786,
+    "height": 1880
+  },
+  "wire-presale": {
+    "width": 802,
+    "height": 1635
+  },
+  "wire-sale": {
+    "width": 725,
+    "height": 1935
+  },
+  "cover": {
+    "width": 1800,
+    "height": 1080
+  },
+  "award": {
+    "width": 618,
+    "height": 805
+  },
+  "wire-presale-off": {
+    "width": 750,
+    "height": 3062
+  },
+  "wire-presale-on": {
+    "width": 750,
+    "height": 2316
+  },
+  "fair-pricing-composition": {
+    "width": 1806,
+    "height": 1372
+  },
+  "demo-niki": {
+    "width": 265,
+    "height": 450
+  },
+  "demo-astrid": {
+    "width": 300,
+    "height": 359
+  },
+  "demo-raya": {
+    "width": 300,
+    "height": 314
+  },
+  "demo-logo": {
+    "width": 125,
+    "height": 84
+  }
+}

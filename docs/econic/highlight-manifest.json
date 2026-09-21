@@ -1,0 +1,242 @@
+[
+  {
+    "name": "announcement-date",
+    "source": "references/13-announcement-banner.png",
+    "image": 13,
+    "box": [
+      14,
+      1325,
+      738,
+      1498
+    ],
+    "file": "highlights/announcement-date.png",
+    "caption": "The cost-to-make promise and event dates",
+    "width": 724,
+    "height": 173
+  },
+  {
+    "name": "preview-toggle-off",
+    "source": "references/15-listing-preview-off.png",
+    "image": 15,
+    "box": [
+      0,
+      235,
+      750,
+      347
+    ],
+    "file": "highlights/preview-toggle-off.png",
+    "caption": "Current-price mode header",
+    "width": 750,
+    "height": 112
+  },
+  {
+    "name": "preview-toggle-on",
+    "source": "references/16-listing-preview-on.png",
+    "image": 16,
+    "box": [
+      0,
+      235,
+      750,
+      347
+    ],
+    "file": "highlights/preview-toggle-on.png",
+    "caption": "Upcoming-price preview header",
+    "width": 750,
+    "height": 112
+  },
+  {
+    "name": "listing-price-off",
+    "source": "references/15-listing-preview-off.png",
+    "image": 15,
+    "box": [
+      28,
+      1552,
+      734,
+      1650
+    ],
+    "file": "highlights/listing-price-off.png",
+    "caption": "Current prices in the product listing",
+    "width": 706,
+    "height": 98
+  },
+  {
+    "name": "listing-price-on",
+    "source": "references/16-listing-preview-on.png",
+    "image": 16,
+    "box": [
+      28,
+      1552,
+      734,
+      1650
+    ],
+    "file": "highlights/listing-price-on.png",
+    "caption": "Upcoming prices with today’s price as reference",
+    "width": 706,
+    "height": 98
+  },
+  {
+    "name": "fair-pricing-breakdown",
+    "source": "references/17-fair-pricing-sheet.png",
+    "image": 17,
+    "box": [
+      0,
+      452,
+      750,
+      991
+    ],
+    "file": "highlights/fair-pricing-breakdown.png",
+    "caption": "Cost to make, start date and excluded cost groups",
+    "width": 750,
+    "height": 539
+  },
+  {
+    "name": "cart-preview-price",
+    "source": "references/19-cart-preview-mobile.png",
+    "image": 19,
+    "box": [
+      213,
+      320,
+      710,
+      633
+    ],
+    "file": "highlights/cart-preview-price.png",
+    "caption": "Upcoming price and today’s price on a cart item",
+    "width": 497,
+    "height": 313
+  },
+  {
+    "name": "cart-end-preview",
+    "source": "references/19-cart-preview-mobile.png",
+    "image": 19,
+    "box": [
+      78,
+      900,
+      650,
+      1477
+    ],
+    "file": "highlights/cart-end-preview.png",
+    "caption": "Preview total, explanation, countdown and End preview",
+    "width": 572,
+    "height": 577
+  },
+  {
+    "name": "desktop-preview-summary",
+    "source": "references/20-cart-preview-desktop.png",
+    "image": 20,
+    "box": [
+      1540,
+      424,
+      2160,
+      1094
+    ],
+    "file": "highlights/desktop-preview-summary.png",
+    "caption": "The preview summary on desktop",
+    "width": 620,
+    "height": 670
+  },
+  {
+    "name": "sale-checkout",
+    "source": "references/21-sale-cart-savings.png",
+    "image": 21,
+    "box": [
+      0,
+      4368,
+      720,
+      4634
+    ],
+    "file": "highlights/sale-checkout.png",
+    "caption": "Savings strip and available checkout during the fair",
+    "width": 720,
+    "height": 266
+  },
+  {
+    "name": "amodira-cart-widget",
+    "source": "references/22-sale-cart-amodira.png",
+    "image": 22,
+    "box": [
+      0,
+      655,
+      720,
+      1495
+    ],
+    "file": "highlights/amodira-cart-widget.png",
+    "caption": "Amodira discovery and Add actions within the bag",
+    "width": 720,
+    "height": 840
+  },
+  {
+    "name": "amodira-variants",
+    "source": "references/23-amodira-variant-sheet.png",
+    "image": 23,
+    "box": [
+      20,
+      247,
+      702,
+      1146
+    ],
+    "file": "highlights/amodira-variants.png",
+    "caption": "Three product formats with prices and Add to bag actions",
+    "width": 682,
+    "height": 899
+  },
+  {
+    "name": "non-returnable-choice",
+    "source": "references/24-non-returnable-option-states.png",
+    "image": 24,
+    "box": [
+      40,
+      50,
+      805,
+      229
+    ],
+    "file": "highlights/non-returnable-choice.png",
+    "caption": "Unchecked and checked states explain the non-returnable choice",
+    "width": 765,
+    "height": 179
+  },
+  {
+    "name": "campaign-counters",
+    "source": "references/25-campaign-counter-banners.png",
+    "image": 25,
+    "box": [
+      20,
+      17,
+      832,
+      235
+    ],
+    "file": "highlights/campaign-counters.png",
+    "caption": "Campaign counters as interface details, not verified metrics",
+    "width": 812,
+    "height": 218
+  },
+  {
+    "name": "recap-thank-you",
+    "source": "references/26-recap-community-results.png",
+    "image": 26,
+    "box": [
+      610,
+      23,
+      1045,
+      291
+    ],
+    "file": "highlights/recap-thank-you.png",
+    "caption": "A campaign-wide thank-you after the event",
+    "width": 435,
+    "height": 268
+  },
+  {
+    "name": "recap-new-returning",
+    "source": "references/28-recap-new-returning-shoppers.png",
+    "image": 28,
+    "box": [
+      34,
+      195,
+      605,
+      343
+    ],
+    "file": "highlights/recap-new-returning.png",
+    "caption": "New and returning customer figures displayed in the recap",
+    "width": 571,
+    "height": 148
+  }
+]

@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { useAltitude } from '@/components/AltitudeProvider';
+
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 /**
  * The hinge of the whole site: an editorial THESIS read over a cockpit canopy of
@@ -27,35 +29,29 @@ export default function SkyHero() {
   const root = useRef<HTMLElement>(null);
   const { goTo } = useAltitude();
 
-  // WEAK MAGNET — replaces the old CSS scroll-snap (y proximity), whose pull
-  // radius is browser-defined and grabbed the hero from half a screen away.
-  // This only settles when scrolling comes to REST already close to the hero:
-  // within SNAP_RADIUS of centre. Everywhere else the page scrolls free.
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const SNAP_RADIUS = 0.1; // fraction of viewport height
-    let timer = 0;
-    const settle = () => {
-      const el = root.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const offset = rect.top + rect.height / 2 - window.innerHeight / 2;
-      if (Math.abs(offset) > 2 && Math.abs(offset) < window.innerHeight * SNAP_RADIUS) {
-        window.scrollBy({ top: offset, behavior: 'smooth' });
-      }
+  useIsomorphicLayoutEffect(() => {
+    type PositionedDetail = { restored: boolean };
+    const select = gsap.utils.selector(root);
+    const text = select('.sky-fold .reveal');
+    const reveals = select('.reveal');
+    const edges = select('.sky-corner, .sky-edge');
+    const portrait = select('.sky-portrait');
+    const bank = select('.sky-cloud-bank');
+    let positioned: PositionedDetail | null = null;
+    let appeared = false;
+    let revealReturn: ((detail: PositionedDetail) => void) | null = null;
+    const showAtRest = () => {
+      gsap.set(reveals, { autoAlpha: 1, y: 0 });
+      gsap.set([...edges, ...portrait, ...bank], { autoAlpha: 1 });
     };
-    const onScroll = () => {
-      window.clearTimeout(timer);
-      timer = window.setTimeout(settle, 160);
+    const onPositioned = (event: Event) => {
+      positioned = { restored: (event as CustomEvent<PositionedDetail>).detail?.restored === true };
+      revealReturn?.(positioned);
     };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => {
-      window.clearTimeout(timer);
-      window.removeEventListener('scroll', onScroll);
-    };
-  }, []);
-
-  useEffect(() => {
+    // The parent anchors/restores after this child layout effect. Wait until
+    // that finishes before revealing so an old scroll position cannot decide
+    // whether the hero should animate.
+    window.addEventListener('altitude:positioned', onPositioned);
     const mm = gsap.matchMedia();
     mm.add(
       {
@@ -64,11 +60,42 @@ export default function SkyHero() {
       },
       (ctx) => {
         if (ctx.conditions?.reduce) {
-          gsap.set('.reveal', { autoAlpha: 1, y: 0 });
-          gsap.set('.sky-edge', { autoAlpha: 1 });
-          gsap.set('.sky-portrait', { autoAlpha: 1 });
-          gsap.set('.sky-cloud-bank', { autoAlpha: 1 });
+          appeared = true;
+          showAtRest();
           return;
+        }
+
+        if (!document.body.classList.contains('preloading')) {
+          if (appeared) {
+            showAtRest();
+            return;
+          }
+
+          gsap.set(text, { autoAlpha: 0, y: 10 });
+          gsap.set([...edges, ...portrait, ...bank], { autoAlpha: 0 });
+          let timeline: gsap.core.Timeline | undefined;
+          revealReturn = ({ restored }) => {
+            if (appeared) return;
+            appeared = true;
+            const bounds = root.current?.getBoundingClientRect();
+            const visible = bounds && bounds.bottom > 0 && bounds.top < window.innerHeight;
+            if (restored || !visible || document.documentElement.hasAttribute('data-home-transition')) {
+              showAtRest();
+              return;
+            }
+
+            // Fade the floating artwork without taking over its CSS transform.
+            timeline = gsap.timeline({ defaults: { ease: 'power2.out' } })
+              .to(bank, { autoAlpha: 1, duration: 0.6 }, 0)
+              .to(portrait, { autoAlpha: 1, duration: 0.6 }, 0.04)
+              .to(text, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.04 }, 0.06)
+              .to(edges, { autoAlpha: 1, duration: 0.4 }, 0.1);
+          };
+          if (positioned) revealReturn(positioned);
+          return () => {
+            revealReturn = null;
+            timeline?.kill();
+          };
         }
 
         // hide first so nothing flashes under the white preloader field
@@ -81,8 +108,15 @@ export default function SkyHero() {
 
         // play AFTER the curtain begins parting; the delay lands the statement as
         // the centre clears (clouds settle to the sides/bottom).
+        let played = false;
+        let fallback = 0;
+        let timeline: gsap.core.Timeline | undefined;
         const play = () => {
-          gsap
+          if (played) return;
+          played = true;
+          appeared = true;
+          window.clearTimeout(fallback);
+          timeline = gsap
             .timeline({ defaults: { ease: 'power3.out' }, delay: 0.9 })
             .to('.sky-cloud-bank', { autoAlpha: 1, duration: 1.6 }, 0)
             .to('.sky-portrait', { autoAlpha: 1, duration: 1.3 }, 0.1)
@@ -90,22 +124,20 @@ export default function SkyHero() {
             .to('.sky-edge', { autoAlpha: 1, duration: 0.8 }, 0.55);
         };
 
-        // if the intro is already gone (remount), play now; else wait for the
-        // signal, with a safety net so the hero never stays hidden.
-        if (!document.body.classList.contains('preloading')) {
-          play();
-          return;
-        }
         window.addEventListener('preloader:done', play, { once: true });
-        const fallback = window.setTimeout(play, 7000);
+        fallback = window.setTimeout(play, 7000);
         return () => {
           window.removeEventListener('preloader:done', play);
           clearTimeout(fallback);
+          timeline?.kill();
         };
       },
       root,
     );
-    return () => mm.revert();
+    return () => {
+      window.removeEventListener('altitude:positioned', onPositioned);
+      mm.revert();
+    };
   }, []);
 
   return (
@@ -122,7 +154,7 @@ export default function SkyHero() {
       <button
         type="button"
         className="sky-edge up"
-        onClick={() => goTo('zone-space')}
+        onClick={(event) => goTo('zone-space', event.detail === 0)}
         aria-label="Go up to the creative side"
       >
         <span className="fc-arrow" aria-hidden>↑</span>
@@ -199,7 +231,7 @@ export default function SkyHero() {
       <button
         type="button"
         className="sky-edge down"
-        onClick={() => goTo('zone-work')}
+        onClick={(event) => goTo('zone-work', event.detail === 0)}
         aria-label="Go down to the professional side"
       >
         <span className="fc-dest">The professional side</span>

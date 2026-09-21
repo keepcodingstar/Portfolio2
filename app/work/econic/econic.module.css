@@ -1,0 +1,232 @@
+/* Preserve checkout's editorial shell. Design variance 5, motion 2, density 3.
+   The supplied campaign artwork retains its original palette and typography. */
+.page { --econic-green: #008d2b; }
+.page .anchor, .page section[id] { scroll-margin-top: 100px; }
+.hero h1 { max-width: 980px; }
+.hero h1 > span:nth-child(2) { white-space: normal; }
+.heroDescription { max-width: 740px; margin-top: 22px !important; color: var(--checkout-muted); font-size: 19px; }
+.hero figure { margin-top: 32px !important; }
+.heroHighlights { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center; padding: 26px 28px; margin-bottom: 12px; border-radius: 16px; background: #f3f6ed; }
+.heroRevenue { display: flex; align-items: center; gap: 20px; }
+.revenueValue { flex: none; color: var(--econic-green); font-family: var(--display); font-size: clamp(62px,7vw,88px); line-height: 1; letter-spacing: -.045em; }
+.heroRevenue strong { display: block; font-size: 18px; line-height: 1.4; }
+.heroAward { display: flex; align-items: center; gap: 20px; padding-left: 28px; border-left: 1px solid #d8e0d0; }
+.heroAwardPhoto { flex: 0 0 58px; }
+.heroAwardPhoto button, .heroAwardPhoto img { border-radius: 6px; }
+.heroAward .visualLabel { margin-bottom: 4px; font-size: 12px; }
+.heroAward strong { display: block; font-size: 21px; font-weight: 500; line-height: 1.25; }
+.heroAwardCredit { display: block; margin-top: 6px; font-size: 12px; color: var(--checkout-muted); }
+.page .framingQuestion { margin-top: 48px; padding-top: 28px; border-top: 1px solid var(--checkout-rule); font-size: clamp(22px, 2vw, 26px); line-height: 1.45; letter-spacing: -.025em; text-wrap: pretty; }
+.page .copyEmphasis { font-weight: 700; color: var(--checkout-ink); }
+.section > p { max-width: 870px; }
+.visual { margin-top: 30px !important; }
+.visual :is(button, img) { border-radius: 10px; }
+.visual img { box-shadow: none; }
+.visualLabel, .boardLabel { display: block; color: #5d695f; font-size: 12px; line-height: 1.5; }
+.visualLabel { margin-bottom: 16px; }
+.inlineLink { color: #345b78; white-space: nowrap; text-decoration: underline; text-decoration-color: #afc4d1; text-underline-offset: 4px; }
+.inlineLink:hover { text-decoration-color: currentColor; }
+.awardVisual, .languageVisual, .phaseVisual, .announcementVisual, .previewVisual, .pricingVisual, .cartVisual, .liveVisual, .amodiraVisual {
+  overflow: hidden; border: 1px solid #dfe8e2; border-radius: 22px; background: #edf3ed;
+}
+.awardVisual { display: grid; grid-template-columns: 1fr 1.08fr; gap: clamp(32px,6vw,80px); padding: clamp(24px,5vw,64px); align-items: center; background: #edf2f5; border-color: #dfe8ef; }
+.awardPhoto { max-width: 380px; }
+.awardWords { padding: 8px 0; }
+.awardWords > span { display: block; }
+.awardTitle { font-family: var(--display); font-size: clamp(38px,4.4vw,60px); line-height: 1.07; letter-spacing: -.03em; }
+.awardCredit { margin-top: 24px; font-size: 15px; }
+.projectFacts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin: 0 0 28px !important; padding-bottom: 24px; border-bottom: 1px solid #d0dde4; }
+.projectFacts dt { font-size: 12px; color: var(--checkout-muted); margin-bottom: 5px; }
+.projectFacts dd { font-size: 14px; }
+.languageVisual { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; padding: 36px; align-items: center; }
+.languageCampaign { grid-column: 1; }
+.languageType { background: #fff; border-radius: 12px; align-self: stretch; display: grid; place-items: center; padding: 16px; }
+.languageCountdown { background: #fff; padding: 16px; border-radius: 12px; display: grid; place-items: center; }
+.languageCounter { padding: 10px 0; }
+.phaseVisual { padding: 36px; background: #f0f3f5; border-color: #e1e7eb; }
+.phaseComparison { padding: clamp(22px, 4vw, 48px); border: 1px solid #e0ebf3; border-radius: 22px; background: #eaf2f8; }
+.phaseSummary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding-bottom: 28px; border-bottom: 1px solid #d0dde5; }
+.phaseSummary strong { display: block; margin: 8px 0; font-size: 21px; font-weight: 500; }
+.phaseSummary > div > span:last-child { color: var(--checkout-muted); font-size: 13px; }
+.comparisonGroup { margin-top: 36px; }
+.comparisonGroup + .comparisonGroup { padding-top: 32px; border-top: 1px solid #d0dde5; }
+.comparisonTitle { display: block; margin-bottom: 24px; font-size: 19px; font-weight: 500; }
+.comparisonPair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(24px, 5vw, 64px); padding: 0 clamp(0px, 4vw, 44px); align-items: start; }
+.comparisonColumn { min-width: 0; }
+.comparisonScreen { max-width: 350px; margin-inline: auto; }
+.comparisonColumn > .visualLabel { font-size: 14px; color: #34566f; }
+.comparisonNote { display: block; margin-top: 18px; font-size: 14px; line-height: 1.6; color: var(--checkout-muted); }
+.saleCartDetails { padding: 10px; border: 1px solid #d8e2eb; border-radius: 14px; background: #fff; }
+.cartCropLabel { display: block; margin: 32px 0 12px; font-size: 11px; color: var(--checkout-muted); }
+.comparisonHint { display: block; margin-top: 26px; font-size: 12px; text-align: right; color: var(--checkout-muted); }
+.boardLabel { margin-bottom: 24px; }
+.phaseGrid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,2fr) minmax(0,1fr); gap: 24px; }
+.phaseScreens { display: grid; gap: 12px; }
+.phaseWithStates .phaseScreens { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.wireframeCaption { display: block; margin-top: 10px; font-size: 12px; color: var(--checkout-muted); text-align: center; }
+.phaseName { display: block; font-size: 19px; font-weight: 500; }
+.phaseGoal { display: block; min-height: 3.3em; margin-top: 5px; color: var(--checkout-muted); font-size: 13px; }
+.wireframe { height: 400px; overflow: hidden; margin-top: 22px; border-radius: 10px; border: 1px solid #e0e4e7; background: #fff; }
+.wireframe img { border-radius: 0; }
+.announcementVisual { display: grid; grid-template-columns: .9fr 1.1fr; align-items: center; gap: clamp(40px,7vw,90px); padding: 48px 80px; }
+.announcementScreen { width: 100%; max-width: 325px; justify-self: center; }
+.announcementDetails { display: grid; gap: 26px; max-width: 440px; }
+.announcementScreen img { border-color: #dce5da; }
+.previewVisual { display: grid; grid-template-columns: .85fr 1.15fr; gap: clamp(36px,6vw,80px); align-items: center; padding: 48px 64px; }
+.previewScreen { width: 100%; max-width: 310px; justify-self: center; }
+.previewDetails { min-width: 0; }
+.previewControl { display: flex; gap: 20px; justify-content: space-between; align-items: center; padding-bottom: 24px; border-bottom: 1px solid #d5dfd4; font-size: 15px; }
+.switch { position: relative; flex: none; width: 66px; height: 38px; min-height: 44px; padding: 5px; border: none; cursor: pointer; border-radius: 24px !important; background: #69716b; transition: background .18s ease; }
+.switch > span { display: block; width: 30px; height: 30px; border-radius: 50%; background: #fff; transition: transform .18s ease; }
+.switch[aria-checked='true'] { background: #008d2b; }
+.switch[aria-checked='true'] > span { transform: translateX(26px); }
+.switch:focus-visible { outline: 3px solid #345b78; outline-offset: 5px; }
+.stateCopy { display: grid; gap: 12px; min-height: 208px; align-content: start; padding-top: 32px; }
+.stateLabel { font-size: 12px; color: #59705e; }
+.stateTitle { font-size: clamp(23px,2.7vw,34px); line-height: 1.2; letter-spacing: -.03em; }
+.stateDescription { max-width: 370px; color: var(--checkout-muted); font-size: 15px; line-height: 1.65; }
+.priceDetail { margin-top: 18px; padding: 22px 16px; background: #fff; border-radius: 12px; }
+.priceDetail img { width: 100%; height: auto; }
+.pricingComposition { overflow: hidden; border: 1px solid #e5e5e5; border-radius: 22px; background: #eaeaea; }
+.pricingVisual { display: grid; grid-template-columns: .85fr 1.15fr; align-items: center; gap: 64px; padding: 48px 64px; }
+.pricingFull { max-width: 320px; justify-self: center; }
+.pricingDetail { min-width: 0; }
+.pricingDetail > button { border: 1px solid #d8e2d6; padding: 16px; background: #fff; }
+.cartVisual { display: grid; grid-template-columns: 1.45fr .9fr; gap: 40px; align-items: center; padding: 40px; background: #edf2f5; border-color: #dfe8ef; }
+.cartDesktop { min-width: 0; }
+.cartDesktop > button { border: 1px solid #dfe6ec; }
+.cartDetail { min-width: 0; }
+.cartDetail > button { background: #fff; padding: 18px; }
+.liveVisual { display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(40px,7vw,96px); align-items: center; padding: 44px 64px; }
+.liveBefore { max-width: 300px; justify-self: center; }
+.liveBefore > button { padding: 16px; background: #fff; }
+.liveAfter { min-width: 0; }
+.liveAfter > button { border: 1px solid #dce5d9; }
+.liveLabel { display: block; margin-top: 24px; color: #436048; font-size: 16px; }
+.amodiraVisual { display: grid; grid-template-columns: 1.1fr 1fr; gap: 36px 56px; align-items: center; padding: 48px 56px 36px; background: #f4f1f1; border-color: #e9e1e1; }
+.amodiraWidget, .amodiraVariants { min-width: 0; }
+.page .resultsGrid { display: grid; grid-template-columns: 1fr 1fr 1.15fr; gap: 32px; margin-top: 32px; padding: 28px 0; border-block: 1px solid var(--checkout-rule); }
+.resultsGrid > div { min-width: 0; }
+.resultsGrid > div + div { padding-left: 32px; border-left: 1px solid var(--checkout-rule); }
+.resultsGrid dt { color: var(--checkout-muted); font-size: 13px; line-height: 1.5; }
+.resultsGrid dd { margin-top: 14px; }
+.resultValue { display: block; color: var(--econic-green); font-family: var(--display); font-size: clamp(52px, 5vw, 68px); line-height: 1; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+.resultContext { display: block; max-width: 245px; margin-top: 14px; color: var(--checkout-muted); font-size: 15px; line-height: 1.55; text-wrap: pretty; }
+.resultAward dd { max-width: 300px; font-size: clamp(23px, 2.3vw, 30px); line-height: 1.25; letter-spacing: -.025em; text-wrap: balance; }
+.page .resultsCredit { margin-top: 16px; color: var(--checkout-muted); font-size: 13px; }
+.page .learnings { padding-top: 64px; }
+.learnings > p { max-width: 800px; text-wrap: pretty; }
+@media (hover: hover) { .visual button img { transition: transform .2s ease; } .visual button:hover img { transform: scale(1.012); } }
+@media (max-width: 1000px) {
+  .heroHighlights { gap: 20px; padding: 24px; }
+  .heroRevenue { gap: 14px; }
+  .heroRevenue strong, .heroAward strong { font-size: 17px; }
+  .heroAward { padding-left: 20px; gap: 14px; }
+  .announcementVisual, .previewVisual, .pricingVisual, .liveVisual { padding: 36px; gap: 36px; }
+  .languageVisual { padding: 28px; gap: 20px; }
+  .languageType { padding: 14px; }
+  .amodiraVisual { padding: 36px; gap: 28px; }
+  .cartVisual { padding: 28px; gap: 28px; }
+  .stateCopy { min-height: 240px; }
+  .wireframe { height: 320px; }
+}
+@media (max-width: 700px) {
+  .heroHighlights { grid-template-columns: 1fr; gap: 22px; }
+  .heroRevenue { gap: 22px; }
+  .heroAward { padding: 22px 0 0; border-left: 0; border-top: 1px solid #d8e0d0; }
+  .heroDescription { font-size: 17px; }
+  .hero h1 { font-size: clamp(32px,5.8vw,42px); }
+  .awardVisual { grid-template-columns: .8fr 1fr; gap: 24px; padding: 24px; }
+  .awardTitle { font-size: 34px; }
+  .awardCredit { font-size: 12px; margin-top: 16px; }
+  .projectFacts { grid-template-columns: 1fr; gap: 10px; }
+  .projectFacts dt { display: inline; margin-right: 8px; font-size: 11px; }
+  .projectFacts dd { display: inline; font-size: 12px; }
+  .awardWords .visualLabel { font-size: 10px; }
+  .phaseVisual { padding: 24px; }
+  .phaseGrid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 12px; gap: 20px; }
+  .phase { flex: 0 0 210px; scroll-snap-align: start; }
+  .phaseWithStates { flex-basis: 432px; }
+  .phaseName { font-size: 16px; }
+  .phaseGoal { font-size: 11px; min-height: 36px; }
+  .wireframe { height: 250px; }
+  .previewVisual { grid-template-columns: 1fr 1fr; gap: 24px; padding: 28px; }
+  .previewControl { font-size: 13px; gap: 8px; flex-wrap: wrap; }
+  .stateCopy { min-height: 220px; padding-top: 24px; }
+  .stateDescription { font-size: 13px; }
+  .priceDetail { padding: 12px 6px; }
+  .cartVisual { grid-template-columns: 1fr; }
+  .cartDetail { max-width: 360px; width: 100%; justify-self: center; }
+  .pricingVisual { gap: 24px; padding: 28px; }
+  .page .resultsGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 24px; }
+  .resultsGrid > div + div { padding-left: 24px; }
+  .resultsGrid .resultAward { grid-column: 1 / -1; padding: 24px 0 0; border-left: 0; border-top: 1px solid var(--checkout-rule); }
+  .resultAward dd { max-width: 420px; }
+}
+@media (max-width: 760px) {
+  .page nav[aria-label='Case study sections'] { top: auto; bottom: calc(16px + env(safe-area-inset-bottom)); max-width: calc(100% - 24px); padding: 5px; border: 1px solid rgba(255,255,255,.85); border-radius: 999px; background: rgba(232,243,251,.94); backdrop-filter: blur(16px); box-shadow: 0 6px 30px rgba(44,66,83,.13); }
+  .page nav[aria-label='Case study sections'] a { min-height: 42px; padding: 12px clamp(8px, 2.5vw, 16px); font-size: 12px; }
+  .page > main { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+}
+@media (max-width: 520px) {
+  .phaseSummary { gap: 12px; }
+  .phaseSummary strong { font-size: 16px; }
+  .phaseSummary > div > span:last-child { font-size: 11px; }
+  .comparisonPair { display: flex; gap: 20px; padding: 0 0 12px; overflow-x: auto; scroll-snap-type: x mandatory; }
+  .comparisonColumn { flex: 0 0 250px; scroll-snap-align: start; }
+  .comparisonTitle { font-size: 18px; }
+  .hero h1 { font-size: 34px; line-height: 1.13; }
+  .heroDescription { margin-top: 18px !important; font-size: 16px; }
+  .hero figure { margin-top: 24px !important; padding: 6px; }
+  .heroHighlights { padding: 20px 16px; }
+  .heroRevenue { gap: 16px; }
+  .heroRevenue strong { font-size: 16px; }
+  .heroAward { gap: 14px; }
+  .heroAwardPhoto { flex-basis: 48px; }
+  .heroAward .visualLabel, .heroAwardCredit { font-size: 10px; }
+  .section { padding-top: 76px; }
+  .section > p { font-size: 16px; line-height: 1.7; }
+  .visual { margin-top: 24px !important; }
+  .awardVisual { grid-template-columns: 1fr; gap: 28px; padding: 24px; }
+  .awardPhoto { max-width: 285px; justify-self: center; }
+  .awardWords { width: 100%; }
+  .awardTitle { font-size: 42px; }
+  .awardCredit { font-size: 14px; }
+  .projectFacts { grid-template-columns: 1fr 1fr; gap: 18px; }
+  .projectFacts dt, .projectFacts dd { display: block; }
+  .awardWords .visualLabel { font-size: 12px; }
+  .languageVisual { grid-template-columns: 1fr; gap: 18px; padding: 20px; }
+  .languageType { padding: 10px; }
+  .languageCountdown { padding: 10px; }
+  .phaseGrid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 12px; }
+  .phase { flex: 0 0 235px; scroll-snap-align: start; }
+  .phaseWithStates { flex-basis: 482px; }
+  .phaseName { font-size: 18px; }
+  .phaseGoal { font-size: 13px; min-height: 3.3em; }
+  .wireframe { height: 330px; }
+  .announcementVisual, .previewVisual, .pricingVisual, .liveVisual { grid-template-columns: 1fr; padding: 24px; gap: 32px; }
+  .announcementScreen { max-width: 265px; }
+  .announcementDetails { max-width: 310px; justify-self: center; }
+  .previewScreen { max-width: 250px; }
+  .previewDetails { grid-row: 1; }
+  .previewControl { font-size: 15px; flex-wrap: nowrap; }
+  .stateCopy { min-height: 178px; gap: 10px; }
+  .stateTitle { font-size: 25px; }
+  .stateDescription { font-size: 14px; }
+  .priceDetail { margin-top: 8px; padding: 16px 10px; }
+  .pricingFull { max-width: 275px; }
+  .cartVisual { padding: 20px; gap: 28px; }
+  .liveBefore { max-width: 260px; }
+  .liveAfter { width: 100%; }
+  .liveLabel { font-size: 14px; }
+  .amodiraVisual { grid-template-columns: 1fr; padding: 22px; gap: 26px; }
+  .page .framingQuestion { margin-top: 32px; padding-top: 24px; font-size: 21px; }
+  .page .resultsGrid { margin-top: 24px; gap: 24px 20px; padding-block: 24px; }
+  .resultsGrid > div + div { padding-left: 20px; }
+  .resultsGrid .resultAward { padding-left: 0; }
+  .resultContext { font-size: 14px; }
+  .page .learnings { padding-top: 48px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .switch, .switch > span, .visual button img { transition: none; }
+}

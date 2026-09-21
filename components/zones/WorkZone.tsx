@@ -6,7 +6,8 @@ import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import GlowCard from '@/components/GlowCard';
-import { CheckoutProjectLink } from '@/components/work/CheckoutTransition';
+import { CaseStudyProjectLink } from '@/components/work/CheckoutTransition';
+import { econicTitle } from '@/app/work/econic/econic-content';
 
 gsap.registerPlugin(ScrollTrigger);
 // mobile URL-bar show/hide fires resize events mid-scroll; a full ScrollTrigger
@@ -41,23 +42,23 @@ const CASES: Case[] = [
     img: { src: '/work/checkout/thumb.jpg', alt: 'Virgio in-house checkout — payment, map address pin, and add-address screens' },
   },
   {
-    name: 'Amodira: Sound of the Scent',
+    name: 'Audio Experience for Fragrance Discovery',
     context:
-      'A 0→1 perfume brand for Virgio. An original song per fragrance whose layers mirror its notes — you hear the perfume before you smell it.',
-    meta: 'Brand 0→1 · Virgio',
+      'Sound of the Scent for Amodira. I led concept development and interaction design, and created eight tracks using AI to convey each perfume’s character and mood.',
+    meta: '2nd most interacted · after the Back button',
     href: '/work/amodira',
     img: { src: '/work/amodira/thumb.jpg', alt: 'Amodira fragrance with its sound layers' },
   },
   {
-    name: 'Fair Pricing',
+    name: 'Clarifying Prices for Fashion Shoppers',
     context:
-      'A price-transparency widget shipped on day one that went viral, won best e-commerce feature, and became registered company IP.',
-    meta: '500K+ users reached',
+      'A bill-style price breakdown. Silver at DIGIES for a trust-building element, and company IP behind Econic Fair.',
+    meta: '500K+ organic views · customer’s post',
     href: '/work/fair-pricing',
     img: { src: '/work/fair-pricing/thumb.jpg', alt: 'Fair Pricing widget on a product page' },
   },
   {
-    name: 'Eco-nic Fair',
+    name: econicTitle,
     context:
       'Virgio’s anniversary “anti-sale”, every garment at cost. A Preview toggle let shoppers see every sale price days early. Best Brand Campaign, e4m RetailEX 2026.',
     meta: '50× revenue · sale days',
@@ -68,14 +69,15 @@ const CASES: Case[] = [
 
 function CardInner({ c, i }: { c: Case; i: number }) {
   const idx = String(i + 1).padStart(2, '0');
-  const ProjectLink = c.href === '/work/checkout' ? CheckoutProjectLink : Link;
+  const hasTransition = c.href === '/work/checkout' || c.href === '/work/amodira' || c.href === '/work/econic';
+  const ProjectLink = hasTransition ? CaseStudyProjectLink : Link;
   return (
     <GlowCard>
       {c.img ? (
         <div className="gc-media">
           <Image
             className="gc-img"
-            data-checkout-cover={c.href === '/work/checkout' ? '' : undefined}
+            data-case-study-cover={hasTransition ? '' : undefined}
             src={c.img.src}
             alt={c.img.alt}
             width={720}
@@ -118,11 +120,11 @@ export default function WorkZone() {
   const stackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const root = stackRef.current;
     if (!root) return;
 
-    const ctx = gsap.context(() => {
+    const media = gsap.matchMedia();
+    media.add('(prefers-reduced-motion: no-preference)', () => {
       const cards = gsap.utils.toArray<HTMLElement>('.gcard');
       cards.forEach((card, i) => {
         if (i === cards.length - 1) return;
@@ -139,7 +141,7 @@ export default function WorkZone() {
       });
     }, root);
 
-    return () => ctx.revert();
+    return () => media.revert();
   }, []);
 
   return (
@@ -154,7 +156,7 @@ export default function WorkZone() {
             <div
               key={c.name}
               className="gcard"
-              data-checkout-card={c.href === '/work/checkout' ? '' : undefined}
+              data-case-study-card={c.href === '/work/checkout' || c.href === '/work/amodira' || c.href === '/work/econic' ? '' : undefined}
               style={{
                 top: `calc(clamp(7rem, 15vh, 9.5rem) + ${i} * 0.85rem)`,
                 zIndex: i + 1,

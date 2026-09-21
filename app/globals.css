@@ -1,7 +1,14 @@
 @import "tailwindcss";
 
-/* The checkout case study carries its existing project image into the lighter
-   sky. Scoped to this entry transition; other routes retain their behaviour. */
+/* A short atmospheric dissolve while the home scene becomes ready. */
+.home-transition-cover {
+  position: fixed; inset: 0; z-index: 2147483646;
+  pointer-events: none; opacity: 0; will-change: opacity;
+  background: radial-gradient(128% 86% at 50% 40%, #ffffff 0%, #f4faff 52%, #e9f5fd 100%);
+}
+
+/* Case-study entry carries the project image into the lighter sky.
+   The original checkout transition timing is shared with Sound of the Scent. */
 html[data-checkout-transition]::view-transition-group(checkout-cover) {
   animation-duration: 450ms;
   animation-timing-function: cubic-bezier(.22, 1, .36, 1);
@@ -33,6 +40,7 @@ html[data-checkout-transition]::view-transition-new(checkout-cover) {
    is read through frosted cockpit-canopy glass.
    ================================================================= */
 :root {
+  --ease-out: cubic-bezier(.23, 1, .32, 1);
   /* neutral ramp (exact, from the brand system) */
   --n-1111: #111111;
   --n-900: #1c1c1c;
@@ -80,8 +88,7 @@ html[data-checkout-transition]::view-transition-new(checkout-cover) {
      altimeter labels), never body. */
   --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Cascadia Code', 'Roboto Mono', monospace;
 
-  /* altitude layer opacities — driven by AltitudeProvider (0..1).
-     Defaults = the SKY keyframe, so first paint already reads as sky. */
+  /* Initial atmosphere, before AltitudeProvider updates layer opacity directly. */
   --space-o: 0.25;
   --sky-o: 1;
   --ground-o: 0;
@@ -127,9 +134,7 @@ html {
   /* Stop any horizontal bleed (e.g. the black hole's oversized WebGL stage)
      from producing sideways page scroll. Vertical scroll is untouched. */
   overflow-x: clip;
-  /* NOTE: no scroll-snap here. The hero's soft magnet is a small JS settle in
-     SkyHero.tsx — CSS `proximity` snapping has a browser-defined pull radius
-     that grabbed from way too far out, especially on mobile. */
+  /* Native scrolling stays where the visitor leaves it; no snap or settle. */
   /* bright base canvas: if anything shows in the instant before <body> paints,
      it's a pale sky tone, not the body's black-space base — so load never flashes
      dark. The space zone keeps its black via its own .space layer on top. */
@@ -157,9 +162,8 @@ body {
      overflow-y stays visible: clip+visible is the one mix the spec allows. */
   overflow-x: clip;
   overflow-y: visible;
-  /* No opacity fade-in: the inline pre-paint script (app/layout.tsx) anchors the
-     scroll to the sky BEFORE the first paint, so there's no mid-page jump to
-     mask. The page renders already on the sky — no black-to-content reveal. */
+  /* Document loads anchor through the inline pre-paint script. Client-side
+     returns stage only .altitude-content until the home anchor is ready. */
 }
 
 ::selection { background: var(--ion); color: #04121b; }
@@ -305,7 +309,7 @@ a { color: inherit; text-decoration: none; }
 html.pl-cover body::before {
   content: ''; position: fixed; inset: 0; z-index: 96; pointer-events: none;
   background: radial-gradient(128% 86% at 50% 40%, #ffffff 0%, #f4faff 52%, #e9f5fd 100%);
-  opacity: 1; transition: opacity 0.95s ease;
+  opacity: 1; transition: opacity 0.8s cubic-bezier(.22, 1, .36, 1);
 }
 html.pl-cover.pl-reveal body::before { opacity: 0; }
 
@@ -492,6 +496,10 @@ body.preloading .navbar {
   z-index: -3; pointer-events: none;
 }
 .altitude-bg .layer { position: absolute; inset: 0; will-change: opacity; }
+
+/* Client-side returns are positioned before revealing the home content. The
+   attribute is only set by JS during mounting; no-JS markup stays visible. */
+.altitude-content[data-positioning] { opacity: 0; pointer-events: none; }
 /* SPACE — literal black space at the apex (hosts the black hole). ONE
    continuous deep-cosmos gradient that holds its darkness the whole way down;
    it only bluens a touch at the very base, where the atmosphere begins. Kept
@@ -1389,7 +1397,7 @@ body.preloading .zone-space { overflow-y: clip; }
   margin-top: clamp(2.2rem, 5vw, 3.4rem);
 }
 /* each card pins; `top` + z-index are set inline per index so they fan as they stack */
-.gcard { position: sticky; will-change: transform, opacity; }
+.gcard { position: sticky; will-change: transform; }
 
 .glow-card {
   position: relative; isolation: isolate;
@@ -1433,7 +1441,7 @@ body.preloading .zone-space { overflow-y: clip; }
 }
 /* fill + crop the media box regardless of the source image's aspect ratio, so
    every card is the same width (portrait thumbs get cropped to 16:10, not stretched) */
-.gc-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.gc-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 220ms var(--ease-out); }
 .gc-media--metric {
   display: grid; place-content: center;
   background: linear-gradient(150deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.08));
@@ -1451,10 +1459,11 @@ body.preloading .zone-space { overflow-y: clip; }
 }
 .gc-title {
   font-family: var(--display); font-weight: 400;
-  font-size: clamp(1.5rem, 3.6vw, 2.4rem); line-height: 1.05; letter-spacing: -0.015em;
+  font-size: clamp(1.5rem, 2.6vw, 2rem); line-height: 1.2; letter-spacing: -0.01em;
+  text-wrap: pretty;
   margin: 0.5rem 0 0; transition: color 0.25s ease;
 }
-.gc-ctx { margin: 0.7rem 0 0; font-size: 0.92rem; color: var(--ink-soft); max-width: 48ch; }
+.gc-ctx { margin: 1rem 0 0; font-size: 0.92rem; color: var(--ink-soft); max-width: 48ch; }
 .gc-foot {
   display: flex; align-items: center; justify-content: space-between; gap: 1rem;
   margin-top: clamp(1rem, 2.4vw, 1.5rem);
@@ -1478,19 +1487,31 @@ body.preloading .zone-space { overflow-y: clip; }
 /* whole card → its full study (stretched-link, keeps the markup linkable) */
 .gc-stretch { position: absolute; inset: 0; z-index: 3; border-radius: inherit; }
 .gc-stretch:focus-visible { outline: 2px solid var(--ion); outline-offset: 4px; }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .glow-card:hover .gc-title { color: var(--ion-700); }
   .glow-card:hover .gc-go .ar { transform: translateX(4px); }
+  .glow-card:hover .gc-img { transform: scale(1.015); }
 }
+.glow-card:has(.gc-stretch:active) .gc-img { transform: scale(.995); transition-duration: 140ms; }
+.glow-card:has(.gc-stretch:focus-visible) .gc-img { transform: none; transition: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .gcard { position: relative; top: auto !important; transform: none !important; opacity: 1 !important; }
   .glow-ring { display: none; }
+  .glow-card .gc-img { transform: none !important; transition: none; }
 }
 
 /* "All case studies →" link in the section head */
 .count.work-all { transition: color 0.2s ease; }
 .count.work-all:hover { color: var(--ion-700); }
+
+/* Short, interruptible confirmation on the controls people use most. */
+.sky-resume, .work-all, .footer-socials a, .footer-links :is(a, button), .footer-mark-btn {
+  transition: scale 140ms var(--ease-out), transform 180ms var(--ease-out), color 160ms ease;
+}
+:is(.sky-resume, .work-all, .footer-socials a, .footer-links a, .footer-links button, .footer-mark-btn):active { scale: .97; }
+:is(.sky-resume, .work-all, .footer-socials a, .footer-links a, .footer-links button, .footer-mark-btn):focus-visible { scale: 1; transition: none; }
+.work-all { display: inline-flex; align-items: center; min-height: 44px; }
 
 /* screen-reader-only utility */
 .sr-only {
@@ -2137,4 +2158,5 @@ body.altitude-ready [data-reveal].in { opacity: 1; transform: none; }
   body { opacity: 1; }
   .fc-arrow { animation: none; }
   .sky-portrait { animation: none; }
+  :is(.sky-resume, .work-all, .footer-socials a, .footer-links a, .footer-links button, .footer-mark-btn):active { scale: 1; }
 }

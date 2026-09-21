@@ -25,7 +25,7 @@ const CASES: Case[] = [
   {
     project: 'Fair Pricing Widget',
     context: 'Award-winning pricing experience — now company IP.',
-    label: 'users reached',
+    label: 'organic views · customer’s post',
     metric: { kind: 'num', to: 500, suffix: 'K+' },
   },
   {
@@ -47,8 +47,8 @@ const CASES: Case[] = [
     metric: { kind: 'num', to: 7, suffix: '×' },
   },
   {
-    project: 'Sound of the Scent',
-    context: 'An audio moment on perfume PDPs — the 2nd most-interacted element on the page.',
+    project: 'Audio Experience for Fragrance Discovery',
+    context: 'An audio experience for eight perfumes — the 2nd most-interacted element on product pages, after the Back button.',
     label: 'most interacted',
     metric: { kind: 'text', text: '2nd' },
   },

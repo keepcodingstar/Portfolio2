@@ -1,486 +1,182 @@
-'use client';
-
-import RevealBody from '@/components/RevealBody';
-import WorkTop from '@/components/work/WorkTop';
-import SiteFooter from '@/components/SiteFooter';
-import { useReveal } from '@/components/work/useReveal';
-import Image from 'next/image';
 import Link from 'next/link';
-import '../work.css';
+import { CheckoutHeader as CaseStudyHeader, EconicMention, Screenshot } from '../checkout/CheckoutInteractions';
+import { econicTitle } from '../econic/econic-content';
+import styles from '../checkout/checkout.module.css';
+import local from './fair-pricing.module.css';
 
-/**
- * Fair Pricing — the flagship study. Rebuilt around real artifacts:
- * the shipped widget screenshots (V1→V3), the customer post that carried
- * it to 550K+, the Silver DIGIES award photo, the framing docs, and a
- * teardown of how every competitor solved the same problem. Page chrome
- * is the altitude glass theme; the product shots keep their own palette
- * because they are the real artifact.
- */
-
-const IMG = '/work/fair-pricing';
-
-const COMPETITORS = [
-  { src: `${IMG}/comp-asket-desktop.png`, name: 'Asket · landed-cost bar', w: 1400, h: 414 },
-  { src: `${IMG}/comp-aforeafter.png`, name: 'Afore After · pie chart', w: 1400, h: 1003 },
-  { src: `${IMG}/comp-quince.png`, name: 'Quince · spec table', w: 1400, h: 537 },
-  { src: `${IMG}/comp-everlane.jpg`, name: 'Everlane-style · photo callouts', w: 1400, h: 1010 },
-  { src: `${IMG}/comp-asket-mobile.png`, name: 'Asket · traceability tabs', w: 1138, h: 1400 },
-  { src: `${IMG}/comp-invoice.png`, name: 'Itemised invoice', w: 1400, h: 724 },
-  { src: `${IMG}/comp-purity.jpg`, name: 'Icon grid + figures', w: 1400, h: 1305 },
-  { src: `${IMG}/comp-bullets.png`, name: 'Percent bullet list', w: 1400, h: 551 },
+const ASSETS = '/work/fair-pricing';
+const sections = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'design', label: 'Design' },
+  { id: 'reflection', label: 'Reflection' },
 ];
 
-export default function FairPricing() {
-  useReveal();
+const annotations = [
+  { number: 1, x: 94, y: 39, title: 'Explain each cost group', body: 'Short descriptions name what “Cost to make,” “Serving cost” and “Others” include.' },
+  { number: 2, x: 94, y: 62, title: 'Give the total its own space', body: 'A highlighted row separates VIRGIO’s price from the costs above and comparison below.' },
+  { number: 3, x: 94, y: 9, title: 'Keep the detail close', body: 'An accordion lets shoppers explore the breakdown within the product page.' },
+];
 
+const references = [
+  { file: 'comp-asket-desktop.png', name: 'ASKET · Desktop', title: 'A comparison on one scale', width: 1400, height: 414, alt: 'ASKET’s full transparency section with landed cost, brand price, traditional retail and a cost breakdown.' },
+  { file: 'comp-invoice.png', name: 'Itemised invoice', title: 'Line items that lead to a total', width: 1400, height: 724, alt: 'An itemised invoice beside the Alina skirt, listing materials, labour, fees, margin and tax.' },
+  { file: 'comp-everlane.jpg', name: 'Photo callouts', title: 'Costs connected to the garment', width: 1400, height: 1010, alt: 'A garment photograph annotated with fabric, trims, labour, freight, packaging and landed costs.' },
+  { file: 'comp-quince.png', name: 'Quince', title: 'Price and features side by side', width: 1400, height: 537, alt: 'Quince compares price, cashmere quality, shipping and returns across brands beside product details.' },
+  { file: 'comp-purity.jpg', name: 'Purity cost breakdown', title: 'A visual category for each cost', width: 1400, height: 1305, alt: 'Illustrated icons and figures for fabric, trims, labour, packaging and operations.' },
+  { file: 'comp-aforeafter.png', name: 'Afore After', title: 'Each category’s share', width: 1400, height: 1003, alt: 'Afore After’s percentage chart for operations, labour, materials, shipping, packaging, fees and VAT.' },
+  { file: 'comp-asket-mobile.png', name: 'ASKET · Mobile', title: 'Cost within a wider transparency story', width: 1138, height: 1400, alt: 'ASKET’s mobile transparency section with landed cost, traceability, environmental impact and links to details.' },
+  { file: 'comp-bullets.png', name: 'Percentage list', title: 'A breakdown in plain text', width: 1400, height: 551, alt: 'A text list of cost percentages for VAT, labour, materials, shipping, merchant fees and packaging.' },
+];
+
+function CompetitiveReference({ reference, index }: { reference: typeof references[number]; index: number }) {
   return (
-    <>
-      <RevealBody />
-      <div className="work-bg" aria-hidden />
-      <WorkTop
-        back={{ href: '/work', label: 'Work' }}
-        links={[
-          { href: '/', label: 'Home' },
-          { href: 'mailto:sameerkapildesigns@gmail.com', label: 'Contact', cta: true },
-        ]}
-      />
+    <figure className={local.reference}>
+      <figcaption><span>{String(index + 1).padStart(2, '0')} / {reference.name}</span><strong>{reference.title}</strong></figcaption>
+      <div className={local.referenceImage}>
+        <Screenshot src={`${ASSETS}/${reference.file}`} width={reference.width} height={reference.height}
+          label={`${reference.name} reference`} alt={reference.alt} />
+      </div>
+    </figure>
+  );
+}
 
-      <div className="work cs">
-        <main className="work-main">
-          {/* HERO */}
-          <section className="cs-hero reveal" data-reveal>
-            <div>
-              <p className="cs-eyebrow">Virgio · Product Design, 2024</p>
-              <h1>
-                The price tag customers <em>trusted enough to share</em>
-              </h1>
-              <p className="cs-hero-desc">
-                Virgio sells quality fashion at honest margins, but a ₹2,100 tag felt as
-                arbitrary as any other. On day one, my manager asked: how do we get customers to
-                trust our prices? I designed a transparency widget that shows where every rupee
-                goes, structured like a <strong>bill</strong>, not a chart. A customer’s post
-                about it reached <strong>550K+ people</strong>, it won a <strong>Silver
-                DIGIES</strong> for Best E-commerce Design, and became the IP behind Virgio’s
-                Econic Fair.
-              </p>
-            </div>
-            <div className="cs-meta glass">
-              <div className="cs-meta-row">
-                <span className="cs-meta-label">Role</span>
-                <span className="cs-meta-value">Product Designer, sole designer</span>
-              </div>
-              <div className="cs-meta-row">
-                <span className="cs-meta-label">Platform</span>
-                <span className="cs-meta-value">Virgio · App &amp; Web</span>
-              </div>
-              <div className="cs-meta-row">
-                <span className="cs-meta-label">Category</span>
-                <span className="cs-meta-value">E-commerce · Fashion</span>
-              </div>
-              <div className="cs-meta-row">
-                <span className="cs-meta-label">Recognition</span>
-                <span className="cs-meta-value">Silver · DIGIES Awards</span>
-              </div>
-              <div className="cs-meta-row">
-                <span className="cs-meta-label">Status</span>
-                <span className="cs-meta-value">
-                  <span className="live" aria-hidden />
-                  Live · Company IP
-                </span>
-              </div>
-            </div>
-          </section>
+export default function FairPricingView() {
+  return (
+    <div className={`${styles.page} ${local.page}`}>
+      <CaseStudyHeader sections={sections} />
+      <main id="case-study" tabIndex={-1} className={styles.main}>
+        <section id="overview" tabIndex={-1} className={`${styles.hero} ${local.hero}`} aria-labelledby="fair-pricing-title">
+          <h1 id="fair-pricing-title">
+            <span className={styles.projectNumber}>Project 3 · Fair Pricing</span>
+            <span className={styles.heroAccent}>Clarifying Prices</span> for Fashion Shoppers
+          </h1>
+          <p className={local.intro}>During my internship at VIRGIO, I designed a price breakdown to help shoppers understand what they were paying for.</p>
 
-          {/* OUTCOMES — read as one block: the human proof, the recognition it
-              earned, and the lasting IP it became. Each card leads with its own
-              headline metric (551.9K · Silver · Company IP), so the stat and the
-              evidence for it live together rather than in a separate strip. */}
-          <section className="cs-results reveal" data-reveal>
-            {/* the viral moment — the metric that is the mission */}
-            <div className="cs-proof glass">
-              <figure className="cs-proof-shot">
-                <Image
-                  src={`${IMG}/viral-tweet.jpg`}
-                  alt="A verified shopper's post: ‘Love this. Makes me trust the brand more. They've mentioned the actual cost + selling price on all product pages.’ 551.9K views, 2.4K likes, 237 reposts."
-                  width={1298}
-                  height={1436}
-                  sizes="(min-width: 900px) 500px, 90vw"
-                  loading="lazy"
-                />
+          <div className={local.openingProof}>
+            <section className={`${local.evidencePanel} ${local.tweetPanel}`} aria-label="Customer response">
+              <figure className={local.customerPost}>
+                <Screenshot src={`${ASSETS}/viral-tweet.jpg`} width={1298} height={1436} priority
+                  label="Customer’s post about Fair Pricing"
+                  alt="A customer writes ‘Love this. Makes me trust the brand more,’ sharing VIRGIO’s price breakdown. The post shows 551.9K views." />
+                <figcaption className={styles.mediaCaption}>A customer’s post</figcaption>
               </figure>
-              <div>
-                <p className="cs-proof-eyebrow">The brief was “make them trust the price”</p>
-                <p className="cs-proof-quote">“Love this. Makes me trust the brand more.”</p>
-                <p className="cs-proof-sub">
-                  A <strong>verified shopper, not Virgio,</strong> posted the widget to{' '}
-                  <strong>551,900 people</strong>, with 2.4K likes and 237 reposts. The feature was
-                  designed to earn trust. The proof it worked was a stranger saying so, in public,
-                  unprompted. Transparency turned into the brand’s own marketing.
-                </p>
-                <div className="cs-proof-metric">
-                  <span className="cs-proof-metric-num">551.9K</span>
-                  <span className="cs-proof-metric-label">Views on a customer’s own post, unpaid and unprompted</span>
+              <div className={local.proofCopy}>
+                <p className={local.evidenceLabel}>A customer’s response</p>
+                <blockquote>“Love this. Makes me trust the brand more.”</blockquote>
+                <p className={local.postContext}>A customer shared the price breakdown alongside the garment.</p>
+                <div className={local.reach}>
+                  <span>500K+</span>
+                  <p>Organic views on a customer’s post</p>
                 </div>
               </div>
-            </div>
+            </section>
 
-            {/* the award it earned */}
-            <div className="cs-accolades glass">
-              <figure className="cs-accolades-shot">
-                <Image
-                  src={`${IMG}/award-digies.jpg`}
-                  alt="The Silver DIGIES award trophy: Best E-commerce Design. Entry titled ‘Transparency: The Future of E-Commerce’, awarded to Virgio."
-                  width={784}
-                  height={1045}
-                  sizes="(min-width: 900px) 300px, 45vw"
-                  loading="lazy"
-                  decoding="async"
-                />
+            <section className={`${local.evidencePanel} ${local.award}`} aria-labelledby="award-title">
+              <figure className={local.awardPhoto}>
+                <Screenshot src={`${ASSETS}/award-digies.jpg`} width={784} height={1045}
+                  label="Silver DIGIES award"
+                  alt="VIRGIO’s Silver DIGIES trophy for Best E-commerce Design, a category including trust-building elements." />
               </figure>
-              <div>
-                <p className="cs-accolades-eyebrow">Recognition</p>
-                <div className="cs-stat">
-                  <span className="cs-stat-num">Silver</span>
-                  <span className="cs-stat-label">DIGIES Award · Best E-commerce Design</span>
-                </div>
-                <p className="cs-accolades-body">
-                  Entered as “Transparency: The Future of E-Commerce,” recognised specifically for
-                  trust-building. The bill concept then became <strong>company IP</strong>, the
-                  anchor for <strong>Econic Fair</strong>, Virgio’s cost-to-make sale, which has run
-                  two editions.
-                </p>
+              <div className={local.awardCopy}>
+                <p className={local.evidenceLabel}>Recognition</p>
+                <p className={local.awardValue}>Silver</p>
+                <h2 id="award-title">Trust-building element</h2>
+                <p className={local.awardCategory}>DIGIES Awards · Best E-commerce Design</p>
+                <p className={local.ipCopy}>Fair Pricing became <strong>VIRGIO’s company IP</strong> and the foundation for <EconicMention label="Econic Fair" description="The cost-to-make campaign built on Fair Pricing." />, shaping the campaign’s story and pricing experience.</p>
               </div>
-            </div>
+            </section>
+          </div>
 
-            {/* the IP it became — Company IP, anchoring two Econic Fair editions */}
-            <div className="cs-ip glass">
-              <div className="cs-stat">
-                <span className="cs-stat-num">Company IP</span>
-                <span className="cs-stat-label">Foundation of two Econic Fair editions</span>
-              </div>
-              <div className="cs-iplogos">
-                <Image className="cs-iplogo" src={`${IMG}/econic-25.png`} alt="Econic Fair ’25 logo" width={328} height={235} sizes="200px" loading="lazy" />
-                <Image className="cs-iplogo" src={`${IMG}/econic-26.png`} alt="Econic Fair ’26 logo" width={436} height={197} sizes="200px" loading="lazy" />
-              </div>
+          <div className={`${styles.storyOpening} ${local.context}`}>
+            <h2 className={styles.overviewLabel}>The problem</h2>
+            <div className={styles.overviewContent}>
+              <p className={styles.openingCopy}>A price tells shoppers <strong>what they will pay, but not what goes into it.</strong> VIRGIO wanted to make that breakdown transparent and easy to read.</p>
+              <dl className={`${styles.metadata} ${local.metadata}`}>
+                <div><dt>Role</dt><dd>Product design intern</dd></div>
+                <div><dt>Platform</dt><dd>App &amp; web</dd></div>
+                <div><dt>Focus</dt><dd>Information architecture, interface writing &amp; visual hierarchy</dd></div>
+                <div><dt>Status</dt><dd>Shipped</dd></div>
+              </dl>
             </div>
+          </div>
+
+          <section className={local.designQuestion} aria-labelledby="design-question-title">
+            <h2 id="design-question-title"><strong>How might we</strong> help shoppers understand what they’re paying for without overwhelming the product page?</h2>
           </section>
+        </section>
 
-          {/* 01 PROBLEM */}
-          <section className="cs-section reveal" data-reveal>
-            <div className="cs-sec-head">
-              <h2 className="cs-sec-title">The problem</h2>
-            </div>
-            <p className="hub-lede" style={{ margin: '0 0 2rem' }}>
-              The morning standup had just wrapped when my manager walked over: “How do we get
-              customers to trust our prices? What if we show a breakdown on the product page?”
-              Customers don’t distrust prices because they’re high. They distrust them because
-              they feel <strong>arbitrary</strong>. Give the number visible context and the
-              question shifts from “is this worth it?” to “I can see exactly why.”
-            </p>
-            <div className="cs-problem glass">
-              <p className="cs-cell-label">Defined problem</p>
-              <p className="cs-statement">
-                Fashion shoppers considering a Virgio product <strong>need a way to contextualise
-                the price</strong>, because without visible justification, any price feels{' '}
-                <strong>arbitrary</strong>, leading to hesitation, drop-off, and distrust of the
-                brand’s value proposition.
-              </p>
-            </div>
-            <div className="cs-grid three">
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">Who</p>
-                <p>
-                  Value-conscious fashion shoppers, primarily women, who weigh quality vs. cost
-                  before committing.
-                </p>
-              </div>
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">What</p>
-                <p>
-                  No visible breakdown of where the price comes from, making Virgio look like
-                  every other brand <strong>hiding behind margin</strong>.
-                </p>
-              </div>
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">Why it matters</p>
-                <p>
-                  Price anxiety is a leading cause of cart abandonment.{' '}
-                  <strong>Context converts sceptics into believers</strong>, and buyers.
-                </p>
-              </div>
-            </div>
-
-            <div className="cs-quote glass">
-              <blockquote>
-                “If we showed customers exactly where every rupee went, we wouldn’t need to
-                convince them. The transparency itself would be the argument.”
-              </blockquote>
-            </div>
-          </section>
-
-          {/* 02 HOW MIGHT WE — the design questions the problem demands */}
-          <section className="cs-section reveal" data-reveal>
-            <div className="cs-sec-head">
-              <h2 className="cs-sec-title">How might we</h2>
-            </div>
-            <p className="hub-lede" style={{ margin: '0 0 2rem' }}>
-              The problem turned into four design questions, each one a decision the final widget
-              would have to answer.
-            </p>
-            <div className="cs-hmw glass">
-              <div className="cs-hmw-row">
-                <p className="cs-hmw-q">
-                  <span className="hmw">HMW</span>make the price feel earned, not inflated?
-                </p>
-                <p className="cs-hmw-a">
-                  Show the cost-of-making, so the final number has a logical foundation.
-                </p>
-              </div>
-              <div className="cs-hmw-row">
-                <p className="cs-hmw-q">
-                  <span className="hmw">HMW</span>reduce the cognitive load of the breakdown?
-                </p>
-                <p className="cs-hmw-a">
-                  Use a familiar mental model, the bill, so scanning feels effortless.
-                </p>
-              </div>
-              <div className="cs-hmw-row">
-                <p className="cs-hmw-q">
-                  <span className="hmw">HMW</span>make the comparison to traditional brands land
-                  emotionally?
-                </p>
-                <p className="cs-hmw-a">
-                  Show “Other Brand’s Margin” as a concrete number, not a vague claim.
-                </p>
-              </div>
-              <div className="cs-hmw-row">
-                <p className="cs-hmw-q">
-                  <span className="hmw">HMW</span>make it work across every product in the
-                  catalogue?
-                </p>
-                <p className="cs-hmw-a">
-                  Build one scalable widget: same structure, variable numbers, never a one-off.
-                </p>
-              </div>
-            </div>
-          </section>
-
-          {/* 03 MARKET GAP — competitor teardown */}
-          <section className="cs-section reveal" data-reveal>
-            <div className="cs-sec-head">
-              <h2 className="cs-sec-title">What everyone else was doing</h2>
-            </div>
-            <p className="hub-lede" style={{ margin: '0 0 0' }}>
-              Price transparency wasn’t new, so I studied how every brand attempting it had
-              solved the same problem. They reached for charts, pie graphs, comparison tables,
-              and dense cost ledgers.
-            </p>
-            <div className="cs-comp-grid">
-              {COMPETITORS.map((c) => (
-                <figure className="cs-comp glass" key={c.src}>
-                  <div className="cs-comp-shot">
-                    <Image
-                      src={c.src}
-                      alt={`Competitor price-transparency execution: ${c.name}`}
-                      width={c.w}
-                      height={c.h}
-                      sizes="(min-width: 980px) 22vw, (min-width: 640px) 30vw, 45vw"
-                      loading="lazy"
-                    />
-                  </div>
-                  <figcaption className="cs-comp-name">{c.name}</figcaption>
-                </figure>
+        <section id="design" tabIndex={-1} className={`${styles.section} ${local.design}`} aria-labelledby="competitive-title">
+          <h2 id="competitive-title">Different ways to explain a price</h2>
+          <p className={styles.prose}>I compared eight references across charts, itemised lists, product callouts and comparison tables.</p>
+          <div className={local.collage} role="group" aria-label="Competitive analysis with eight pricing references">
+            <CompetitiveReference reference={references[0]} index={0} />
+            <div className={local.referenceMasonry}>
+              {references.slice(1).map((reference, index) => (
+                <CompetitiveReference key={reference.file} reference={reference} index={index + 1} />
               ))}
             </div>
-            <p className="cs-verdict">
-              Every one is accurate. Every one asks the shopper to <strong>study</strong> a chart,
-              a table, or a spec sheet to understand a single number. Accurate, but demanding, and
-              a shopper skimming a product page won’t do the work. <strong>The gap wasn’t honesty.
-              It was readability.</strong>
-            </p>
-          </section>
+            <p className={local.collageHint}>Competitive review</p>
+          </div>
+          <p className={local.decision}>I chose a <strong>familiar bill-style list</strong> to explain the costs, supported by a comparison bar for the overview.</p>
 
-          {/* 03 THE IDEA — read it like a bill */}
-          <section className="cs-section reveal" data-reveal>
-            <div className="cs-sec-head">
-              <h2 className="cs-sec-title">The idea: read it like a bill</h2>
-            </div>
-            <div className="cs-split">
-              <div className="cs-split-copy">
-                <p>
-                  So I stopped designing a data visualisation and borrowed the one financial
-                  document everyone already knows how to read: <strong>a bill</strong>. A
-                  restaurant receipt, a utility statement: items listed, subtotals grouped, the
-                  total at the bottom. It adds up naturally because we’ve read thousands of them.
-                </p>
-                <p>
-                  The first sketch worked the math out as a single stacked bar (fabric, making,
-                  cost-to-serve, margin) then resolved into line items that <strong>total to
-                  “your price.”</strong> No legend, no analysis. Just a number that explains
-                  itself on a skim.
-                </p>
-              </div>
-              <figure className="cs-shot glass">
-                <Image
-                  src={`${IMG}/wireframe.jpg`}
-                  alt="Early hand wireframe: a ₹2000 price broken into a stacked cost bar (fabric, making, cost-to-serve, margins) resolving to ‘your price’."
-                  width={1400}
-                  height={1148}
-                  sizes="(min-width: 900px) 500px, 90vw"
-                  loading="lazy"
-                />
-                <figcaption>
-                  <b>The first sketch.</b> Working the price out as a cost bar that resolves to
-                  one self-explaining total.
-                </figcaption>
+          <section className={styles.section} aria-labelledby="iterations-title">
+            <h2 id="iterations-title">From line items to cost groups</h2>
+            <p className={styles.prose}>The early modal listed costs individually. The next version grouped them into broader categories inside a product-page accordion.</p>
+            <div className={local.iterations}>
+              <figure>
+                <div className={local.iterationStage}>
+                  <Screenshot src={`${ASSETS}/widget-v1.png`} width={720} height={1082} label="Early price breakdown exploration"
+                    alt="Early modal exploration with separate fabric, manufacturing and transportation items, subtotal rows and a price comparison." />
+                </div>
+                <figcaption><span>Early exploration</span><strong>Individual cost items</strong></figcaption>
+              </figure>
+              <figure>
+                <div className={local.iterationStage}>
+                  <Screenshot src={`${ASSETS}/widget-v2.png`} width={816} height={1018} label="Grouped price breakdown"
+                    alt="Grouped version with Making Cost, Serving Cost and Others, each explained within an inline accordion." />
+                </div>
+                <figcaption><span>Refined structure</span><strong>Fewer groups, with explanations</strong></figcaption>
               </figure>
             </div>
-          </section>
-
-          {/* 04 ITERATIONS — real shipped screenshots */}
-          <section className="cs-section reveal" data-reveal>
-            <div className="cs-sec-head">
-              <h2 className="cs-sec-title">Three iterations</h2>
-            </div>
-            <div className="cs-iters">
-              {/* V1 */}
-              <div className="cs-iter glass">
-                <span className="cs-iter-tag">V1 · Day one</span>
-                <div className="iter-screen">
-                  <Image
-                    src={`${IMG}/widget-v1.png`}
-                    alt="V1 widget: a modal price breakdown with granular line items and a direct ‘Other Brand’s Margin’ callout."
-                    width={720}
-                    height={1082}
-                    sizes="(min-width: 900px) 400px, 90vw"
-                    loading="lazy"
-                  />
-                </div>
-                <p className="cs-iter-name">Bold and direct</p>
-                <p className="cs-iter-desc">
-                  Modal overlay. Granular line items. Direct margin callout. The bill structure
-                  made it scannable without explanation.
-                </p>
-                <div className="cs-iter-changes">
-                  <span className="cs-pill">Went viral: “Other Brand’s Margin” was the most shared line</span>
-                  <span className="cs-pill">Became the IP foundation for Econic Fair</span>
-                </div>
-              </div>
-
-              {/* V2 */}
-              <div className="cs-iter glass">
-                <span className="cs-iter-tag">V2 · After testing</span>
-                <div className="iter-screen">
-                  <Image
-                    src={`${IMG}/widget-v2.png`}
-                    alt="V2 widget: an inline accordion with grouped cost categories (Making, Serving, Others) each explained in plain language."
-                    width={816}
-                    height={1018}
-                    sizes="(min-width: 900px) 400px, 90vw"
-                    loading="lazy"
-                  />
-                </div>
-                <p className="cs-iter-name">Strategically softer</p>
-                <p className="cs-iter-desc">
-                  Inline accordion. Grouped categories with context. Dropped the direct margin
-                  callout; user feedback and competitive reasons both pointed here.
-                </p>
-                <div className="cs-iter-changes">
-                  <span className="cs-pill">Scalable across the catalogue</span>
-                  <span className="cs-pill">Powered both Econic Fair editions</span>
-                </div>
-              </div>
-
-              {/* V3 */}
-              <div className="cs-iter glass">
-                <span className="cs-iter-tag">V3 · Brand refresh</span>
-                <div className="iter-screen">
-                  <Image
-                    src={`${IMG}/widget-v3.png`}
-                    alt="V3 widget: highlighted total rows in pill containers, sharper hierarchy, aligned to the new brand language."
-                    width={1064}
-                    height={1138}
-                    sizes="(min-width: 900px) 400px, 90vw"
-                    loading="lazy"
-                  />
-                </div>
-                <p className="cs-iter-name">Visual maturity</p>
-                <p className="cs-iter-desc">
-                  Highlighted total rows in pill containers. Better hierarchy: totals are
-                  impossible to miss on a skim. Aligned to the new brand language.
-                </p>
-                <div className="cs-iter-changes">
-                  <span className="cs-pill">Reads in two passes, skim or detail</span>
-                  <span className="cs-pill">Softer label: “extra margin” not “margin”</span>
-                </div>
-              </div>
+            <div className={local.writingNote}>
+              <h3>Getting the labels right</h3>
+              <p>I revised the wording repeatedly through informal testing with colleagues, balancing <strong>what shoppers could understand</strong> with how VIRGIO wanted to present its prices.</p>
             </div>
           </section>
 
-          {/* 05 VALIDATION */}
-          <section className="cs-section reveal" data-reveal>
-            <div className="cs-sec-head">
-              <h2 className="cs-sec-title">How we validated it</h2>
-            </div>
-            <div className="cs-grid two">
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">Method</p>
-                <p>
-                  No formal usability lab. We took the widget to the floor, to women in the office
-                  who matched the primary audience. <strong>Watched unprompted reading
-                  behaviour.</strong> Noted what they read first, what made them lean in.
-                </p>
-              </div>
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">What we found</p>
-                <p>
-                  <strong>People didn’t need to be told how to read it.</strong> They just did.
-                  The bill structure required zero explanation. The only friction came from
-                  specific label wording, which we iterated until each line felt instinctive.
-                </p>
-              </div>
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">The assumption that held</p>
-                <p>
-                  Readability was the missing piece in every competitor execution.{' '}
-                  <strong>A familiar mental model beats a correct but demanding one</strong>, every
-                  time, in this context.
-                </p>
-              </div>
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">The assumption that evolved</p>
-                <p>
-                  V1 assumed granular line items built the most trust. Testing showed{' '}
-                  <strong>grouped categories worked equally well</strong>: users trusted the
-                  total, not the itemisation. That unlocked V2.
-                </p>
-              </div>
+          <section className={styles.section} aria-labelledby="final-title">
+            <h2 id="final-title">The total stands out. The detail explains it.</h2>
+            <div className={local.finalDesign}>
+              <figure>
+                <div className={local.finalStage}>
+                  <Screenshot src={`${ASSETS}/widget-v3.png`} width={1064} height={1138} annotations={annotations}
+                    label="Final Fair Pricing widget"
+                    alt="Final Fair Pricing accordion with explanatory cost groups, a highlighted VIRGIO price and a separate traditional-price comparison." />
+                </div>
+                <figcaption className={styles.mediaCaption}>Final design</figcaption>
+              </figure>
+              <ol className={`${styles.annotationNotes} ${local.notes}`} aria-label="Final design decisions">
+                {annotations.map(({ number, title, body }) => (
+                  <li key={number} value={number}>
+                    <span className={styles.annotationNumber} aria-hidden="true">{number}</span>
+                    <div><strong>{title}</strong><p>{body}</p></div>
+                  </li>
+                ))}
+              </ol>
             </div>
           </section>
+        </section>
 
-          {/* REFLECTION */}
-          <section className="cs-reflect glass reveal" data-reveal>
-            <div className="cs-reflect-label">Takeaway</div>
-            <p className="cs-reflect-text">
-              “The best solution is rarely the most novel one. It’s the one that borrows most
-              naturally from how people already think. A bill isn’t a breakthrough. Applying it
-              where everyone else reached for a chart is.”
-            </p>
-          </section>
+        <section id="reflection" tabIndex={-1} className={`${styles.reflectionStory} ${local.reflection}`} aria-labelledby="reflection-title">
+          <h2 id="reflection-title">Clarity lives in the small decisions</h2>
+          <p>Grouping, labels and hierarchy shaped how the price was explained. Next, I’d test with shoppers outside the team to see how they interpret the categories and comparison price.</p>
+        </section>
 
-          {/* NEXT */}
-          <nav className="cs-next">
-            <Link href="/work/amodira">
-              <span aria-hidden>←</span> Prev: Amodira: Sound of the Scent
-            </Link>
-            <Link href="/work/econic">
-              Next: Econic 2025 <span aria-hidden>→</span>
-            </Link>
-          </nav>
-        </main>
-
-        <SiteFooter />
-      </div>
-    </>
+        <nav className={styles.next} aria-label="More case studies">
+          <Link href="/work/amodira"><span aria-hidden>←</span><span><small>Previous project</small>Audio Experience for Fragrance Discovery</span></Link>
+          <Link href="/work/econic"><span><small>Next project</small>{econicTitle}</span><span aria-hidden>→</span></Link>
+        </nav>
+      </main>
+    </div>
   );
 }

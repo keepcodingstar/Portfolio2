@@ -1,0 +1,128 @@
+/* Checkout's reading system, with layouts built for the pricing evidence. */
+.page section[id] { scroll-margin-top: 108px; }
+.page section.design[id] { scroll-margin-top: 0; }
+.page .hero { padding-bottom: 0; }
+.page .intro { max-width: 700px; margin-top: 22px; color: var(--checkout-muted); font-size: 20px; line-height: 1.6; text-wrap: pretty; }
+/* Two evidence panels follow the original study's image-and-story rhythm. */
+.openingProof { display: grid; gap: 24px; margin-top: 44px; }
+.evidencePanel { display: grid; grid-template-columns: minmax(0,330px) minmax(0,1fr); align-items: center; gap: clamp(30px,5vw,64px); padding: 36px; border: 1px solid rgba(255,255,255,.92); border-radius: 24px; background: linear-gradient(125deg, rgba(255,255,255,.48), rgba(247,252,255,.72)); box-shadow: inset 0 1px 0 #fff, 0 18px 45px -38px rgba(49,84,112,.3); }
+.customerPost { min-width: 0; }
+.customerPost button img { border-radius: 14px; box-shadow: none; }
+.customerPost figcaption { font-size: 11px; }
+.proofCopy { min-width: 0; }
+.page .evidenceLabel { margin-bottom: 18px; font-size: 12px; color: var(--checkout-muted); }
+.page .proofCopy blockquote { max-width: 570px; font-family: var(--display); font-size: clamp(28px,3vw,39px); font-weight: 400; line-height: 1.3; letter-spacing: -.01em; text-wrap: balance; }
+.page .postContext { max-width: 450px; margin-top: 18px; font-size: 16px; color: var(--checkout-muted); line-height: 1.65; }
+.reach { display: flex; align-items: center; gap: 24px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--checkout-rule); }
+.reach > span { font-size: clamp(46px,4.7vw,62px); font-weight: 400; line-height: 1; letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
+.page .reach p { max-width: 190px; color: var(--checkout-muted); font-size: 14px; line-height: 1.5; }
+.awardPhoto { width: 100%; max-width: 230px; justify-self: center; }
+.awardPhoto button img { border-radius: 14px; box-shadow: none; }
+.awardCopy { min-width: 0; }
+.page .awardValue { font-family: var(--display); font-size: clamp(48px,5vw,64px); line-height: 1.1; }
+.page .award h2 { font-size: 24px; line-height: 1.35; letter-spacing: -.025em; margin-top: 12px; }
+.page .awardCategory { font-size: 14px; color: var(--checkout-muted); line-height: 1.65; margin-top: 10px; }
+.page .ipCopy { max-width: 570px; margin-top: 24px; font-size: 17px; line-height: 1.7; color: var(--checkout-muted); }
+.ipCopy strong { font-weight: 600; }
+.ipCopy a { color: var(--checkout-ink); }
+.page .context { grid-template-columns: 190px minmax(0, 1fr); gap: 44px; padding-top: 80px; }
+.page .metadata { grid-template-columns: 1fr .7fr 1.7fr .6fr; margin-top: 28px !important; }
+.page .metadata dd { line-height: 1.6; }
+.designQuestion { margin-top: 40px; padding: 32px 36px; border: 1px solid #dce8f1; border-radius: 20px; background: #eaf2f8; }
+.page .designQuestion h2 { max-width: 900px; font-size: clamp(24px,2.3vw,29px); font-weight: 400; line-height: 1.4; letter-spacing: -.025em; text-wrap: pretty; }
+.page .designQuestion strong { font-weight: 700; }
+.collage { margin-top: 30px; padding: 30px; border-radius: 24px; background: #eaf2f8; border: 1px solid #dce8f1; }
+.referenceMasonry { columns: 2; column-gap: 28px; }
+.page .reference { display: inline-block; vertical-align: top; width: 100%; min-width: 0; break-inside: avoid; margin-bottom: 28px; }
+.collage figcaption { margin-bottom: 12px; }
+.collage figcaption span { display: block; font-size: 11px; color: var(--checkout-muted); }
+.collage figcaption strong { display: block; margin-top: 4px; font-size: 15px; font-weight: 500; letter-spacing: -.01em; }
+.referenceImage { padding: 12px; background: #fff; border: 1px solid rgba(110,142,164,.12); border-radius: 12px; box-shadow: 0 12px 24px -24px rgba(40,70,93,.5); }
+.referenceImage button img { border-radius: 5px; box-shadow: none; }
+.page .collageHint { padding-top: 18px; border-top: 1px solid #cfdfe9; color: var(--checkout-muted); font-size: 11px; line-height: 1.5; }
+.page .decision { max-width: 760px; margin-top: 24px; font-size: 20px; line-height: 1.6; letter-spacing: -.015em; }
+.decision strong { font-weight: 600; }
+.iterations { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 30px; }
+.iterationStage { display: flex; align-items: center; justify-content: center; min-height: 490px; padding: 30px; background: #eaf2f8; border: 1px solid #e0ebf3; border-radius: 20px; }
+.iterationStage > button { max-width: 292px; }
+.iterationStage img { border-radius: 8px; }
+.iterations figcaption { margin-top: 16px; }
+.iterations figcaption span { display: block; font-size: 12px; color: var(--checkout-muted); }
+.iterations figcaption strong { display: block; font-size: 17px; line-height: 1.5; margin-top: 4px; }
+.writingNote { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 44px; align-items: baseline; margin-top: 34px; padding-top: 26px; border-top: 1px solid var(--checkout-rule); }
+.page .writingNote h3 { font-size: 18px; letter-spacing: -.02em; }
+.page .writingNote p { max-width: 710px; font-size: 17px; line-height: 1.7; color: var(--checkout-muted); }
+.writingNote strong { font-weight: 600; }
+.finalDesign { display: grid; grid-template-columns: 1.25fr 1fr; align-items: center; gap: 60px; margin-top: 30px; }
+.finalDesign figure { min-width: 0; }
+.finalStage { padding: 28px; background: #eaf2f8; border: 1px solid #e0ebf3; border-radius: 20px; }
+.finalStage img { border-radius: 8px; }
+.page .notes { grid-template-columns: 1fr; gap: 38px; margin: 0; }
+.notes strong { font-size: 18px; letter-spacing: -.015em; }
+.notes p { max-width: 300px; font-size: 16px; }
+.page .reflection { padding: 36px 40px; }
+.page .reflection p { font-size: 18px; max-width: 810px; }
+@media (max-width: 1000px) {
+  .evidencePanel { grid-template-columns: minmax(0,280px) minmax(0,1fr); gap: 30px; padding: 28px; }
+  .page .proofCopy blockquote { font-size: 30px; }
+  .reach { gap: 18px; }
+  .awardPhoto { max-width: 210px; }
+  .collage { padding: 24px; }
+  .referenceMasonry { column-gap: 22px; }
+  .iterationStage { min-height: 0; padding: 28px; }
+  .finalDesign { gap: 32px; }
+  .page .context, .writingNote { grid-template-columns: 160px minmax(0, 1fr); gap: 30px; }
+}
+@media (max-width: 760px) {
+  .evidencePanel { grid-template-columns: 1fr; gap: 28px; }
+  .customerPost { max-width: 380px; width: 100%; justify-self: center; }
+  .page .proofCopy blockquote { max-width: none; }
+  .award { grid-template-columns: 150px minmax(0,1fr); gap: 28px; }
+  .page .awardValue { font-size: 48px; }
+  .page .award h2 { font-size: 21px; }
+  .page .awardCategory { font-size: 13px; }
+  .page .ipCopy { font-size: 16px; }
+  .page .context, .writingNote { grid-template-columns: 1fr; gap: 16px; }
+  .page .context { padding-top: 64px; }
+  .page .metadata { grid-template-columns: 1fr 1fr; }
+  .referenceImage { padding: 10px; }
+  .finalDesign { grid-template-columns: 1fr; gap: 24px; }
+  .finalDesign > figure { width: 100%; max-width: 520px; justify-self: center; }
+  .page .notes { gap: 24px; }
+  .notes p { max-width: 100%; }
+}
+@media (max-width: 600px) {
+  .page .intro { font-size: 17px; margin-top: 18px; }
+  .openingProof { margin-top: 28px; gap: 20px; }
+  .evidencePanel { padding: 20px; border-radius: 20px; }
+  .customerPost button img { border-radius: 12px; }
+  .customerPost figcaption { font-size: 10px; }
+  .page .evidenceLabel { margin-bottom: 12px; }
+  .page .proofCopy blockquote { font-size: 27px; }
+  .page .postContext { font-size: 15px; margin-top: 14px; }
+  .reach { gap: 18px; margin-top: 22px; padding-top: 20px; }
+  .reach > span { font-size: 46px; }
+  .page .reach p { font-size: 12px; }
+  .award { grid-template-columns: 1fr; gap: 24px; }
+  .awardPhoto { max-width: 210px; }
+  .page .award h2 { font-size: 23px; }
+  .page .ipCopy { font-size: 16px; margin-top: 18px; }
+  .page .context { padding-top: 56px; }
+  .designQuestion { padding: 24px; border-radius: 18px; }
+  .collage { padding: 18px; border-radius: 18px; }
+  .referenceMasonry { columns: 1; }
+  .page .reference { margin-bottom: 26px; }
+  .page .collageHint { padding-top: 16px; font-size: 10px; }
+  .page .decision { font-size: 18px; }
+  .iterations { grid-template-columns: 1fr; gap: 28px; }
+  .iterationStage { padding: 28px; border-radius: 16px; }
+  .iterationStage > button { max-width: 270px; }
+  .iterations figcaption { margin-top: 12px; }
+  .writingNote { margin-top: 26px; padding-top: 24px; gap: 10px; }
+  .page .writingNote p { font-size: 16px; }
+  .finalStage { padding: 18px; border-radius: 16px; }
+  .notes strong { font-size: 17px; }
+  .notes p { font-size: 15px; }
+  .page .reflection { padding: 28px 24px; }
+  .page .reflection p { font-size: 17px; }
+}

@@ -4,51 +4,101 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLayoutEffect, type ComponentProps, type MouseEvent } from 'react';
 
-let finishArrival: (() => void) | null = null;
+type Arrival = { pathname: string; finish: () => void; cancel: () => void; cancelled: boolean };
+let pendingArrival: Arrival | null = null;
 
-export function CheckoutArrival() {
+export function CaseStudyArrival() {
   useLayoutEffect(() => {
-    const finish = finishArrival;
-    if (!finish) return;
-    const cover = document.querySelector<HTMLImageElement>('[data-checkout-hero]');
+    const arrival = pendingArrival;
+    if (!arrival || arrival.pathname !== window.location.pathname) return;
+    let mounted = true;
+    const cover = document.querySelector<HTMLImageElement>('[data-case-study-hero], [data-checkout-hero]');
     const ready = cover ? cover.decode().catch(() => {}) : Promise.resolve();
-    void ready.then(finish);
-    return () => { finish(); };
+    void ready.then(() => { if (mounted && !arrival.cancelled) arrival.finish(); });
+    // React replays layout effects in development. Cleanup only invalidates
+    // this decode callback; cancelling here skips the shared-image transition.
+    return () => { mounted = false; };
   }, []);
   return null;
 }
 
-/** A progressive enhancement for checkout entry. Native links still handle
- * modified clicks, reduced motion, and browsers without View Transitions. */
-export function CheckoutProjectLink(props: ComponentProps<typeof Link>) {
+export const CheckoutArrival = CaseStudyArrival;
+
+/** Native links handle keyboard activation, modified clicks, reduced motion,
+ * and browsers without View Transitions. */
+export function CaseStudyProjectLink(props: ComponentProps<typeof Link>) {
   const router = useRouter();
 
   function enter(event: MouseEvent<HTMLAnchorElement>) {
     props.onClick?.(event);
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey
-      || !document.startViewTransition || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if (finishArrival) return;
+      || event.currentTarget.target && event.currentTarget.target !== '_self') return;
+
+    // A second click must never inherit a previous transition's delayed scroll.
+    pendingArrival?.cancel();
+    if (event.detail === 0 || !document.startViewTransition
+      || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const destination = new URL(event.currentTarget.href);
+    if (destination.origin !== window.location.origin
+      || !['/work/checkout', '/work/amodira', '/work/econic'].includes(destination.pathname)) return;
+    const source = event.currentTarget.closest('[data-case-study-card], [data-checkout-card]')
+      ?.querySelector<HTMLElement>('[data-case-study-cover], [data-checkout-cover]');
+    if (!source) return;
     event.preventDefault();
 
-    const source = event.currentTarget.closest('[data-checkout-card]')?.querySelector<HTMLElement>('[data-checkout-cover]');
-    if (source) source.style.viewTransitionName = 'checkout-cover';
+    source.style.viewTransitionName = 'checkout-cover';
     document.documentElement.dataset.checkoutTransition = 'true';
-    let timer: ReturnType<typeof setTimeout>;
-    const arrived = new Promise<void>((resolve) => { finishArrival = resolve; });
+    let resolveArrival: () => void = () => {};
+    const arrived = new Promise<void>((resolve) => { resolveArrival = resolve; });
+    const arrival: Arrival = {
+      pathname: destination.pathname,
+      finish: resolveArrival,
+      cancelled: false,
+      cancel: () => {
+        arrival.cancelled = true;
+        transition.skipTransition();
+        resolveArrival();
+        cleanup();
+      },
+    };
+    pendingArrival = arrival;
+    let navigated = false;
+    const navigate = () => {
+      if (navigated) return;
+      navigated = true;
+      router.push(destination.pathname + destination.search + destination.hash, { scroll: true });
+    };
     const transition = document.startViewTransition(async () => {
-      router.push('/work/checkout', { scroll: true });
+      if (arrival.cancelled) return;
+      navigate();
       await arrived;
-      window.scrollTo(0, 0);
+      // The watchdog covers loading, not the visible image animation.
+      window.clearTimeout(timer);
+      if (!arrival.cancelled && window.location.pathname === arrival.pathname && !destination.hash) {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
     });
-    // Never leave navigation frozen when a route loads slowly or fails.
-    timer = setTimeout(() => { transition.skipTransition(); finishArrival?.(); finishArrival = null; }, 1800);
-    void transition.finished.catch(() => {}).finally(() => {
-      clearTimeout(timer);
-      if (source) source.style.viewTransitionName = '';
-      delete document.documentElement.dataset.checkoutTransition;
-      finishArrival = null;
-    });
+    const timer = window.setTimeout(() => {
+      navigate();
+      arrival.cancel();
+    }, 1800);
+    let cleaned = false;
+    function cleanup() {
+      if (cleaned) return;
+      cleaned = true;
+      window.clearTimeout(timer);
+      source!.style.viewTransitionName = '';
+      if (pendingArrival === arrival) {
+        delete document.documentElement.dataset.checkoutTransition;
+        pendingArrival = null;
+      }
+    }
+    // Skipping deliberately rejects ready, even when finished resolves.
+    void transition.ready.catch(() => {});
+    void transition.finished.catch(() => {}).finally(cleanup);
   }
 
   return <Link {...props} onClick={enter} />;
 }
+
+export const CheckoutProjectLink = CaseStudyProjectLink;

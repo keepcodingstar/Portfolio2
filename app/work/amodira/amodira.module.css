@@ -1,0 +1,189 @@
+/* Reuse checkout's editorial foundation; only fragrance-specific layouts live here. */
+.page .heroSkills { max-width: 780px; margin-top: 22px; color: var(--checkout-muted); font-size: 16px; line-height: 1.6; text-wrap: pretty; }
+.page .heroCaption { padding: 12px 10px 2px; font-size: 12px; color: var(--checkout-muted); }
+.page .metadata { grid-template-columns: 1.35fr 1fr 1fr 1fr; }
+.page section[id] { scroll-margin-top: 105px; }
+.page :is(.collectionPhoto, .conceptFigure, .fragranceCollection) { margin-top: 30px; }
+.collectionPhoto > img { display: block; width: 100%; height: auto; border-radius: 20px; }
+.visualLabel { display: block; color: var(--checkout-muted); font-size: 12px; }
+.mediaChannels { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; padding: 10px 0; border-top: 1px solid var(--checkout-rule); border-bottom: 1px solid var(--checkout-rule); }
+.mediaChannels > div { padding: 18px 20px; }
+.mediaChannels dt { display: flex; align-items: center; gap: 12px; font-size: 17px; font-weight: 500; }
+.mediaChannels svg { width: 23px; height: 23px; flex: none; }
+.page .mediaChannels dd { margin-top: 10px; font-size: 14px; line-height: 1.55; color: var(--checkout-muted); }
+.soundChannel { border-radius: 12px; background: #eaf2f8; }
+.recordArt { position: relative; width: 144px; height: 144px; margin: 34px auto; }
+.recordArt > span { position: absolute; inset: 0; border-radius: 12px; background: #d1e0eb; border: 1px solid #b8cfdf; transform: rotate(-12deg); }
+.recordArt > span:nth-child(2) { background: #e7f0f7; transform: rotate(7deg); }
+.recordArt > span:last-child { background: repeating-radial-gradient(circle, #354e61 0 3px, #405b70 4px 5px); transform: none; border-radius: 50%; inset: 15px; border: 7px solid #354e61; }
+.recordArt::after { content: ''; position: absolute; width: 30px; height: 30px; border: 11px solid #cbdde9; background: #edf4f9; border-radius: 50%; left: 57px; top: 57px; }
+.directionBoard { display: grid; grid-template-columns: 230px minmax(0,1fr); gap: 28px 40px; margin-top: 28px; padding: 32px; border: 1px solid #e0ebf3; border-radius: 22px; }
+.rayaIdentity { text-align: center; }
+.rayaIdentity img { display: block; width: 100%; height: auto; }
+.rayaIdentity > span { display: block; font-family: var(--display); font-size: 28px; }
+.notesArtwork { display: flex; flex-direction: column; justify-content: center; gap: 20px; }
+.notesArtwork button img { box-shadow: none; border-radius: 0; }
+.soundIdentity, .soundMapping { padding-top: 30px; border-top: 1px solid var(--checkout-rule); }
+.soundIdentity { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.soundIdentity > span { font-family: var(--display); font-size: 28px; line-height: 1.3; }
+.soundIdentity .recordArt { margin: 20px auto 30px; }
+.page .musicalLayers { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; }
+.musicalLayers > div + div { border-left: 1px dashed #c5d2dc; padding-left: 18px; }
+.musicalLayers dt { font-size: 14px; line-height: 1.4; }
+.layerConnection { display: block; color: #8096a7; margin: 8px 0; }
+.musicalLayers strong { display: block; font-family: var(--display); font-size: 28px; line-height: 1.2; font-weight: 400; }
+.layerWave { display: block; width: 100%; height: auto; margin: 16px 0; color: #506f85; }
+.musicalLayers p { font-size: 14px; line-height: 1.6; color: var(--checkout-muted); }
+.musicalChoices { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 32px; padding-top: 28px; border-top: 1px solid var(--checkout-rule); }
+.musicalChoices dt { font-size: 16px; font-weight: 500; }
+.page .musicalChoices dd { margin-top: 8px; color: var(--checkout-muted); font-size: 14px; }
+.profileStudy { margin-top: 30px; }
+.profileStage { display: flex; justify-content: center; padding: 36px; background: #edf4f9; border: 1px solid #e0ebf3; border-radius: 22px; }
+.profileStage > button { max-width: 560px; }
+.profileStage dialog img { max-width: 769px; }
+.storytelling { margin-top: 48px; }
+.storytelling h3 { font-size: 24px; line-height: 1.3; letter-spacing: -.025em; }
+.page .storytelling > p { margin-top: 12px; }
+.storyExample { --checkout-ink: #303a2b; --checkout-muted: #4b533d; --checkout-rule: rgba(74,81,54,.22); position: relative; isolation: isolate; overflow: hidden; margin-top: 24px; padding: 24px 32px 30px; border: 1px solid #b3c295; border-radius: 18px; background: #C9D8AB; color: var(--checkout-ink); }
+.storyExample::before { content: ''; position: absolute; z-index: -1; inset: 0; background: url('/work/amodira/vaanan-branch-texture.webp') right top / 65% auto no-repeat; opacity: .45; pointer-events: none; }
+.storyTrack { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; column-gap: 20px; padding-bottom: 22px; border-bottom: 1px solid var(--checkout-rule); }
+.storyIdentity { grid-area: 1 / 1; display: flex; align-items: center; gap: 16px; }
+.storyIdentity img { width: 64px; height: 64px; object-fit: contain; border: 1px solid rgba(99,115,73,.2); border-radius: 10px; background: #fff; }
+.storyIdentity > span { font-family: var(--display); font-size: 26px; }
+.storyTrack .inlinePlayer { display: contents; }
+.storyTrack .inlinePlayButton { grid-area: 1 / 2; justify-self: end; border-color: #b3ad87; background: #f7f4e8; color: #3e492f; box-shadow: 0 4px 14px -8px rgba(61,67,41,.25); }
+.storyTrack .inlinePlayButton[data-playing] { border-color: #465337; background: #465337; color: #f7f4e8; }
+.page .storyTrack .inlinePlayButton:focus-visible { outline-color: #465337; }
+.storyTrack .trackStatus { grid-area: 2 / 2; text-align: right; }
+.storyArc { --story-gap: 52px; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: var(--story-gap); margin: 26px 0 0; padding: 0; list-style: none; }
+.storyArc li { display: flex; flex-direction: column; gap: 10px; }
+.storyArc strong { position: relative; display: flex; align-items: center; flex: 1; font-size: 21px; line-height: 1.35; letter-spacing: -.025em; }
+.storyArrow { position: absolute; left: calc(100% + var(--story-gap) / 2); top: 50%; width: 24px; height: 24px; transform: translate(-50%, -50%); color: #7b643d; }
+.fragranceGrid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 32px 20px; margin: 0; padding: 0; list-style: none; }
+.fragranceGrid img { display: block; width: 100%; height: auto; border: 1px solid #e8eef3; border-radius: 16px; }
+.fragranceName { display: block; margin-top: 24px; text-align: center; font-family: var(--display); font-size: 25px; }
+.fragranceArtwork { position: relative; isolation: isolate; border-radius: 16px; }
+.fragranceMedia { position: relative; overflow: hidden; border-radius: inherit; }
+.notesToggle { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; border-radius: inherit; background: transparent; cursor: pointer; }
+.page .notesToggle:focus-visible { outline-offset: -4px; }
+.notesPanel { position: absolute; inset: 0; padding: 22px 18px 28px; border: 1px solid #dce6ee; border-radius: inherit; background: #f0f5f9; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 140ms ease; }
+.fragranceArtwork[data-notes-open] .notesPanel { opacity: 1; visibility: visible; }
+.fragranceArtwork[data-notes-open] .notesList { position: relative; z-index: 2; pointer-events: auto; }
+.notesList { display: grid; gap: 8px; max-height: 100%; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #a9bdcc transparent; }
+.notesList dt { color: #607586; font-size: 10px; line-height: 1.4; }
+.notesList > div:first-child dt { display: flex; align-items: center; min-height: 36px; padding-right: 76px; }
+.page .notesList dd { margin-top: 3px; color: #263d4e; font-size: 12px; line-height: 1.4; }
+.fragranceCard:has(:focus-visible) .notesPanel { transition: none; }
+.fragranceArtwork[data-active] { box-shadow: 0 0 0 2px #789bb4; }
+.playButton { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 0; min-height: 46px; border: 1px solid #d5e2ec; border-radius: 999px; background: rgba(250,253,255,.96); color: #28485f; cursor: pointer; font: inherit; box-shadow: 0 4px 16px -8px rgba(28,57,79,.3); transition: background .18s ease, color .18s ease, transform .18s ease; }
+.playButton svg { width: 19px; height: 19px; flex: none; }
+.playButton[data-playing] { background: #345b78; border-color: #345b78; color: #fff; }
+.playButton:active { transform: scale(.96); }
+.page .playButton:focus-visible { outline-offset: 3px; }
+.cardPlayButton { position: absolute; z-index: 1; right: 16px; bottom: -23px; width: 46px; height: 46px; }
+.likeButton { position: absolute; z-index: 2; top: 4px; right: 4px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 44px; height: 44px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; color: #748593; cursor: pointer; font: inherit; transition: transform 140ms cubic-bezier(.23,1,.32,1), color 140ms ease; }
+.likeButton svg { width: 16px; height: 16px; flex: none; }
+.likeButton[data-liked] { color: #c15f55; }
+.likeButton[aria-busy] { opacity: .6; cursor: progress; }
+.likeButton[aria-disabled="true"] { cursor: default; }
+.likeButton:active { transform: scale(.96); }
+.likeCount { font-size: 12px; font-variant-numeric: tabular-nums; }
+.likesHint { max-width: 380px; }
+.trackProgress { position: absolute; right: 0; bottom: 0; left: 0; height: 3px; pointer-events: none; }
+.trackProgress > div { height: 100%; background: #345b78; transform-origin: left; }
+.page .trackStatus { min-height: 20px; margin-top: 6px; color: var(--checkout-muted); font-size: 12px; line-height: 1.6; text-align: center; font-variant-numeric: tabular-nums; }
+.inlinePlayer { margin-top: 20px; }
+.inlinePlayButton { padding: 0 20px; font-size: 14px; }
+@media (hover: hover) {
+  .playButton:hover { background: #e0edf7; }
+  .playButton[data-playing]:hover { background: #284a64; }
+  .likeButton:hover { color: #b35b52; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .storyTrack .inlinePlayButton:hover { background: #eeead8; }
+  .storyTrack .inlinePlayButton[data-playing]:hover { background: #36432a; }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .fragranceArtwork[data-notes-open] .fragranceMedia { display: grid; }
+  .fragranceArtwork[data-notes-open] .fragranceMedia > img { grid-area: 1 / 1; opacity: 0; }
+  .fragranceArtwork[data-notes-open] .notesPanel { position: relative; grid-area: 1 / 1; }
+  .notesList { max-height: none; overflow: visible; }
+}
+
+.comparison { display: grid; grid-template-columns: 1.4fr 1fr; gap: 28px; margin-top: 32px; }
+.comparison > figure { min-width: 0; }
+.comparisonStage { display: flex; align-items: center; justify-content: center; min-height: 370px; padding: 22px; background: #eaf2f8; border: 1px solid #e0ebf3; border-radius: 22px; }
+.finalStage > button { max-width: 310px; }
+.comparisonCaption { margin-top: 18px; font-size: 15px; line-height: 1.6; }
+.comparisonCaption strong { display: block; }
+
+.outcome { display: grid; grid-template-columns: 220px minmax(0,1fr); align-items: center; gap: 64px; padding: 38px 0; margin-top: 28px; border-top: 1px solid var(--checkout-rule); border-bottom: 1px solid var(--checkout-rule); }
+.outcomeMetric > span { display: block; }
+.page .outcomeMetric p { margin-top: 12px; font-size: 15px; line-height: 1.55; color: var(--checkout-muted); }
+.interactionOrder { list-style: none; margin: 0; padding: 0; }
+.interactionOrder li { display: flex; align-items: center; gap: 22px; padding: 20px 24px; font-size: 20px; }
+.interactionOrder li:last-child { border-radius: 12px; background: #eaf2f8; }
+.interactionOrder span { color: var(--checkout-muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 900px) {
+  .page .metadata { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .comparison { gap: 20px; grid-template-columns: 1.2fr 1fr; }
+  .comparisonStage { min-height: 300px; padding: 16px; }
+  .outcome { grid-template-columns: 160px minmax(0,1fr); gap: 32px; }
+  .mediaChannels > div { padding: 16px 12px; }
+  .directionBoard { grid-template-columns: 160px minmax(0,1fr); gap: 24px; padding: 24px; }
+  .musicalChoices { gap: 20px; }
+  .page .musicalLayers { gap: 12px; }
+  .musicalLayers > div + div { padding-left: 12px; }
+}
+
+@media (max-width: 700px) {
+  .comparison { grid-template-columns: 1fr; gap: 32px; }
+  .comparisonStage { min-height: 0; padding: 24px 16px; border-radius: 16px; }
+  .comparisonCaption { font-size: 14px; }
+  .outcome { grid-template-columns: 1fr; gap: 24px; padding: 28px 0; }
+  .outcomeMetric { display: flex; align-items: center; gap: 24px; }
+  .page .outcomeMetric p { margin-top: 0; }
+  .mediaChannels { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .recordArt { width: 120px; height: 120px; margin: 26px auto; }
+  .recordArt::after { left: 45px; top: 45px; }
+  .directionBoard { grid-template-columns: 1fr; padding: 24px 18px; border-radius: 16px; }
+  .rayaIdentity { max-width: 150px; justify-self: center; }
+  .soundMapping { padding-top: 0; border-top: 0; }
+  .page .musicalLayers { grid-template-columns: 1fr; gap: 24px; }
+  .musicalLayers > div + div { padding: 24px 0 0; border-left: 0; border-top: 1px dashed #c5d2dc; }
+  .musicalLayers dt { display: grid; grid-template-columns: 1fr 28px 1fr; align-items: center; gap: 12px; }
+  .layerConnection { margin: 0; transform: rotate(-90deg); text-align: center; }
+  .musicalLayers strong { font-size: 26px; }
+  .layerWave { max-width: 240px; height: 64px; margin: 12px auto; }
+  .musicalChoices { grid-template-columns: 1fr; gap: 22px; }
+  .profileStage { padding: 18px; border-radius: 16px; }
+  .storytelling h3 { font-size: 22px; }
+  .storyExample { padding: 22px 20px 26px; border-radius: 16px; }
+  .storyTrack { column-gap: 12px; }
+  .storyIdentity { gap: 10px; }
+  .storyIdentity img { width: 52px; height: 52px; }
+  .storyIdentity > span { font-size: 23px; }
+  .storyTrack .inlinePlayButton { gap: 7px; padding: 0 12px; font-size: 13px; white-space: nowrap; }
+  .storyTrack .trackStatus { max-width: 130px; }
+  .storyArc { --story-gap: 42px; grid-template-columns: 1fr; }
+  .storyArrow { left: 10px; top: calc(100% + var(--story-gap) / 2); width: 20px; height: 20px; transform: translate(-50%, -50%) rotate(90deg); }
+  .fragranceGrid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px 14px; }
+  .fragranceName { font-size: 22px; margin-top: 24px; }
+  .cardPlayButton { right: 12px; }
+  .collectionPhoto > img { border-radius: 16px; }
+}
+
+@media (max-width: 380px) {
+  .likeButton { gap: 4px; }
+  .likeCount { font-size: 11px; }
+  .cardPlayButton { right: 10px; }
+}
+
+@media (max-width: 360px) {
+  .storyTrack { grid-template-columns: 1fr; }
+  .storyTrack .inlinePlayButton { grid-area: 2 / 1; justify-self: start; margin-top: 12px; }
+  .storyTrack .trackStatus { grid-area: 3 / 1; text-align: left; }
+}

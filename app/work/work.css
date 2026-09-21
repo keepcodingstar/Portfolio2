@@ -46,6 +46,7 @@
   border-radius: 999px;
 }
 .work-back {
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
@@ -54,7 +55,7 @@
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--ink-soft);
-  transition: color 0.2s ease;
+  transition: color 160ms ease, scale 140ms var(--ease-out);
 }
 .work-back .ar {
   display: inline-block;
@@ -68,6 +69,9 @@
   gap: 0.4rem;
 }
 .work-top-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-family: var(--mono);
   font-size: 0.64rem;
   letter-spacing: 0.14em;
@@ -75,7 +79,7 @@
   color: var(--ink-soft);
   padding: 0.5rem 0.85rem;
   border-radius: 999px;
-  transition: color 0.2s ease, background 0.2s ease;
+  transition: color 160ms ease, background-color 160ms ease, scale 140ms var(--ease-out);
 }
 .work-top-links a:hover { color: var(--ink); background: rgba(255, 255, 255, 0.4); }
 .work-top-links a.cta {
@@ -93,12 +97,12 @@
 }
 
 /* reveal — sections lift in on scroll; killed under reduced motion below */
-.reveal {
+.work .reveal {
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.reveal.in { opacity: 1; transform: none; }
+.work .reveal.in { opacity: 1; transform: none; }
 
 /* =================================================================
    HUB — the index of projects
@@ -142,9 +146,12 @@
   padding: clamp(1.5rem, 3.4vw, 2.4rem) clamp(1.4rem, 3.2vw, 2.4rem);
   border-radius: var(--r-xl);
   color: var(--ink);
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+  transition: transform 220ms var(--ease-out), scale 140ms var(--ease-out), box-shadow 220ms ease;
 }
 a.proj { cursor: pointer; }
+a.proj:active { scale: .995; }
+.work-back:active, .work-top-links a:active { scale: .97; }
+:is(a.proj, .work-back, .work-top-links a):focus-visible { scale: 1; transition: none; }
 .proj-idx {
   font-family: var(--mono);
   font-size: 0.72rem;
@@ -1075,6 +1082,7 @@ a.proj { cursor: pointer; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal { opacity: 1; transform: none; transition: none; }
+  .work .reveal { opacity: 1; transform: none; transition: none; }
   .work-back .ar, .proj-go .ar { transition: none; }
+  a.proj:active, .work-back:active, .work-top-links a:active { scale: 1; }
 }

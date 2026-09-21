@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import EconicView from './EconicView';
+import { econicTitle, econicDescription } from './econic-content';
 
 const URL_PATH = '/work/econic';
-const TITLE = 'Econic 2025 — preview the sale before it started, 50× revenue when it did';
-const DESCRIPTION =
-  'Virgio’s 2nd-anniversary “anti-sale”: every garment sold at its cost to make. A Preview toggle let shoppers see every sale price days early. Won Best Brand Campaign of the Year at the e4m RetailEX Awards 2026.';
+const TITLE = econicTitle;
+const DESCRIPTION = econicDescription;
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -15,20 +15,20 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     url: URL_PATH,
     type: 'article',
-    images: ['/work/econic/award-retailex.png'],
+    images: ['/work/econic/thumb.jpg'],
   },
   twitter: {
     card: 'summary_large_image',
     title: TITLE,
     description: DESCRIPTION,
-    images: ['/work/econic/award-retailex.png'],
+    images: ['/work/econic/thumb.jpg'],
   },
 };
 
 const CASE_JSONLD = {
   '@context': 'https://schema.org',
   '@type': 'CreativeWork',
-  name: 'Econic 2025',
+  name: TITLE,
   headline: TITLE,
   description: DESCRIPTION,
   url: `https://sameerkapil.com${URL_PATH}`,

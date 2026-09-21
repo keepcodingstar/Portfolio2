@@ -1,0 +1,254 @@
+[
+  {
+    "image": 1,
+    "file": "references/01-template-context-strategy.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-50086140-aa7c-476e-a15b-2b861fa4adec.png",
+    "type": "Teacher template",
+    "width": 1655,
+    "height": 270,
+    "sha256": "c179aadd77eaa7a7c2884d517def9b0b1b9b50e1e2396c7ad52c03409838a04b"
+  },
+  {
+    "image": 2,
+    "file": "references/02-template-flows-components.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-43bc658d-422d-493f-b717-b52b166a5eea.png",
+    "type": "Teacher template",
+    "width": 1228,
+    "height": 245,
+    "sha256": "5ffd43713634b487f11c7191ceb534556bdbe3229c3ba62c30e4435679b74755"
+  },
+  {
+    "image": 3,
+    "file": "references/03-template-decisions-outcomes.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-bbf37515-eb9b-4c4f-b436-302d503e01ad.png",
+    "type": "Teacher template",
+    "width": 1243,
+    "height": 258,
+    "sha256": "78992aff41ba06ab064aaaa1d36472cb90d943a473cb6f412bf8c30a7ad5d9bf"
+  },
+  {
+    "image": 4,
+    "file": "references/04-campaign-phase-notes.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-1fb2780f-37cd-4671-a993-0ab099821da8.png",
+    "type": "Planning notes",
+    "width": 884,
+    "height": 518,
+    "sha256": "183087214d686c78a3e4e7009166584238cda3e95bb6a28d3949d7fa637623c6"
+  },
+  {
+    "image": 5,
+    "file": "references/05-presale-home-wireframe.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-5ade34cb-dfd8-48ba-b4a1-cea17885d49d.png",
+    "type": "Early design",
+    "width": 3840,
+    "height": 2160,
+    "sha256": "44b21319ee5d0ddeee65667fa001cd48ff60388b3c781171bc332a9061d31282"
+  },
+  {
+    "image": 6,
+    "file": "references/06-announcement-home-wireframe.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-89243b33-f158-4946-a65f-f6ddb11c644a.png",
+    "type": "Early design",
+    "width": 3840,
+    "height": 2160,
+    "sha256": "0851d2a156a1ac90518fd7436796dc9e4469fc117fa454821e0c7be645f4ab28"
+  },
+  {
+    "image": 7,
+    "file": "references/07-sale-pricing-cart-board.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-9df5db98-ad31-45b6-b588-1e48ca4d53a4.png",
+    "type": "Early design",
+    "width": 3840,
+    "height": 2160,
+    "sha256": "d58709a3c517426b3724bf572733e3f1608e7e922c939b7834d270b705c9ea79"
+  },
+  {
+    "image": 8,
+    "file": "references/08-announcement-listing-board.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-78db7b8f-953a-4dcd-bc99-737e3a6e3736.png",
+    "type": "Early design",
+    "width": 3840,
+    "height": 2160,
+    "sha256": "9a619448a9bf955d8877e36f0b6e3bedbf26d0d7513a9cc9377abe42adf28bc7"
+  },
+  {
+    "image": 9,
+    "file": "references/09-presale-listing-board.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-3ab85aab-fe08-487c-9d59-2da5dc5c9e89.png",
+    "type": "Early design",
+    "width": 3840,
+    "height": 2160,
+    "sha256": "e7144ec99e04e1f98fd59991dc111bd5490eab2f39e96aeddc0f4c95a5fa0101"
+  },
+  {
+    "image": 10,
+    "file": "references/10-presale-product-pricing-board.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-ef3cb962-a5fa-40f1-88be-bb5c4488d422.png",
+    "type": "Early design",
+    "width": 3840,
+    "height": 2160,
+    "sha256": "7c030f7d86a229d17f38dd0dd587e1a8f5133ab620ea636ac4866184fb60065f"
+  },
+  {
+    "image": 11,
+    "file": "references/11-presale-cart-board.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-fb36057e-4f04-4cc2-9a98-914575b21ef7.png",
+    "type": "Early design",
+    "width": 3840,
+    "height": 2160,
+    "sha256": "6db656a7a8d5eb3014f878fd7b052225975967f35f717e64732d1cc5f302ef99"
+  },
+  {
+    "image": 12,
+    "file": "references/12-announcement-listing.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-48ac5320-408f-422a-9cc5-b2b1e39ff3e0.png",
+    "type": "Final design supplied",
+    "width": 750,
+    "height": 2224,
+    "sha256": "3d86e835b1232687ed452c5e57cea6db6198837064524932dfee5e7c07ea2d5d"
+  },
+  {
+    "image": 13,
+    "file": "references/13-announcement-banner.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-c4b5d2b4-6daa-4114-b939-83cc0c9efe47.png",
+    "type": "Final design supplied",
+    "width": 750,
+    "height": 1498,
+    "sha256": "90ea2f79bcb2aa9bbe6da874a5fd6c4b794eb926c0ad9a38d8c87b96e1a7d327"
+  },
+  {
+    "image": 14,
+    "file": "references/14-announcement-sheet.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-b01ec1ad-4eea-4d1f-b57e-4b97a356baba.png",
+    "type": "Final design supplied",
+    "width": 974,
+    "height": 1354,
+    "sha256": "9169d2fd70e7151f6c1bbaf47230ad18500225f5aae24d32132f8ecd7be47482"
+  },
+  {
+    "image": 15,
+    "file": "references/15-listing-preview-off.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-b78d2e53-d3e3-4539-8304-e213da5e5a82.png",
+    "type": "Final design supplied",
+    "width": 750,
+    "height": 2316,
+    "sha256": "cc8fe09f50e46acd73f4c093196ef8669bffa6e71c26a1241c2ad9ea42013fcf"
+  },
+  {
+    "image": 16,
+    "file": "references/16-listing-preview-on.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-7d24f600-bb19-485f-a9fc-3436550ca450.png",
+    "type": "Final design supplied",
+    "width": 750,
+    "height": 2316,
+    "sha256": "d12d9dc9f9325c837b9a1375bf1c5afd70f8b61ff8e521a96c363e242aefb2f9"
+  },
+  {
+    "image": 17,
+    "file": "references/17-fair-pricing-sheet.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-91b842d9-faa6-4a5a-bd79-cdce7c860f68.png",
+    "type": "Final design supplied",
+    "width": 750,
+    "height": 1188,
+    "sha256": "d62351f0c3351ab10931a665532af5af37da13cb191de8a1b1bfe7e574424b57"
+  },
+  {
+    "image": 18,
+    "file": "references/18-product-preview-pair.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-616aa9a9-b845-4152-8912-7f5e5236cbea.png",
+    "type": "Final design supplied",
+    "width": 465,
+    "height": 634,
+    "sha256": "2c8734dbff28c0e6291dd8f27fab11ee146f38c4491880e19962fa7845161ca1"
+  },
+  {
+    "image": 19,
+    "file": "references/19-cart-preview-mobile.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-fdbdc2a2-c7e5-4805-9a07-7325a26575ca.png",
+    "type": "Final design supplied",
+    "width": 720,
+    "height": 1558,
+    "sha256": "0e1b317fcfd33834b946b70d2c2ea505cd00d92f9c894c0c3b0ae0ed6a789039"
+  },
+  {
+    "image": 20,
+    "file": "references/20-cart-preview-desktop.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-445e5822-de4b-4d72-88b4-0099a8bf0217.png",
+    "type": "Final design supplied",
+    "width": 2486,
+    "height": 1830,
+    "sha256": "bb45a375b5ebf5485cdd4e38f73d6b103783e5a85fb779ba92dd67bb6c6590cf"
+  },
+  {
+    "image": 21,
+    "file": "references/21-sale-cart-savings.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-09a1569c-bf8a-451a-aa86-5a50b0740f46.png",
+    "type": "Final design supplied",
+    "width": 720,
+    "height": 4634,
+    "sha256": "b3690b539b7f2b24633dd267cc01c7e306d953ddbae6f8812c7f7219ef236be5"
+  },
+  {
+    "image": 22,
+    "file": "references/22-sale-cart-amodira.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-4ebdd242-d8e2-4448-858b-ff8d81b3ce58.png",
+    "type": "Final design supplied",
+    "width": 720,
+    "height": 3002,
+    "sha256": "aaa5dfb2a7c3e676333fa869a2eeb2f12f8d24ab0114b24940f607ec9c621f83"
+  },
+  {
+    "image": 23,
+    "file": "references/23-amodira-variant-sheet.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-c66df9dc-e176-4e91-84dc-ec9b81a8901f.png",
+    "type": "Final design supplied",
+    "width": 720,
+    "height": 1167,
+    "sha256": "054f15a074aab1284ac201d411b5d76f0cefdffadf6680d8e4142ea4112ce4d9"
+  },
+  {
+    "image": 24,
+    "file": "references/24-non-returnable-option-states.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-def3466e-ad67-4805-9e15-7309a71c9df7.png",
+    "type": "Final design supplied",
+    "width": 842,
+    "height": 322,
+    "sha256": "2adc82f0b9af34cb2dfece3c7358fe091012e0a6af00e987bfc795dbe314ee99"
+  },
+  {
+    "image": 25,
+    "file": "references/25-campaign-counter-banners.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-6687bd2f-13b1-4bf6-8a42-6d060659702f.png",
+    "type": "Final design supplied",
+    "width": 852,
+    "height": 254,
+    "sha256": "2d293488b5c1cc0e977a7bfd666d1ba9013fb566b66f0622f13cb0a7d4926e65"
+  },
+  {
+    "image": 26,
+    "file": "references/26-recap-community-results.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-175a6685-9bd4-4419-a347-3d3bb5c164c6.png",
+    "type": "Final design supplied",
+    "width": 1098,
+    "height": 810,
+    "sha256": "7474ba66ccaee9e8da84981131a33463965e05c1422699b48bce9ad28c47977e"
+  },
+  {
+    "image": 27,
+    "file": "references/27-recap-products-cities.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-8e087c82-a1dc-4426-8309-83cad6334858.png",
+    "type": "Final design supplied",
+    "width": 1086,
+    "height": 789,
+    "sha256": "f47d6a0fd084300068e167fa04fa95837d284d008d4bcd0527aea580233ae37f"
+  },
+  {
+    "image": 28,
+    "file": "references/28-recap-new-returning-shoppers.png",
+    "source": "/var/folders/8l/xywqyjvn31zfj_dj6mx1ztx00000gp/T/codex-clipboard-44e719fe-978d-457a-91d6-a02e4b1148ef.png",
+    "type": "Final design supplied",
+    "width": 637,
+    "height": 637,
+    "sha256": "b10d009ca5674331eba8964fe6d21874a75028ab4f8e331f965ca61fd087c1ef"
+  }
+]

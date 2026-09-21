@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import AmodiraView from './AmodiraView';
+import { amodiraTitle, amodiraDescription } from './amodira-content';
 
 const URL_PATH = '/work/amodira';
-const TITLE = 'Amodira: Sound of the Scent — a perfume you feel before it arrives';
-const DESCRIPTION =
-  'A 0→1 fragrance brand for Virgio. Invented “Sound of the Scent” — an original song per fragrance whose treble, mids and bass mirror its top, heart and base notes. Became the most-interacted element on the PDP.';
+const TITLE = amodiraTitle;
+const DESCRIPTION = amodiraDescription;
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -28,14 +28,14 @@ export const metadata: Metadata = {
 const CASE_JSONLD = {
   '@context': 'https://schema.org',
   '@type': 'CreativeWork',
-  name: 'Amodira — Sound of the Scent',
+  name: amodiraTitle,
   headline: TITLE,
   description: DESCRIPTION,
   url: `https://sameerkapil.com${URL_PATH}`,
   author: { '@type': 'Person', name: 'Sameer Kapil' },
   creator: { '@type': 'Person', name: 'Sameer Kapil' },
-  about: 'Brand 0→1, fragrance, product design, PDP',
-  keywords: 'Amodira, fragrance, brand 0 to 1, sound of the scent, Virgio, product design',
+  about: 'Fragrance discovery, concept development, interaction design, AI audio creation',
+  keywords: 'Amodira, fragrance, sound of the scent, Virgio, product design, usability testing, AI audio',
 } as const;
 
 export default function Page() {

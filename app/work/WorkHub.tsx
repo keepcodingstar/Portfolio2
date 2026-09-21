@@ -3,9 +3,10 @@
 import Link from 'next/link';
 import RevealBody from '@/components/RevealBody';
 import WorkTop from '@/components/work/WorkTop';
-import { CheckoutProjectLink } from '@/components/work/CheckoutTransition';
+import { CaseStudyProjectLink } from '@/components/work/CheckoutTransition';
 import SiteFooter from '@/components/SiteFooter';
 import { useReveal } from '@/components/work/useReveal';
+import { econicTitle } from './econic/econic-content';
 import './work.css';
 import '../portfolio-type.css';
 
@@ -44,29 +45,28 @@ const PROJECTS: Project[] = [
   {
     slug: 'amodira',
     href: '/work/amodira',
-    name: 'Amodira: Sound of the Scent',
+    name: 'Audio Experience for Fragrance Discovery',
     context:
-      'A 0→1 perfume brand for Virgio. Invented a way to sell a scent online — an original song per fragrance whose layers mirror its notes, so you feel the perfume before you smell it.',
-    tags: ['Virgio', 'Brand 0→1', 'Fragrance', '2025'],
-    metric: '7',
-    unit: '×',
-    label: 'revenue · Econic sale',
+      'Sound of the Scent for Amodira. I led concept development and interaction design, and created eight tracks using AI to convey each perfume’s character and mood.',
+    tags: ['Virgio', 'Concept development', 'Fragrance', '2025'],
+    metric: '2nd',
+    label: 'most interacted · after the Back button',
   },
   {
     slug: 'fair-pricing',
     href: '/work/fair-pricing',
-    name: 'Fair Pricing',
+    name: 'Clarifying Prices for Fashion Shoppers',
     context:
-      'A price-transparency widget built on day one that went viral, won best e-commerce feature, and became registered company IP.',
+      'A bill-style price breakdown. Silver at DIGIES for a trust-building element, and company IP behind Econic Fair.',
     tags: ['Virgio', 'E-commerce', '2024', 'Live · Company IP'],
     metric: '500',
     unit: 'K+',
-    label: 'users reached',
+    label: 'organic views · customer’s post',
   },
   {
     slug: 'econic',
     href: '/work/econic',
-    name: 'Econic 2025',
+    name: econicTitle,
     context:
       'Virgio’s 2nd-anniversary “anti-sale” — every garment at its cost to make. I co-designed the campaign UI, anchored by a Preview toggle that let shoppers see every sale price days before it went live. Won Best Brand Campaign at the e4m RetailEX Awards 2026.',
     tags: ['Virgio', 'Campaign UI', '2025', 'Award'],
@@ -78,7 +78,7 @@ const PROJECTS: Project[] = [
 
 function Card({ p, i }: { p: Project; i: number }) {
   const idx = String(i + 1).padStart(2, '0');
-  const ProjectLink = p.href === '/work/checkout' ? CheckoutProjectLink : Link;
+  const ProjectLink = p.href === '/work/checkout' || p.href === '/work/amodira' || p.href === '/work/econic' ? CaseStudyProjectLink : Link;
   const inner = (
     <>
       <span className="proj-idx">{idx}</span>

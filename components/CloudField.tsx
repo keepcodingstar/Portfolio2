@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { addAfterEffect, Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Clouds, Cloud } from '@react-three/drei';
+
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 /**
  * The hero's clouds. They belong to the PAGE, not the preloader.
@@ -110,7 +112,7 @@ const easeInOutCubic = (p: number) =>
 const coverOffset = (rx: number, top: boolean) =>
   [rx * COVER_X - rx, top ? 0 : COVER_LIFT, COVER_NEAR] as const;
 
-function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
+function Sky({ animate, intro, entered }: { animate: boolean; intro: boolean; entered: boolean }) {
   const group = useRef<THREE.Group>(null);
   // one ref per cloud — the curtain animates each cloud's local position from a
   // gathered "cover the centre" pose out to its resting place at the sides/bottom.
@@ -123,12 +125,8 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
   // sky→ground): the clouds belong to the hero, so they finish sweeping off by
   // the time the work zone is centred — work/about/footer below stay clear.
   const anchor = useRef({ skyMid: 0, workOffsetY: 0 });
-  const pRef = useRef(0); // scroll-driven world-y target for the bank (1:1 with page)
   const introStart = useRef<number | null>(null);
-  // fires once the canvas has actually painted its first cloud frame, so the
-  // pre-paint cover (html.pl-cover) can dissolve out AS the clouds materialise —
-  // gating on real paint stops the cover lifting to reveal already-formed clouds.
-  const announcedReady = useRef(false);
+  const positioned = useRef(false);
   // drei <Clouds> batches every cloud into one instanced mesh; when that mesh's
   // bounding sphere leaves the camera frustum the WHOLE batch is culled at once,
   // so the clouds pop out abruptly as they scroll off. Turn culling off (once the
@@ -142,7 +140,18 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
   // conversion from innerHeight made the whole cloud world jump mid-scroll.
   const viewH = useThree((s) => s.size.height);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
+    // useFrame runs BEFORE WebGL draws. Announce readiness after rendering so
+    // the loader and route snapshot never reveal an empty canvas.
+    const unsubscribe = addAfterEffect(() => {
+      if (!positioned.current) return;
+      unsubscribe();
+      window.dispatchEvent(new Event('clouds:ready'));
+    });
+    return unsubscribe;
+  }, []);
+
+  useIsomorphicLayoutEffect(() => {
     const measure = () => {
       const sky = document.getElementById('zone-sky');
       const work = document.getElementById('zone-work');
@@ -153,32 +162,18 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
       const workMid = work ? work.offsetTop + work.offsetHeight / 2 : skyMid + viewH * 2;
       anchor.current.workOffsetY = -(workMid - skyMid) * (VIEW_WORLD_H / viewH);
     };
-    const onScroll = () => {
-      const eye = window.scrollY + viewH / 2;
-      // 1:1 with the page: px offset from the sky mid → world units (same as bg)
-      pRef.current = (eye - anchor.current.skyMid) * (VIEW_WORLD_H / viewH);
-    };
     // real resizes (orientation, desktop window) re-run this whole effect via
     // the viewH dep; the listener catches document reflows at a constant height
-    const onResize = () => { measure(); onScroll(); };
     measure();
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize);
+    window.addEventListener('resize', measure);
     return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onResize);
+      window.removeEventListener('resize', measure);
     };
   }, [viewH]);
 
   useFrame((state) => {
     const g = group.current;
     if (!g) return;
-
-    if (!announcedReady.current) {
-      announcedReady.current = true;
-      window.dispatchEvent(new Event('clouds:ready'));
-    }
 
     if (!culledOff.current) {
       culledOff.current = true;
@@ -189,14 +184,18 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
     // The GROUP scrolls with the page, but at BANK_PARALLAX (<1) so the hero bank
     // lags slightly and lingers in frame on the descent rather than snapping off.
     // The per-cloud CURTAIN (cover → part) layers on each cloud's local pos.
-    g.position.y = pRef.current * BANK_PARALLAX;
+    // Read the actual scroll position for this frame: the home anchor can move
+    // in a parent layout effect before its scroll event has been dispatched.
+    const p = (window.scrollY + viewH / 2 - anchor.current.skyMid) * (VIEW_WORLD_H / viewH);
+    g.position.y = p * BANK_PARALLAX;
     g.position.x = animate ? Math.sin(state.clock.elapsedTime / 16) * 0.5 : 0;
 
     // curtain: until `entered` fires every cloud sits in the COVER pose (full
     // screen); once it does, each slides OUT to rest — centre clouds first, edges
-    // last — so the cover parts left/right. Reduced motion / !animate skips to rest.
+    // last — so the cover parts left/right. SPA returns skip the curtain while
+    // retaining ambient drift; reduced motion also skips straight to rest.
     const t = state.clock.getElapsedTime();
-    if (entered && animate && introStart.current === null) introStart.current = t;
+    if (intro && entered && animate && introStart.current === null) introStart.current = t;
 
     for (let i = 0; i < BANK.length; i++) {
       const node = cloudRefs.current[i];
@@ -207,7 +206,7 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
       const rz = BANK[i].pos[2];
 
       let e = 1; // 1 = at rest
-      if (!animate) {
+      if (!intro || !animate) {
         e = 1;
       } else if (!entered || introStart.current === null) {
         e = 0; // covering the screen
@@ -224,8 +223,17 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
 
     // work/projects edge clouds — no curtain; translate their whole group so it
     // sits over #zone-work and scrolls 1:1 (own group ⇒ correct frustum culling).
-    if (workGroup.current) workGroup.current.position.y = pRef.current + anchor.current.workOffsetY;
-  });
+    if (workGroup.current) workGroup.current.position.y = p + anchor.current.workOffsetY;
+
+    // Drei reads matrixWorld to build its cloud instances at frame priority 0.
+    // Apply placement first, then refresh those matrices before the batch runs;
+    // waiting for Three's render would draw the first batch at the origin.
+    g.updateWorldMatrix(true, true);
+    workGroup.current?.updateWorldMatrix(true, true);
+    state.camera.updateWorldMatrix(true, false);
+
+    positioned.current = true;
+  }, -1);
 
   return (
     <>
@@ -292,26 +300,25 @@ function Sky({ animate, entered }: { animate: boolean; entered: boolean }) {
 
 export default function CloudField({ className }: { className?: string }) {
   const [animate, setAnimate] = useState(true);
-  // clouds are VISIBLE during the countdown — a soft full cover behind the
-  // counting number. `visible` wells them up; `entered` only fires the SCATTER:
+  // Ambient motion is independent of the once-per-document opening curtain.
+  const [intro, setIntro] = useState(false);
+  // Clouds are fully drawn behind the intro cover. One cover fade reveals them;
+  // `entered` only fires the SCATTER:
   // the cover bursts apart and settles into the resting bank when the preloader
-  // clears — or immediately on reduced motion / a remount.
-  const [visible, setVisible] = useState(false);
+  // clears. A skipped intro starts at rest instead of replaying that scatter.
   const [entered, setEntered] = useState(false);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const shouldPlayIntro = !reduced && document.body.classList.contains('preloading');
     setAnimate(!reduced);
+    setIntro(shouldPlayIntro);
 
-    // well the cover up into view for the count (a tick after mount so the first
-    // painted frame is already in the cover pose — no reposition jitter)
-    const show = window.setTimeout(() => setVisible(true), reduced ? 0 : 60);
-
-    // if the intro is already gone (reduced motion, or a remount), scatter now
-    if (reduced || !document.body.classList.contains('preloading')) {
-      setVisible(true);
+    // Resolve the remount before paint. `entered` alone would start a new
+    // scatter timeline, so `intro` explicitly keeps the bank in its rest pose.
+    if (!shouldPlayIntro) {
       setEntered(true);
-      return () => clearTimeout(show);
+      return;
     }
 
     const enter = () => setEntered(true);
@@ -319,7 +326,6 @@ export default function CloudField({ className }: { className?: string }) {
     // safety net — never leave the clouds covering if the event is missed
     const fallback = window.setTimeout(enter, 7000);
     return () => {
-      clearTimeout(show);
       window.removeEventListener('preloader:done', enter);
       clearTimeout(fallback);
     };
@@ -327,17 +333,12 @@ export default function CloudField({ className }: { className?: string }) {
 
   return (
     <div className={className} aria-hidden>
-      {/* The cloud layer wells up (`visible`) in its COVER pose to back the
-          counting number, then SCATTERS to the resting bank on `entered`. The
-          first painted frame is already the cover pose, so fading in is clean —
-          no "reposition, then animate" jitter. Reduced motion: no fade, appears
-          at rest. The outer .cloudfield still carries the --sky-o envelope. */}
+      {/* The loader owns the first reveal; the canvas doesn't run a second,
+          competing fade. SPA returns render directly in the resting pose. */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
-          opacity: visible ? 1 : 0,
-          transition: animate ? 'opacity 0.8s ease' : 'none',
         }}
       >
         <Canvas
@@ -351,7 +352,7 @@ export default function CloudField({ className }: { className?: string }) {
           gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}
           style={{ background: 'transparent' }}
         >
-          <Sky animate={animate} entered={entered} />
+          <Sky animate={animate} intro={intro} entered={entered} />
         </Canvas>
       </div>
     </div>

@@ -1,6 +1,8 @@
 'use client';
 
 import type { ZoneId } from '@/components/AltitudeProvider';
+import { OPEN_FEEDBACK_EVENT } from '@/components/feedback/exploration';
+import HomeLink from '@/components/HomeTransition';
 
 /**
  * The single site-wide footer — the grassland "Let's talk" contact slab. Used on
@@ -37,7 +39,7 @@ const COLOPHON: { k: string; v: string }[] = [
 type Props = {
   /** Home-page altitude scroller. When omitted (standalone routes), the brand
    *  mark and nav fall back to anchors that route back to the homepage zones. */
-  goTo?: (zone: ZoneId) => void;
+  goTo?: (zone: ZoneId, instant?: boolean) => void;
 };
 
 export default function SiteFooter({ goTo }: Props) {
@@ -55,14 +57,14 @@ export default function SiteFooter({ goTo }: Props) {
             type="button"
             className="footer-mark-btn"
             aria-label="Sameer Kapil — back to the top"
-            onClick={() => goTo('zone-sky')}
+            onClick={(event) => goTo('zone-sky', event.detail === 0)}
           >
             <FooterLogo />
           </button>
         ) : (
-          <a className="footer-mark-btn" href="/" aria-label="Sameer Kapil — home">
+          <HomeLink className="footer-mark-btn" href="/" aria-label="Sameer Kapil — home">
             <FooterLogo />
-          </a>
+          </HomeLink>
         )}
       </div>
 
@@ -94,15 +96,18 @@ export default function SiteFooter({ goTo }: Props) {
           </ul>
 
           <nav className="footer-links" aria-label="Footer">
+            <button type="button" aria-haspopup="dialog" onClick={() => window.dispatchEvent(new Event(OPEN_FEEDBACK_EVENT))}>
+              Leave feedback
+            </button>
             {NAV.map((n) =>
               goTo ? (
-                <button key={n.id} type="button" onClick={() => goTo(n.id)}>
+                <button key={n.id} type="button" onClick={(event) => goTo(n.id, event.detail === 0)}>
                   {n.label}
                 </button>
               ) : (
-                <a key={n.id} href={`/#${n.id}`}>
+                <HomeLink key={n.id} href={`/#${n.id}`}>
                   {n.label}
-                </a>
+                </HomeLink>
               ),
             )}
             <a href={RESUME} target="_blank" rel="noreferrer">

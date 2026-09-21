@@ -26,6 +26,7 @@ const COUNT_SPEED = 1.15;
  */
 
 const REVEAL_MS = 700; // number + haze lift away, then the layer unmounts
+const CLOUD_REVEAL_MS = 800; // matches the single intro-cover dissolve in CSS
 
 /** The loader number is an <Odometer /> rolling 0 → 100. A safety timeout
  *  guarantees the intro proceeds even if the odometer's completion never fires. */
@@ -60,6 +61,21 @@ function Counter({
 
 export default function Preloader() {
   const [phase, setPhase] = useState<'count' | 'reveal' | 'done'>('count');
+  const revealTimer = useRef(0);
+  const completed = useRef(false);
+  const countFinished = useRef(false);
+  const cloudsRevealed = useRef(false);
+
+  const finishWhenReady = useCallback(() => {
+    if (completed.current || !countFinished.current || !cloudsRevealed.current) return;
+    completed.current = true;
+    setPhase('reveal');
+    document.body.classList.remove('preloading');
+    window.dispatchEvent(new Event('preloader:done'));
+    revealTimer.current = window.setTimeout(() => setPhase('done'), REVEAL_MS);
+  }, []);
+
+  useEffect(() => () => window.clearTimeout(revealTimer.current), []);
 
   useIsomorphicLayoutEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -97,18 +113,27 @@ export default function Preloader() {
     // A safety timeout clears it even if the canvas never signals.
     const root = document.documentElement;
     let dropId = 0;
+    let revealed = false;
     const reveal = () => {
-      root.classList.add('pl-reveal'); // start the cross-fade (see globals.css)
-      dropId = window.setTimeout(() => root.classList.remove('pl-cover', 'pl-reveal'), 1000);
+      if (revealed) return;
+      revealed = true;
+      root.classList.add('pl-reveal');
+      dropId = window.setTimeout(() => {
+        root.classList.remove('pl-cover', 'pl-reveal');
+        cloudsRevealed.current = true;
+        finishWhenReady();
+      }, CLOUD_REVEAL_MS);
     };
     window.addEventListener('clouds:ready', reveal, { once: true });
-    const safetyId = window.setTimeout(reveal, 1600);
+    // Give slow devices time to actually draw. The old 1.6s deadline exposed an
+    // empty canvas, then the fully formed cloud bank popped in afterwards.
+    const safetyId = window.setTimeout(reveal, 6000);
     return () => {
       window.removeEventListener('clouds:ready', reveal);
       clearTimeout(safetyId);
       clearTimeout(dropId);
     };
-  }, []);
+  }, [finishWhenReady]);
 
   // safety net: if we ever reach 'done' without having signalled (shouldn't
   // happen), make sure the flag is dropped so the nav can never stay hidden.
@@ -142,14 +167,11 @@ export default function Preloader() {
   }, [phase]);
 
   const handleCountDone = useCallback(() => {
-    setPhase('reveal');
-    // the count just landed — fire the scatter NOW so the cloud cover bursts
-    // apart as the number lifts away (drop "preloading" so the nav can fade in),
-    // then unmount this layer once the number has cleared.
-    document.body.classList.remove('preloading');
-    window.dispatchEvent(new Event('preloader:done'));
-    window.setTimeout(() => setPhase('done'), REVEAL_MS);
-  }, []);
+    countFinished.current = true;
+    // On slower loads, hold the final reading until the cloud reveal has
+    // finished. Their parting animation cannot race the first appearance.
+    finishWhenReady();
+  }, [finishWhenReady]);
 
   return (
     <>

@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import HomeLink from '@/components/HomeTransition';
 
 type NavLink = { href: string; label: string; cta?: boolean };
 
@@ -19,10 +19,10 @@ export default function WorkTop({
   return (
     <header className="work-top">
       <div className="work-top-inner glass">
-        <Link href={back.href} className="work-back">
+        <HomeLink href={back.href} className="work-back">
           <span className="ar" aria-hidden>←</span>
           {back.label}
-        </Link>
+        </HomeLink>
         <nav className="work-top-links">
           {links.map((l) =>
             l.cta ? (
@@ -41,9 +41,9 @@ export default function WorkTop({
                 {l.label}
               </a>
             ) : (
-              <Link key={l.href + l.label} href={l.href}>
+              <HomeLink key={l.href + l.label} href={l.href}>
                 {l.label}
-              </Link>
+              </HomeLink>
             ),
           )}
         </nav>

@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type ReactNode,
@@ -19,8 +20,7 @@ import {
  *
  * This provider:
  *   • anchors the viewport at the sky zone on load (no mid-page flash),
- *   • cross-fades three fixed atmosphere layers against the viewport's altitude
- *     (CSS vars --space-o / --sky-o / --ground-o),
+ *   • cross-fades the atmosphere layers directly against the viewport's altitude,
  *   • tracks the active zone for the glass side-nav.
  *
  * Native scroll only — no smooth-scroll dependency. `goTo` uses the browser's
@@ -31,10 +31,11 @@ export type ZoneId = 'zone-space' | 'zone-sky' | 'zone-work' | 'zone-ground';
 
 type Ctx = {
   active: ZoneId;
-  goTo: (zone: ZoneId) => void;
+  goTo: (zone: ZoneId, instant?: boolean) => void;
 };
 
 const AltitudeCtx = createContext<Ctx | null>(null);
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 export function useAltitude(): Ctx {
   const ctx = useContext(AltitudeCtx);
@@ -54,7 +55,30 @@ const ORDER: ZoneId[] = ['zone-space', 'zone-sky', 'zone-work', 'zone-ground'];
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
+// A new Home link gets a new history entry; Back/Forward keeps the original
+// entry and its scroll position. Keep coordinates in memory so scrolling does
+// not require continuous history.replaceState calls, and reloads keep the intro.
+const HOME_ENTRY_KEY = 'portfolioHomeEntry';
+type HomePosition = { x: number; y: number };
+const homePositions = new Map<string, HomePosition>();
+const positionStorageKey = (entry: string) => `portfolio:home-scroll:${entry}`;
+let pendingHistoryEntry: string | undefined;
+
+// Capture before an uncached Back navigation fetches the route: Next may
+// replace custom history fields while the home component is still loading.
+export function captureHomeHistoryEntry(value: unknown) {
+  pendingHistoryEntry = typeof value === 'string' ? value : undefined;
+}
+
+function readStoredPosition(entry: string): HomePosition | undefined {
+  try {
+    const value = JSON.parse(sessionStorage.getItem(positionStorageKey(entry)) ?? 'null');
+    if (value && Number.isFinite(value.x) && Number.isFinite(value.y)) return { x: value.x, y: value.y };
+  } catch { /* Browsing still works when session storage is unavailable. */ }
+}
+
 export default function AltitudeProvider({ children }: { children: ReactNode }) {
+  const content = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<ZoneId>('zone-sky');
   const activeRef = useRef<ZoneId>('zone-sky');
   // stable viewport height: mobile URL-bar show/hide fires resize events with a
@@ -62,6 +86,7 @@ export default function AltitudeProvider({ children }: { children: ReactNode }) 
   // atmosphere cross-fade and active zone jump. Refreshed only on width change
   // (real resize / orientation flip) — see the resize handler below.
   const vhRef = useRef(0);
+  const layers = useRef<{ space: HTMLElement[]; sky: HTMLElement[]; ground: HTMLElement[] }>({ space: [], sky: [], ground: [] });
 
   // measure each zone's document-Y midpoint
   function mids(): { id: ZoneId; mid: number }[] {
@@ -107,10 +132,14 @@ export default function AltitudeProvider({ children }: { children: ReactNode }) 
     const atmos =
       lo.id === 'zone-space' && hi.id === 'zone-sky' ? Math.pow(t, 2.4) : t;
 
-    const root = document.documentElement.style;
-    root.setProperty('--space-o', lerp(a.space, b.space, atmos).toFixed(3));
-    root.setProperty('--sky-o', lerp(a.sky, b.sky, atmos).toFixed(3));
-    root.setProperty('--ground-o', lerp(a.ground, b.ground, t).toFixed(3));
+    // Update only the five visual layers. Inherited root variables used to
+    // invalidate styles throughout the whole page on every scroll frame.
+    for (const channel of ['space', 'sky', 'ground'] as const) {
+      const opacity = lerp(a[channel], b[channel], channel === 'ground' ? t : atmos).toFixed(3);
+      for (const layer of layers.current[channel]) {
+        if (layer.style.opacity !== opacity) layer.style.opacity = opacity;
+      }
+    }
 
     // nearest zone = active (for the rail)
     let nearest: ZoneId = ms[0].id;
@@ -136,18 +165,71 @@ export default function AltitudeProvider({ children }: { children: ReactNode }) 
     return top + rect.height / 2 - vhRef.current / 2;
   }
 
-  function goTo(zone: ZoneId) {
+  function goTo(zone: ZoneId, instant = false) {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const target = Math.max(0, centerOffset(zone));
-    window.scrollTo({ top: target, behavior: reduced ? 'auto' : 'smooth' });
+    window.scrollTo({ top: target, behavior: reduced || instant ? 'instant' : 'smooth' });
   }
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
+    // The root layout's inline anchor only runs on a document load. On a client
+    // navigation, stage the content before paint while Next finishes its scroll
+    // handling, so the scrapbook/work section cannot flash ahead of the hero.
+    const page = content.current;
+    page?.setAttribute('data-positioning', '');
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
     }
 
+    const savedEntry: unknown = pendingHistoryEntry ?? window.history.state?.[HOME_ENTRY_KEY];
+    pendingHistoryEntry = undefined;
+    const entry = typeof savedEntry === 'string' ? savedEntry : crypto.randomUUID();
+    // A project reload starts a new JS document, so also retain the departure
+    // position for that tab. A deliberate home reload still plays its intro.
+    const restorePosition = homePositions.get(entry)
+      ?? (!document.body.classList.contains('preloading') ? readStoredPosition(entry) : undefined);
+    window.history.replaceState({ ...window.history.state, [HOME_ENTRY_KEY]: entry }, '');
+    let departing = false;
+    const rememberPosition = () => {
+      // A route may change its URL before this page unmounts. Never save the
+      // next page's scroll, or overwrite a different Home visit on browser Back.
+      if (departing || window.location.pathname !== '/') return;
+      const currentEntry: unknown = window.history.state?.[HOME_ENTRY_KEY];
+      if (currentEntry !== undefined && currentEntry !== entry) return;
+      // Next can replace custom history fields while refreshing its route
+      // state. Reattach this entry before leaving so Back can still find it.
+      if (currentEntry !== entry) {
+        window.history.replaceState({ ...window.history.state, [HOME_ENTRY_KEY]: entry }, '');
+      }
+      homePositions.set(entry, { x: window.scrollX, y: window.scrollY });
+    };
+    const persistPosition = () => {
+      const position = homePositions.get(entry);
+      if (!position) return;
+      try { sessionStorage.setItem(positionStorageKey(entry), JSON.stringify(position)); }
+      catch { /* The in-memory position remains available. */ }
+    };
+    const rememberDeparture = (event: Event) => {
+      rememberPosition();
+      persistPosition();
+      const click = event as MouseEvent;
+      const link = event.target instanceof Element ? event.target.closest('a[href]') : null;
+      if (event.type === 'click' && link instanceof HTMLAnchorElement && click.button === 0
+        && !click.metaKey && !click.ctrlKey && !click.shiftKey && !click.altKey
+        && (!link.target || link.target === '_self')) {
+        const destination = new URL(link.href);
+        // Keep the departure snapshot while a route transition replaces the
+        // document. Its shorter page can otherwise clamp the old scroll value.
+        departing = destination.origin === window.location.origin && destination.pathname !== '/';
+      }
+    };
+
     vhRef.current = window.innerHeight;
+    layers.current = {
+      space: Array.from(document.querySelectorAll<HTMLElement>('.altitude-bg .space, .starfield')),
+      sky: Array.from(document.querySelectorAll<HTMLElement>('.altitude-bg .sky, .cloudfield')),
+      ground: Array.from(document.querySelectorAll<HTMLElement>('.altitude-bg .ground')),
+    };
     let vw = window.innerWidth;
     const onResize = () => {
       // height-only delta = the mobile URL bar, not a real resize — ignore it
@@ -159,6 +241,7 @@ export default function AltitudeProvider({ children }: { children: ReactNode }) 
 
     let raf = 0;
     const onScroll = () => {
+      rememberPosition();
       if (raf) return;
       raf = requestAnimationFrame(() => {
         raf = 0;
@@ -166,20 +249,45 @@ export default function AltitudeProvider({ children }: { children: ReactNode }) 
       });
     };
 
-    // anchor at the sky zone after first layout, then reveal (no mid-page flash)
+    // Restore a history visit exactly; new Home/section links keep their own
+    // destination instead of inheriting the last visit's scroll position.
     const anchor = () => {
-      window.scrollTo(0, Math.max(0, centerOffset('zone-sky')));
+      const requested = window.location.hash.slice(1) as ZoneId;
+      const zone = ORDER.includes(requested) ? requested : 'zone-sky';
+      window.scrollTo({
+        left: restorePosition?.x ?? 0,
+        top: restorePosition?.y ?? Math.max(0, centerOffset(zone)),
+        behavior: 'instant',
+      });
       update();
       document.body.classList.add('altitude-ready');
     };
-    requestAnimationFrame(() => requestAnimationFrame(anchor));
+    anchor();
+    const anchorRaf = requestAnimationFrame(() => {
+      // One correction after the router's commit, still covered by the local
+      // staging state. This is positioning, not another homepage intro.
+      anchor();
+      page?.removeAttribute('data-positioning');
+      rememberPosition();
+      window.dispatchEvent(new CustomEvent('altitude:positioned', {
+        detail: { restored: restorePosition !== undefined },
+      }));
+    });
 
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize);
+    // Capture before a project's link starts its route/image transition.
+    document.addEventListener('click', rememberDeparture, true);
+    window.addEventListener('pagehide', rememberDeparture);
     return () => {
       if (raf) cancelAnimationFrame(raf);
+      cancelAnimationFrame(anchorRaf);
+      page?.removeAttribute('data-positioning');
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
+      document.removeEventListener('click', rememberDeparture, true);
+      window.removeEventListener('pagehide', rememberDeparture);
+      persistPosition();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -192,7 +300,7 @@ export default function AltitudeProvider({ children }: { children: ReactNode }) 
         <div className="layer sky" />
         <div className="layer ground" />
       </div>
-      {children}
+      <div className="altitude-content" ref={content}>{children}</div>
     </AltitudeCtx.Provider>
   );
 }

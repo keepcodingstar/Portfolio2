@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { CheckoutArrival } from '@/components/work/CheckoutTransition';
 import { CheckoutHeader, EconicMention, Screenshot } from './CheckoutInteractions';
+import { econicTitle } from '../econic/econic-content';
 import { checkoutOutcomes, checkoutTitle, checkoutTitleAccent, combinedScreens, desktopAnnotations, explorations, finalScreens, scope, story, type ScreenAnnotation, type StudyScreen } from './checkout-content';
 import styles from './checkout.module.css';
 
@@ -20,10 +21,10 @@ function AnnotationNotes({ annotations }: { annotations: ScreenAnnotation[] }) {
   );
 }
 
-function ScreenGallery({ screens, label, four = false, showHint = false }: { screens: StudyScreen[]; label: string; four?: boolean; showHint?: boolean }) {
+function ScreenGallery({ screens, label, four = false, showSwipeHint = false }: { screens: StudyScreen[]; label: string; four?: boolean; showSwipeHint?: boolean }) {
   return (
     <div className={styles.galleryBlock}>
-      {showHint && <p className={`${styles.galleryHint} ${styles.galleryHintAbove}`}><span className={styles.swipeHint}>Swipe to explore. </span>Select a screen to enlarge ↗</p>}
+      {showSwipeHint && <p className={styles.swipeHint}>Swipe to explore.</p>}
       <div className={`${styles.screenGallery} ${four ? styles.fourScreens : ''}`} role="group" aria-label={label} tabIndex={0}>
         {screens.map((screen) => (
           <figure key={screen.file} className={styles.screenItem}>
@@ -83,7 +84,7 @@ export default function CheckoutCase() {
                 <Screenshot src={`${ASSETS}/shopify-checkout.webp`} label="Original Shopify checkout"
                   width={3024} height={2300} alt="VIRGIO’s original Shopify checkout, with shipping and payment on the left and the order summary on the right. Personal account details are hidden." />
               </div>
-              <figcaption className={styles.mediaCaption}><span>Before · Shopify checkout</span><span>Select image to enlarge ↗</span></figcaption>
+              <figcaption className={styles.mediaCaption}>Before · Shopify checkout</figcaption>
             </figure>
             <div className={styles.critiqueGrid}>
               <div><p className={styles.issueLabel}>Migration trigger</p><h3>Capacity we couldn’t directly scale</h3><p>The sale exposed a dependency on Shopify checkout capacity, even when our other systems could handle the traffic. This prompted the move in-house.</p></div>
@@ -92,8 +93,8 @@ export default function CheckoutCase() {
             </div>
           </section>
 
-          <aside className={styles.principleCard} aria-label="Reducing hesitation at checkout">
-            <p className={styles.principleLead}><span className={styles.heroAccent}>{story.hesitation.accent}</span>{story.hesitation.lead.slice(story.hesitation.accent.length)}</p>
+          <aside className={styles.principleCard} aria-labelledby="checkout-principle-title">
+            <h3 id="checkout-principle-title" className={styles.principleLead}>{story.hesitation.lead}</h3>
             <p className={styles.designPrinciple}>{story.hesitation.body}</p>
           </aside>
 
@@ -115,7 +116,7 @@ export default function CheckoutCase() {
             <p className={styles.statusLabel}>Explored · Not shipped</p>
             <h2 id="concept-title">{story.concept.title}</h2>
             <p className={styles.prose}>{story.concept.body}</p>
-            <ScreenGallery screens={combinedScreens} label="Combined checkout concept: four screens" four showHint />
+            <ScreenGallery screens={combinedScreens} label="Combined checkout concept: four screens" four showSwipeHint />
             <p className={styles.conceptNote}>The combined concept was not taken forward. The shipped direction kept checkout focused on verifying delivery details and completing payment.</p>
           </section>
 
@@ -124,7 +125,6 @@ export default function CheckoutCase() {
             <h2 id="explorations-title">Other directions along the way</h2>
             <p className={styles.prose}>Three alternatives for organising saved cards, payment modes and the order summary.</p>
             <div className={styles.galleryBlock}>
-              <p className={`${styles.galleryHint} ${styles.galleryHintAbove}`}>Select a screen to enlarge ↗</p>
               <div className={styles.explorationGrid}>
                 {explorations.map((screen) => (
                   <article key={screen.file}>
@@ -171,7 +171,7 @@ export default function CheckoutCase() {
                 <Screenshot src="/work/checkout/address-mobile.png" label="Final address details form" width={804} height={1770} phone
                   alt="Editable address form with a map-backed location card, address fields and a selector for who the order is for." />
               </div>
-              <figcaption className={styles.mediaCaption}><span>Locate the delivery point, then review the address.</span><span>Select a screen to enlarge ↗</span></figcaption>
+              <figcaption className={styles.mediaCaption}>Locate the delivery point, then review the address.</figcaption>
             </figure>
           </section>
         </section>
@@ -207,8 +207,8 @@ export default function CheckoutCase() {
         </section>
 
         <nav className={styles.next} aria-label="More case studies">
-          <Link href="/work/econic"><span aria-hidden>←</span><span><small>Previous project</small>Econic 25</span></Link>
-          <Link href="/work/amodira"><span><small>Next project</small>Amodira: Sound of the Scent</span><span aria-hidden>→</span></Link>
+          <Link href="/work/econic"><span aria-hidden>←</span><span><small>Previous project</small>{econicTitle}</span></Link>
+          <Link href="/work/amodira"><span><small>Next project</small>Audio Experience for Fragrance Discovery</span><span aria-hidden>→</span></Link>
         </nav>
       </main>
     </div>

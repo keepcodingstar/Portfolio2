@@ -4,6 +4,8 @@ import { Caveat } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import Clarity from '@/components/Clarity';
+import FeedbackPrompt from '@/components/feedback/FeedbackPrompt';
+import ProjectNavigation from '@/components/work/ProjectNavigation';
 import './globals.css';
 
 /**
@@ -114,7 +116,8 @@ export const metadata: Metadata = {
  */
 const ANCHOR_SKY = `(function(){try{
   if('scrollRestoration' in history)history.scrollRestoration='manual';
-  var el=document.getElementById('zone-sky');
+  var id=location.hash.slice(1);
+  var el=document.getElementById(['zone-space','zone-sky','zone-work','zone-ground'].indexOf(id)>=0?id:'zone-sky');
   if(el){var r=el.getBoundingClientRect();
     var top=r.top+window.pageYOffset+r.height/2-window.innerHeight/2;
     window.scrollTo(0,Math.max(0,top));}
@@ -142,7 +145,8 @@ export default function RootLayout({
             ONLY the home route mounts a Preloader to clear this — guard on
             pathname so the other pages aren't left covered. */}
         <script dangerouslySetInnerHTML={{ __html: "if(location.pathname==='/'){document.documentElement.classList.add('pl-cover');document.body.classList.add('preloading')}" }} />
-        {children}
+        <ProjectNavigation>{children}</ProjectNavigation>
+        <FeedbackPrompt />
         <script dangerouslySetInnerHTML={{ __html: ANCHOR_SKY }} />
         <Analytics />
         <SpeedInsights />

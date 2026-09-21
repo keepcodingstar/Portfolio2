@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import FairPricingView from './FairPricingView';
 
 const URL_PATH = '/work/fair-pricing';
-const TITLE = 'Fair Pricing — the price tag customers trusted enough to share';
+const TITLE = 'Clarifying Prices for Fashion Shoppers';
 const DESCRIPTION =
-  'A price-transparency widget structured like a bill, not a chart. Reached 550K+ people via a customer’s own post, won Silver at the DIGIES Awards, and became registered company IP anchoring two Econic Fair editions.';
+  'Designing VIRGIO’s Fair Pricing breakdown: 500K+ organic views on a customer’s post, Silver at DIGIES for a trust-building element, and company IP behind Econic Fair.';
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -36,7 +36,7 @@ const CASE_JSONLD = {
   creator: { '@type': 'Person', name: 'Sameer Kapil' },
   about: 'Price transparency, e-commerce, product design',
   keywords: 'fair pricing, price transparency, e-commerce, Virgio, product design',
-  award: 'Silver — DIGIES Awards, Best E-commerce Design',
+  award: 'Silver — DIGIES Awards, Best E-commerce Design, trust-building element',
 } as const;
 
 export default function Page() {

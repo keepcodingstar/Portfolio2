@@ -1,347 +1,156 @@
-'use client';
-
-import RevealBody from '@/components/RevealBody';
-import WorkTop from '@/components/work/WorkTop';
-import SiteFooter from '@/components/SiteFooter';
-import { useReveal } from '@/components/work/useReveal';
 import Image from 'next/image';
 import Link from 'next/link';
-import '../work.css';
+import type { ReactNode } from 'react';
+import { CaseStudyArrival } from '@/components/work/CheckoutTransition';
+import { CheckoutHeader, Screenshot } from '../checkout/CheckoutInteractions';
+import EconicPreview from './EconicPreview';
+import { campaignPhases, story } from './econic-content';
+import shared from '../checkout/checkout.module.css';
+import styles from './econic.module.css';
 
-/**
- * Eco-nic Fair '25 — Virgio's 2nd-anniversary "anti-sale": every garment sold
- * at its exact cost-to-make, up to 70% off, over three days (Nov 7–9, 2025).
- * The strategic knot was a pre-buzz paradox — build desire for a sale while
- * telling shoppers "don't buy yet" — solved with a Preview · Cost-to-make
- * toggle that let people see every sale price days early. Built on the Fair
- * Pricing bill widget (the company IP that was the root of the whole event),
- * the campaign won Best Brand Campaign of the Year at the e4m RetailEX Awards
- * 2026. Co-designed across all surfaces with the Virgio design team. Page chrome
- * is the altitude glass theme; the product shots keep their own palette because
- * they are the real artifact.
- */
+const ASSETS = '/work/econic/redesign';
+const NAV = [{ id: 'overview', label: 'Overview' }, { id: 'challenge', label: 'Challenge' }, { id: 'design', label: 'Design' }, { id: 'learnings', label: 'Learnings' }] as const;
 
-const IMG = '/work/econic';
+type SectionName = keyof typeof story;
+function EmphasizedText({ text, phrase }: { text: string; phrase?: string }) {
+  const start = phrase ? text.indexOf(phrase) : -1;
+  if (!phrase || start < 0) return text;
+  return <>{text.slice(0, start)}<strong className={styles.copyEmphasis}>{phrase}</strong>{text.slice(start + phrase.length)}</>;
+}
 
-export default function EconicFair() {
-  useReveal();
-
+function StorySection({ name, id, children, link }: { name: SectionName; id?: string; children: ReactNode; link?: ReactNode }) {
+  const section = story[name];
   return (
-    <>
-      <RevealBody />
-      <div className="work-bg" aria-hidden />
-      <WorkTop
-        back={{ href: '/work', label: 'Work' }}
-        links={[
-          { href: '/', label: 'Home' },
-          { href: 'mailto:sameerkapildesigns@gmail.com', label: 'Contact', cta: true },
-        ]}
-      />
+    <section id={id} tabIndex={id ? -1 : undefined} className={`${shared.section} ${styles.section}`} aria-labelledby={`${name}-title`}>
+      <h2 id={`${name}-title`}>{story[name].title}</h2>
+      <p className={shared.prose}><EmphasizedText text={section.body} phrase={'emphasis' in section ? section.emphasis : undefined} />{link && <> {link}</>}</p>
+      <figure className={styles.visual}>{children}</figure>
+    </section>
+  );
+}
+function Detail({ name, width, height, label, alt, phone = false }: { name: string; width: number; height: number; label: string; alt: string; phone?: boolean }) {
+  return <Screenshot src={`${ASSETS}/${name}.webp`} width={width} height={height} label={label} alt={alt} phone={phone} unoptimized />;
+}
 
-      <div className="work cs">
-        <main className="work-main">
-          {/* HERO — toggle-led, with the award front-loaded as the BLUF proof */}
-          <section className="cs-hero reveal" data-reveal>
-            <div>
-              <p className="cs-eyebrow">Virgio · Eco-nic Fair ’25 · Campaign UI, 2025</p>
-              <h1>
-                Previewing the sale before it started — and driving <em>50× revenue</em> when it did
-              </h1>
-              <p className="cs-hero-desc">
-                For its 2nd anniversary, Virgio ran the <strong>Eco-nic Fair ’25</strong> — an
-                “anti-sale” that sold every garment at its exact <strong>cost to make</strong>, up
-                to 70% off, over three days. That created a paradox: how do you build buzz for a
-                sale while telling shoppers <strong>“don’t buy yet”</strong>? Our answer was a{' '}
-                <strong>Preview · Cost-to-make toggle</strong> pinned to the top of the whole
-                journey — flip it and every price on the page swaps to its upcoming sale price. It
-                became the most-appreciated part of the fair, which drove{' '}
-                <strong>50× revenue</strong> over its three days and won{' '}
-                <strong>Best Brand Campaign of the Year</strong> at the e4m RetailEX Awards 2026.
-              </p>
-            </div>
-            <div className="cs-meta glass">
-              <div className="cs-meta-row">
-                <span className="cs-meta-label">Role</span>
-                <span className="cs-meta-value">Co-designer · Virgio design team</span>
+export default function EconicView() {
+  return (
+    <div className={`${shared.page} ${styles.page}`}>
+      <CaseStudyArrival />
+      <CheckoutHeader sections={NAV} />
+      <main id="case-study" tabIndex={-1} className={shared.main}>
+        <section className={`${shared.hero} ${styles.hero}`} aria-labelledby="econic-title">
+          <h1 id="econic-title"><span className={shared.projectNumber}>Project 4 · VIRGIO · Econic Fair ’25</span><span className={shared.heroAccent}>Helping Shoppers Navigate</span><br />a Cost-to-Make Sale<br />from Discovery to Purchase</h1>
+          <p className={styles.heroDescription}>I co-designed the shopping experience with the VIRGIO team, helping shoppers move from an early price preview to sale-day purchase.</p>
+          <figure className={shared.heroFrame}>
+            <div className={styles.heroHighlights} role="group" aria-label="VIRGIO campaign results">
+              <div className={styles.heroRevenue}>
+                <span className={styles.revenueValue}>50×</span>
+                <div><strong>one usual day’s revenue</strong><span className={styles.heroAwardCredit}>Total revenue across three sale days</span></div>
               </div>
-              <div className="cs-meta-row">
-                <span className="cs-meta-label">Scope</span>
-                <span className="cs-meta-value">Campaign UI — PLP, PDP, cart, all phases</span>
-              </div>
-              <div className="cs-meta-row">
-                <span className="cs-meta-label">The event</span>
-                <span className="cs-meta-value">Cost-to-make “anti-sale” · Nov 7–9, 2025</span>
-              </div>
-              <div className="cs-meta-row">
-                <span className="cs-meta-label">Recognition</span>
-                <span className="cs-meta-value">e4m RetailEX 2026 · Best Brand Campaign</span>
-              </div>
-              <div className="cs-meta-row">
-                <span className="cs-meta-label">Status</span>
-                <span className="cs-meta-value">
-                  <span className="live" aria-hidden />
-                  Shipped · Live 2025
-                </span>
+              <div className={styles.heroAward}>
+                <div className={styles.heroAwardPhoto}><Detail name="award" width={618} height={805} label="Econic Fair RetailEX award" alt="VIRGIO Eco-nic Fair ’25 trophy for Best Brand Campaign of the Year at e4m RetailEX Awards 2026." /></div>
+                <div><span className={styles.visualLabel}>e4m RetailEX Awards 2026</span><strong>Best Brand Campaign of the Year</strong><span className={styles.heroAwardCredit}>Awarded to the VIRGIO campaign</span></div>
               </div>
             </div>
-          </section>
+            <Image data-case-study-hero className={shared.heroImage} src="/work/econic/thumb.jpg" alt="Econic Fair price preview toggle, as featured on the homepage."
+              width={1056} height={660} sizes="(max-width: 600px) 90vw, (max-width: 1232px) 88vw, 1094px" priority unoptimized />
+          </figure>
+        </section>
 
-          {/* OUTCOMES — the award it won, the shipped customer number, and the
-              signature interaction. Real, attributed proof up front; the 50× and
-              7× figures carry an honest event-spike caveat. */}
-          <section className="cs-results reveal" data-reveal>
-            {/* the award — the headline proof */}
-            <div className="cs-accolades glass">
-              <figure className="cs-accolades-shot">
-                <Image
-                  src={`${IMG}/award-retailex.png`}
-                  alt="The e4m RetailEX Awards 2026 trophy: Best Brand Campaign of the Year, awarded for VIRGIO Eco-nic Fair ’25."
-                  width={960}
-                  height={1280}
-                  sizes="(min-width: 900px) 300px, 45vw"
-                  loading="lazy"
-                />
-              </figure>
-              <div>
-                <p className="cs-accolades-eyebrow">Recognition</p>
-                <div className="cs-stat">
-                  <span className="cs-stat-num">Best Campaign</span>
-                  <span className="cs-stat-label">
-                    e4m RetailEX Awards 2026 · Best Brand Campaign of the Year
-                  </span>
+        <section id="overview" tabIndex={-1} aria-labelledby="overview-title">
+          <div className={shared.storyOpening}>
+            <h2 id="overview-title" className={shared.overviewLabel}>Overview</h2>
+            <div className={shared.overviewContent}>
+              <p className={shared.openingCopy}><EmphasizedText text={story.overview.body} phrase={story.overview.emphasis} /></p>
+              <dl className={shared.metadata}>
+                <div><dt>My role</dt><dd>Co-design · VIRGIO team</dd></div>
+                <div><dt>Timeline</dt><dd>3–4 weeks</dd></div>
+                <div><dt>Scope</dt><dd>Mobile & desktop</dd></div>
+                <div><dt>Focus</dt><dd>Interaction design & pricing communication</dd></div>
+              </dl>
+            </div>
+          </div>
+        </section>
+
+        <p className={styles.framingQuestion}><EmphasizedText text={story.overview.question} phrase="How might we" /></p>
+
+        <StorySection name="phases" id="challenge">
+          <div className={styles.phaseVisual}>
+            <div className={styles.phaseGrid} tabIndex={0} role="group" aria-label="Three campaign phases, scroll to explore">
+              {campaignPhases.map((phase) => (
+                <div key={phase.name} className={`${styles.phase} ${phase.screens.length > 1 ? styles.phaseWithStates : ''}`}>
+                  <span className={styles.stateLabel}>{phase.phase}</span>
+                  <span className={styles.phaseName}>{phase.name}</span>
+                  <span className={styles.phaseGoal}>{phase.goal}</span>
+                  <div className={styles.phaseScreens}>
+                    {phase.screens.map((screen) => (
+                      <div key={screen.image}>
+                        <div className={styles.wireframe}>
+                          <Detail name={screen.image} width={screen.width} height={screen.height} label={screen.label} alt={screen.alt} />
+                        </div>
+                        {phase.screens.length > 1 && <span className={styles.wireframeCaption}>{screen.label}</span>}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <p className="cs-accolades-body">
-                  The Eco-nic Fair ’25 was named <strong>Best Brand Campaign of the Year</strong> at
-                  the e4m RetailEX Awards — recognition for the whole cost-to-make idea, the toggle
-                  that fronted it, and the phased journey that carried it.
-                </p>
-              </div>
+              ))}
             </div>
+          </div>
+        </StorySection>
 
-            {/* the headline number — 50× revenue over the fair */}
-            <div className="cs-ip glass">
-              <div className="cs-stat">
-                <span className="cs-stat-num tnum">50×</span>
-                <span className="cs-stat-label">
-                  revenue over the three days of the fair
-                </span>
-              </div>
-              <p className="cs-accolades-body" style={{ maxWidth: '34ch' }}>
-                The toggle that fronted it became the <strong>most-appreciated</strong> element of
-                the fair. Built on the <strong>Fair Pricing</strong> bill widget — the company IP
-                that was the root of the whole event — and sub-brand <strong>Amodira</strong> rode
-                the same days to <strong>7× revenue</strong>.
-              </p>
+        <div id="design" tabIndex={-1} className={styles.anchor}>
+          <StorySection name="language">
+            <div className={styles.languageVisual}>
+              <div className={styles.languageCampaign}><Detail name="brand-banner" width={748} height={452} label="Econic campaign identity" alt="Econic Fair logo, green countdown and zero margins message over picnic campaign photography." /></div>
+              <div className={styles.languageType}><Detail name="brand-type-refined" width={1138} height={770} label="Campaign typography" alt="Together we made fashion fair. Three days. Zero margins. All heart." /></div>
+              <div className={styles.languageCountdown}><Detail name="countdown-promise" width={510} height={264} label="Fair countdown and promise" alt="Econic Fair countdown, Zero margins. Zero markup., and the November 7–9 cost-to-make message." /></div>
+              <div className={styles.languageCounter}><Detail name="campaign-counters" width={812} height={218} label="Campaign banners" alt="Econic shopping and savings banners using playful shapes and the campaign type treatment." /></div>
             </div>
+          </StorySection>
 
-            {/* the shipped customer number — from the recap page that went live */}
-            <div className="cs-ip glass">
-              <div className="cs-stat">
-                <span className="cs-stat-num">9,755</span>
-                <span className="cs-stat-label">
-                  shoppers bought at cost price during the three-day fair
-                </span>
-              </div>
-              <p className="cs-accolades-body" style={{ maxWidth: '34ch' }}>
-                The number Virgio published on its own post-sale recap — “even when it meant{' '}
-                <strong>70% off</strong>.”
-              </p>
-            </div>
-          </section>
+          <StorySection name="preview"><EconicPreview /></StorySection>
 
-          {/* 01 PROBLEM — the pre-buzz paradox */}
-          <section className="cs-section reveal" data-reveal>
-            <div className="cs-sec-head">
-              <h2 className="cs-sec-title">The pre-buzz paradox</h2>
+          <StorySection name="pricing" link={<Link className={styles.inlineLink} href="/work/fair-pricing">Explore Fair Pricing ↗</Link>}>
+            <div className={styles.pricingComposition}>
+              <Detail name="fair-pricing-composition" width={1806} height={1372} label="Fair pricing on the product page" alt="Econic product-page preview with the fair-pricing breakdown: ₹690 cost to make is highlighted, while serving cost and other costs are crossed out in the fair-price view." />
             </div>
-            <p className="hub-lede" style={{ margin: '0 0 2rem' }}>
-              Every big sale wants a runway of anticipation. But the moment you announce one,
-              full-price shopping stalls — everyone waits. The brief was sharper than “promote a
-              sale”: <strong>build desire for days, while actively telling people not to buy
-              yet</strong> — and do it as a statement, not a countdown banner.
-            </p>
-            <div className="cs-problem glass">
-              <p className="cs-cell-label">Defined problem</p>
-              <p className="cs-statement">
-                We needed shoppers to <strong>anticipate</strong> the Eco-nic Fair without{' '}
-                <strong>collapsing sales on the days before it</strong> — communicating exactly{' '}
-                <strong>what would be available at what price</strong>, while the honest message was
-                literally “don’t buy before the sale starts.”
-              </p>
-            </div>
+          </StorySection>
 
-            <div className="cs-quote glass">
-              <blockquote>
-                “Telling someone not to buy is easy. Making them excited that they shouldn’t — that
-                was the design problem.”
-              </blockquote>
+          <StorySection name="amodira" link={<Link className={styles.inlineLink} href="/work/amodira">More work for Amodira ↗</Link>}>
+            <div className={styles.amodiraVisual}>
+              <div className={styles.amodiraWidget}><Detail name="amodira-cart-widget" width={720} height={840} label="Amodira cart widget" alt="Amodira's best deal of the sale widget introduces fragrances through floral and product imagery, with Add actions." /></div>
+              <div className={styles.amodiraVariants}><Detail name="amodira-variants" width={682} height={899} label="Amodira variant sheet" alt="Fragrance formats with individual prices and Add to bag actions." /></div>
             </div>
-          </section>
+          </StorySection>
+        </div>
 
-          {/* 02 HOW MIGHT WE */}
-          <section className="cs-section reveal" data-reveal>
-            <div className="cs-sec-head">
-              <h2 className="cs-sec-title">How might we</h2>
+        <section id="results" tabIndex={-1} className={`${shared.section} ${styles.section} ${styles.results}`} aria-labelledby="results-title">
+          <h2 id="results-title">{story.results.title}</h2>
+          <dl className={styles.resultsGrid}>
+            {story.results.metrics.map(({ label, value, context }) => (
+              <div key={label}>
+                <dt>{label}</dt>
+                <dd><span className={styles.resultValue}>{value}</span><span className={styles.resultContext}>{context}</span></dd>
+              </div>
+            ))}
+            <div className={styles.resultAward}>
+              <dt>{story.results.award.label}</dt>
+              <dd>{story.results.award.title}</dd>
             </div>
-            <p className="hub-lede" style={{ margin: '0 0 2rem' }}>
-              The paradox turned into three questions the campaign UI had to answer.
-            </p>
-            <div className="cs-hmw glass">
-              <div className="cs-hmw-row">
-                <p className="cs-hmw-q">
-                  <span className="hmw">HMW</span>turn “don’t buy yet” into anticipation, not a
-                  closed door?
-                </p>
-                <p className="cs-hmw-a">
-                  Let shoppers <strong>preview</strong> the exact sale price now — desire you can
-                  see, on a timer.
-                </p>
-              </div>
-              <div className="cs-hmw-row">
-                <p className="cs-hmw-q">
-                  <span className="hmw">HMW</span>show what’s coming at what price, across the whole
-                  catalogue?
-                </p>
-                <p className="cs-hmw-a">
-                  A single toggle that re-prices <strong>every product</strong> in place — no
-                  separate landing page to maintain.
-                </p>
-              </div>
-              <div className="cs-hmw-row">
-                <p className="cs-hmw-q">
-                  <span className="hmw">HMW</span>make a three-day event feel like an occasion, not
-                  a banner?
-                </p>
-                <p className="cs-hmw-a">
-                  Stage it in <strong>phases</strong> — curtain-raiser, pre-sale, sale, a thank-you
-                  — each with its own UI shift.
-                </p>
-              </div>
-            </div>
-          </section>
+          </dl>
+          <p className={styles.resultsCredit}>{story.results.body}</p>
+        </section>
 
-          {/* 03 THE IDEA — preview the sale (toggle before/after) */}
-          <section className="cs-section reveal" data-reveal>
-            <div className="cs-sec-head">
-              <h2 className="cs-sec-title">The idea: a price you can preview</h2>
-            </div>
-            <div className="cs-split-copy" style={{ maxWidth: '64ch' }}>
-              <p>
-                Instead of hiding the sale behind a “coming soon” promise, we put it in the
-                shopper’s hands. A <strong>Preview · Cost-to-make</strong> toggle sat at the top of
-                the journey through every phase. Off, you saw today’s price. Flip it on — the bar
-                turns green — and <strong>every price on the page</strong> drops to its exact
-                cost-to-make sale price, with a live countdown to Nov 7–9 and one honest line:{' '}
-                <strong>“Zero margins. Zero markup.”</strong>
-              </p>
-              <p>
-                It only works because Virgio already shows where every rupee goes. The toggle is the{' '}
-                <strong>Fair Pricing bill widget</strong> — the company IP that was the root of the
-                whole event — turned into a campaign mechanic: the same transparency, now letting
-                you watch the margin disappear in real time.
-              </p>
-            </div>
-            <div className="cs-split">
-              <figure className="cs-shot glass">
-                <Image
-                  src={`${IMG}/plp-toggle-off.png`}
-                  alt="Eco-nic Fair PLP with the Preview toggle OFF: a black bar reading ‘Preview — Cost to make’, a countdown of 2 days 13 hours, and products at today’s price of ₹2,100 (was ₹3,000)."
-                  width={375}
-                  height={1158}
-                  sizes="(min-width: 900px) 400px, 90vw"
-                  loading="lazy"
-                />
-                <figcaption>
-                  <b>Toggle off · today’s price.</b> A black bar and a countdown. Products sit at
-                  their normal price — ₹2,100.
-                </figcaption>
-              </figure>
-              <figure className="cs-shot glass">
-                <Image
-                  src={`${IMG}/plp-toggle-on.png`}
-                  alt="The same PLP with the Preview toggle ON: the bar turns green and every product re-prices to its cost-to-make sale price of ₹1,290, with the strikethrough showing ₹2,100 today."
-                  width={375}
-                  height={1158}
-                  sizes="(min-width: 900px) 400px, 90vw"
-                  loading="lazy"
-                />
-                <figcaption>
-                  <b>Toggle on · the sale, previewed.</b> The bar goes green and every price drops to
-                  its cost-to-make — ₹1,290 — days early.
-                </figcaption>
-              </figure>
-            </div>
-            <p className="cs-verdict">
-              The thing people couldn’t stop touching wasn’t a banner. It was{' '}
-              <strong>proof you could hold</strong> — the sale price, on the real product, before
-              the sale even started.
-            </p>
-          </section>
+        <section id="learnings" tabIndex={-1} className={`${shared.section} ${styles.section} ${styles.learnings}`} aria-labelledby="learnings-title">
+          <h2 id="learnings-title">{story.learnings.title}</h2>
+          <p className={shared.prose}><EmphasizedText text={story.learnings.body} phrase={story.learnings.emphasis} /></p>
+        </section>
 
-          {/* 04 THE PHASED JOURNEY */}
-          <section className="cs-section reveal" data-reveal>
-            <div className="cs-sec-head">
-              <h2 className="cs-sec-title">Staged in four phases</h2>
-            </div>
-            <p className="hub-lede" style={{ margin: '0 0 0' }}>
-              An occasion, not a banner. Each phase changed the UI and reset the countdown, so a
-              returning shopper always knew exactly where they were in the story.
-            </p>
-            <div className="cs-grid two" style={{ marginTop: 'clamp(1.8rem, 3.5vw, 2.6rem)' }}>
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">01 · Curtain-raiser</p>
-                <p>
-                  The first signal. Eco-nic branding lands on the PLP with a countdown and the
-                  promise — “shop Virgio at its making cost.”
-                </p>
-              </div>
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">02 · Pre-sale · 3 days</p>
-                <p>
-                  The <strong>toggle goes live</strong>. Shoppers preview every cost-to-make price
-                  while the clock counts down — anticipation without the discount.
-                </p>
-              </div>
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">03 · Sale · 3 days</p>
-                <p>
-                  Nov 7–9. The preview becomes the price across PLP, PDP and cart — every garment
-                  sold at its exact cost to make.
-                </p>
-              </div>
-              <div className="cs-cell glass">
-                <p className="cs-cell-label">04 · Post-sale</p>
-                <p>
-                  A recap page that thanks the community and tells them how big it got — the
-                  bookend that closed the loop.
-                </p>
-              </div>
-            </div>
-          </section>
-
-          {/* REFLECTION */}
-          <section className="cs-reflect glass reveal" data-reveal>
-            <div className="cs-reflect-label">Takeaway</div>
-            <p className="cs-reflect-text">
-              “The strongest campaign mechanic we had wasn’t a new idea — it was an old one, made
-              honest. Fair Pricing already showed the cost. The fair just let people watch the
-              margin vanish, on a timer, before it was even gone.”
-            </p>
-          </section>
-
-          {/* NEXT */}
-          <nav className="cs-next">
-            <Link href="/work/fair-pricing">
-              <span aria-hidden>←</span> Prev: Fair Pricing
-            </Link>
-            <Link href="/work/checkout">
-              Next: Faster Checkout <span aria-hidden>→</span>
-            </Link>
-          </nav>
-        </main>
-
-        <SiteFooter />
-      </div>
-    </>
+        <nav className={shared.next} aria-label="More case studies">
+          <Link href="/work/fair-pricing"><span aria-hidden>←</span><span><small>Previous project</small>Fair Pricing</span></Link>
+          <Link href="/work/checkout"><span><small>Next project</small>Faster Checkout</span><span aria-hidden>→</span></Link>
+        </nav>
+      </main>
+    </div>
   );
 }

@@ -17,6 +17,7 @@ interface StarProps {
 }
 
 interface StarsBackgroundProps {
+  paused?: boolean;
   starDensity?: number;
   allStarsTwinkle?: boolean;
   twinkleProbability?: number;
@@ -26,6 +27,7 @@ interface StarsBackgroundProps {
 }
 
 export const StarsBackground: React.FC<StarsBackgroundProps> = ({
+  paused = false,
   starDensity = 0.00015,
   allStarsTwinkle = true,
   twinkleProbability = 0.7,
@@ -85,9 +87,7 @@ export const StarsBackground: React.FC<StarsBackgroundProps> = ({
     }
 
     return () => {
-      if (canvasRef.current) {
-        resizeObserver.unobserve(canvasRef.current);
-      }
+      resizeObserver.disconnect();
     };
   }, [generateStars]);
 
@@ -97,7 +97,7 @@ export const StarsBackground: React.FC<StarsBackgroundProps> = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let animationFrameId: number;
+    let animationFrameId = 0;
 
     const render = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -114,7 +114,7 @@ export const StarsBackground: React.FC<StarsBackgroundProps> = ({
         }
       });
 
-      animationFrameId = requestAnimationFrame(render);
+      if (!paused) animationFrameId = requestAnimationFrame(render);
     };
 
     render();
@@ -122,7 +122,7 @@ export const StarsBackground: React.FC<StarsBackgroundProps> = ({
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [stars]);
+  }, [stars, paused]);
 
   return (
     <canvas
