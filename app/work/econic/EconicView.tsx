@@ -52,8 +52,8 @@ export default function EconicView() {
                 <div><span className={styles.visualLabel}>e4m RetailEX Awards 2026</span><strong>Best Brand Campaign of the Year</strong><span className={styles.heroAwardCredit}>Awarded to the VIRGIO campaign</span></div>
               </div>
             </div>
-            <Image data-case-study-hero className={shared.heroImage} src="/work/econic/thumb.jpg" alt="Econic Fair price preview toggle, as featured on the homepage."
-              width={1056} height={660} sizes="(max-width: 600px) 90vw, (max-width: 1232px) 88vw, 1094px" priority unoptimized />
+            <Image data-case-study-hero className={shared.heroImage} src="/work/econic/thumb-fair-25.webp" alt="Eco-nic Fair ’25 campaign — Preview cost to make toggle above the Zero Margins. Zero Markup. campaign artwork."
+              width={1615} height={1010} sizes="(max-width: 600px) 90vw, (max-width: 1232px) 88vw, 1094px" priority unoptimized />
           </figure>
         </section>
 

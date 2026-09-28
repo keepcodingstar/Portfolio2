@@ -44,7 +44,7 @@ export function EconicMention({ label = 'Econic 25', description = 'Previewing s
       </Link>
       {open && <span ref={preview} className={styles.projectPreview}>
         <Link href="/work/econic" className={styles.previewCard} aria-label={`Read ${econicTitle}`}>
-          <Image src="/work/econic/thumb.jpg" alt="" width={1056} height={660} sizes="300px" />
+          <Image src="/work/econic/thumb-fair-25.webp" alt="" width={1615} height={1010} sizes="300px" />
           <span className={styles.previewCopy}>
             <span className={styles.previewTitle}>{econicTitle}</span>
             <span className={styles.previewDescription}>{description}</span>

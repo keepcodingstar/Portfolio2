@@ -63,7 +63,7 @@ const CASES: Case[] = [
       'Virgio’s anniversary “anti-sale”, every garment at cost. A Preview toggle let shoppers see every sale price days early. Best Brand Campaign, e4m RetailEX 2026.',
     meta: '50× revenue · sale days',
     href: '/work/econic',
-    img: { src: '/work/econic/thumb.jpg', alt: 'Eco-nic Fair price preview toggle' },
+    img: { src: '/work/econic/thumb-fair-25.webp', alt: 'Eco-nic Fair ’25 campaign — Preview cost to make toggle and Zero Margins. Zero Markup.' },
   },
 ];
 

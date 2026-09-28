@@ -15,13 +15,13 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     url: URL_PATH,
     type: 'article',
-    images: ['/work/econic/thumb.jpg'],
+    images: ['/work/econic/thumb-fair-25.webp'],
   },
   twitter: {
     card: 'summary_large_image',
     title: TITLE,
     description: DESCRIPTION,
-    images: ['/work/econic/thumb.jpg'],
+    images: ['/work/econic/thumb-fair-25.webp'],
   },
 };
 
