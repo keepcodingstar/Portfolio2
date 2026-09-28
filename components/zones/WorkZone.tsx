@@ -55,7 +55,7 @@ const CASES: Case[] = [
       'A bill-style price breakdown. Silver at DIGIES for a trust-building element, and company IP behind Econic Fair.',
     meta: '500K+ organic views · customer’s post',
     href: '/work/fair-pricing',
-    img: { src: '/work/fair-pricing/thumb.jpg', alt: 'Fair Pricing widget on a product page' },
+    img: { src: '/work/fair-pricing/thumb-trust.webp', alt: 'Breaking Prices, Building Trust — Fair Pricing widget, pricing sketches, and DIGIES award' },
   },
   {
     name: econicTitle,
