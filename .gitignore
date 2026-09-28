@@ -29,6 +29,7 @@ next-env.d.ts
 dev.log
 *.log
 _*.png
+/tmp/
 
 # agent tooling (installed skills, harness config, install metadata)
 /.agents/

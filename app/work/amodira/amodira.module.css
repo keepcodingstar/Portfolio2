@@ -1,5 +1,5 @@
 /* Reuse checkout's editorial foundation; only fragrance-specific layouts live here. */
-.page .heroSkills { max-width: 780px; margin-top: 22px; color: var(--checkout-muted); font-size: 16px; line-height: 1.6; text-wrap: pretty; }
+.page .heroSkills { margin-top: 22px; color: var(--checkout-muted); font-size: 16px; line-height: 1.6; text-wrap: pretty; }
 .page .heroCaption { padding: 12px 10px 2px; font-size: 12px; color: var(--checkout-muted); }
 .page .metadata { grid-template-columns: 1.35fr 1fr 1fr 1fr; }
 .page section[id] { scroll-margin-top: 105px; }

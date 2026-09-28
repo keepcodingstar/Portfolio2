@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import CaseStudyLearnings from '@/components/work/CaseStudyLearnings';
 import { CheckoutHeader as CaseStudyHeader, EconicMention, Screenshot } from '../checkout/CheckoutInteractions';
 import { econicTitle } from '../econic/econic-content';
 import styles from '../checkout/checkout.module.css';
@@ -8,7 +9,7 @@ const ASSETS = '/work/fair-pricing';
 const sections = [
   { id: 'overview', label: 'Overview' },
   { id: 'design', label: 'Design' },
-  { id: 'reflection', label: 'Reflection' },
+  { id: 'learnings', label: 'Learnings' },
 ];
 
 const annotations = [
@@ -30,7 +31,7 @@ const references = [
 
 function CompetitiveReference({ reference, index }: { reference: typeof references[number]; index: number }) {
   return (
-    <figure className={local.reference}>
+    <figure data-case-reveal className={local.reference}>
       <figcaption><span>{String(index + 1).padStart(2, '0')} / {reference.name}</span><strong>{reference.title}</strong></figcaption>
       <div className={local.referenceImage}>
         <Screenshot src={`${ASSETS}/${reference.file}`} width={reference.width} height={reference.height}
@@ -101,12 +102,12 @@ export default function FairPricingView() {
           </div>
 
           <section className={local.designQuestion} aria-labelledby="design-question-title">
-            <h2 id="design-question-title"><strong>How might we</strong> help shoppers understand what they’re paying for without overwhelming the product page?</h2>
+            <h2 data-case-reveal="text" id="design-question-title"><strong>How might we</strong> help shoppers understand what they’re paying for without overwhelming the product page?</h2>
           </section>
         </section>
 
         <section id="design" tabIndex={-1} className={`${styles.section} ${local.design}`} aria-labelledby="competitive-title">
-          <h2 id="competitive-title">Different ways to explain a price</h2>
+          <h2 data-case-reveal="text" id="competitive-title">Different ways to explain a price</h2>
           <p className={styles.prose}>I compared eight references across charts, itemised lists, product callouts and comparison tables.</p>
           <div className={local.collage} role="group" aria-label="Competitive analysis with eight pricing references">
             <CompetitiveReference reference={references[0]} index={0} />
@@ -120,17 +121,17 @@ export default function FairPricingView() {
           <p className={local.decision}>I chose a <strong>familiar bill-style list</strong> to explain the costs, supported by a comparison bar for the overview.</p>
 
           <section className={styles.section} aria-labelledby="iterations-title">
-            <h2 id="iterations-title">From line items to cost groups</h2>
+            <h2 data-case-reveal="text" id="iterations-title">From line items to cost groups</h2>
             <p className={styles.prose}>The early modal listed costs individually. The next version grouped them into broader categories inside a product-page accordion.</p>
             <div className={local.iterations}>
-              <figure>
+              <figure data-case-reveal>
                 <div className={local.iterationStage}>
                   <Screenshot src={`${ASSETS}/widget-v1.png`} width={720} height={1082} label="Early price breakdown exploration"
                     alt="Early modal exploration with separate fabric, manufacturing and transportation items, subtotal rows and a price comparison." />
                 </div>
                 <figcaption><span>Early exploration</span><strong>Individual cost items</strong></figcaption>
               </figure>
-              <figure>
+              <figure data-case-reveal>
                 <div className={local.iterationStage}>
                   <Screenshot src={`${ASSETS}/widget-v2.png`} width={816} height={1018} label="Grouped price breakdown"
                     alt="Grouped version with Making Cost, Serving Cost and Others, each explained within an inline accordion." />
@@ -145,9 +146,9 @@ export default function FairPricingView() {
           </section>
 
           <section className={styles.section} aria-labelledby="final-title">
-            <h2 id="final-title">The total stands out. The detail explains it.</h2>
+            <h2 data-case-reveal="text" id="final-title">The total stands out. The detail explains it.</h2>
             <div className={local.finalDesign}>
-              <figure>
+              <figure data-case-reveal>
                 <div className={local.finalStage}>
                   <Screenshot src={`${ASSETS}/widget-v3.png`} width={1064} height={1138} annotations={annotations}
                     label="Final Fair Pricing widget"
@@ -167,10 +168,10 @@ export default function FairPricingView() {
           </section>
         </section>
 
-        <section id="reflection" tabIndex={-1} className={`${styles.reflectionStory} ${local.reflection}`} aria-labelledby="reflection-title">
-          <h2 id="reflection-title">Clarity lives in the small decisions</h2>
-          <p>Grouping, labels and hierarchy shaped how the price was explained. Next, I’d test with shoppers outside the team to see how they interpret the categories and comparison price.</p>
-        </section>
+        <CaseStudyLearnings
+          body="Grouping, labels and hierarchy shaped how the price was explained. Next, I’d test with shoppers outside the team to see how they interpret the categories and comparison price."
+          emphasis="Grouping, labels and hierarchy"
+        />
 
         <nav className={styles.next} aria-label="More case studies">
           <Link href="/work/amodira"><span aria-hidden>←</span><span><small>Previous project</small>Audio Experience for Fragrance Discovery</span></Link>

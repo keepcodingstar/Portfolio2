@@ -4,6 +4,8 @@ import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import HomeLink from '@/components/HomeTransition';
+import { scrollToPosition } from '@/components/SmoothScroll';
+import CaseStudyMotion from '@/components/work/CaseStudyMotion';
 import { useProjectBack, useProjectOrigin } from '@/components/work/ProjectNavigation';
 import { econicTitle } from '../econic/econic-content';
 import styles from './checkout.module.css';
@@ -111,7 +113,8 @@ export function CheckoutHeader({ sections = SECTIONS }: { sections?: readonly { 
     pendingSection.current = id;
     window.clearTimeout(settleTimer.current);
     settleTimer.current = window.setTimeout(() => { pendingSection.current = null; }, 1200);
-    section.scrollIntoView({ behavior: reduce || event.detail === 0 ? 'instant' : 'smooth', block: 'start' });
+    const inset = parseFloat(getComputedStyle(section).scrollMarginTop) || 0;
+    scrollToPosition(section.getBoundingClientRect().top + window.scrollY - inset, reduce || event.detail === 0);
     section.focus({ preventScroll: true });
     setActive(id);
   }
@@ -119,6 +122,7 @@ export function CheckoutHeader({ sections = SECTIONS }: { sections?: readonly { 
   return (
     <>
       <a className={styles.skipLink} href="#case-study">Skip to case study</a>
+      <CaseStudyMotion />
       <header className={styles.header}>
         <HomeLink href={backHref} onClick={onBack} className={styles.back}><span aria-hidden>←</span> {backHref === '/' ? 'Home' : 'Work'}</HomeLink>
         <nav className={styles.headerLinks} aria-label="Main navigation">

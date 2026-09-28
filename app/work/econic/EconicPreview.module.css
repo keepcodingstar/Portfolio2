@@ -89,7 +89,8 @@
 .totalPrice { font-size: 22px; }
 .totalPrice[data-preview='true'] { background: var(--fair-green); color: #fff; }
 .bagCaption { display: block; margin-top: 12px; color: #858585; font-size: 10px; text-align: center; }
-.demoFooter { display: grid; justify-items: center; gap: 12px; margin-top: 30px; }
+.demoFooter { position: relative; display: grid; justify-items: center; gap: 12px; margin-top: 30px; }
+.previewCue { position: absolute; top: -15px; left: calc(50% + 90px); width: 72px; height: 64px; color: #26703a; pointer-events: none; }
 .demoFooter .previewAction { min-width: 175px; min-height: 46px; padding: 12px 24px; border: 1px solid var(--fair-black); border-radius: 12px; background: var(--fair-black); color: #fff; font-size: 14px; font-weight: 500; cursor: pointer; touch-action: manipulation; transition: transform 150ms cubic-bezier(.23,1,.32,1); }
 .previewAction:active { transform: scale(.97); }
 .demoFooter > span { font-size: 11px; color: #737b6e; }
@@ -117,5 +118,6 @@
   .widgetHeader { margin-bottom: 24px; }
   .promise { font-size: 14px; }
   .canvas .widgetHeader h3 { font-size: 40px; }
+  .previewCue { top: -5px; left: calc(50% + 84px); width: 48px; height: 48px; }
 }
 @media (prefers-reduced-motion: reduce) { .thumb, .demoFooter .previewAction { transition: none; } .cards { scroll-behavior: auto; } }

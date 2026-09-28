@@ -22,9 +22,9 @@ function StorySection({ name, id, children, link }: { name: SectionName; id?: st
   const section = story[name];
   return (
     <section id={id} tabIndex={id ? -1 : undefined} className={`${shared.section} ${styles.section}`} aria-labelledby={`${name}-title`}>
-      <h2 id={`${name}-title`}>{story[name].title}</h2>
+      <h2 data-case-reveal="text" id={`${name}-title`}>{story[name].title}</h2>
       <p className={shared.prose}><EmphasizedText text={section.body} phrase={'emphasis' in section ? section.emphasis : undefined} />{link && <> {link}</>}</p>
-      <figure className={styles.visual}>{children}</figure>
+      <figure data-case-reveal className={styles.visual}>{children}</figure>
     </section>
   );
 }
@@ -125,8 +125,8 @@ export default function EconicView() {
         </div>
 
         <section id="results" tabIndex={-1} className={`${shared.section} ${styles.section} ${styles.results}`} aria-labelledby="results-title">
-          <h2 id="results-title">{story.results.title}</h2>
-          <dl className={styles.resultsGrid}>
+          <h2 data-case-reveal="text" id="results-title">{story.results.title}</h2>
+          <dl data-case-reveal="group" className={styles.resultsGrid}>
             {story.results.metrics.map(({ label, value, context }) => (
               <div key={label}>
                 <dt>{label}</dt>
@@ -142,7 +142,7 @@ export default function EconicView() {
         </section>
 
         <section id="learnings" tabIndex={-1} className={`${shared.section} ${styles.section} ${styles.learnings}`} aria-labelledby="learnings-title">
-          <h2 id="learnings-title">{story.learnings.title}</h2>
+          <h2 data-case-reveal="text" id="learnings-title">{story.learnings.title}</h2>
           <p className={shared.prose}><EmphasizedText text={story.learnings.body} phrase={story.learnings.emphasis} /></p>
         </section>
 

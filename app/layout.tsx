@@ -6,6 +6,8 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import Clarity from '@/components/Clarity';
 import FeedbackPrompt from '@/components/feedback/FeedbackPrompt';
 import ProjectNavigation from '@/components/work/ProjectNavigation';
+import SmoothScroll from '@/components/SmoothScroll';
+import 'lenis/dist/lenis.css';
 import './globals.css';
 
 /**
@@ -146,6 +148,7 @@ export default function RootLayout({
             pathname so the other pages aren't left covered. */}
         <script dangerouslySetInnerHTML={{ __html: "if(location.pathname==='/'){document.documentElement.classList.add('pl-cover');document.body.classList.add('preloading')}" }} />
         <ProjectNavigation>{children}</ProjectNavigation>
+        <SmoothScroll />
         <FeedbackPrompt />
         <script dangerouslySetInnerHTML={{ __html: ANCHOR_SKY }} />
         <Analytics />

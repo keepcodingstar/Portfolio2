@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { scrollToPosition } from '@/components/SmoothScroll';
 
 /**
  * The spine of the site: a true CENTRE-ANCHOR scroll.
@@ -23,8 +24,8 @@ import {
  *   • cross-fades the atmosphere layers directly against the viewport's altitude,
  *   • tracks the active zone for the glass side-nav.
  *
- * Native scroll only — no smooth-scroll dependency. `goTo` uses the browser's
- * own smooth behaviour; reduced motion gets instant jumps.
+ * Document scroll stays native; the shared controller eases desktop input.
+ * Reduced motion gets instant jumps.
  */
 
 export type ZoneId = 'zone-space' | 'zone-sky' | 'zone-work' | 'zone-ground';
@@ -168,7 +169,7 @@ export default function AltitudeProvider({ children }: { children: ReactNode }) 
   function goTo(zone: ZoneId, instant = false) {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const target = Math.max(0, centerOffset(zone));
-    window.scrollTo({ top: target, behavior: reduced || instant ? 'instant' : 'smooth' });
+    scrollToPosition(target, reduced || instant);
   }
 
   useIsomorphicLayoutEffect(() => {

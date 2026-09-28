@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { CaseStudyArrival } from '@/components/work/CheckoutTransition';
+import CaseStudyLearnings from '@/components/work/CaseStudyLearnings';
 import { CheckoutHeader as CaseStudyHeader, Screenshot } from '../checkout/CheckoutInteractions';
 import styles from '../checkout/checkout.module.css';
 import local from './amodira.module.css';
@@ -48,9 +49,9 @@ export default function AmodiraView() {
           </div>
 
           <section className={styles.section} aria-labelledby="problem-title">
-            <h2 id="problem-title">{story.problem.title}</h2>
+            <h2 data-case-reveal="text" id="problem-title">{story.problem.title}</h2>
             <p className={styles.prose}>{story.problem.body}</p>
-            <figure className={local.collectionPhoto}>
+            <figure data-case-reveal className={local.collectionPhoto}>
               <Image src={`${ASSETS}/collection.webp`} width={1600} height={1200}
                 alt="Amodira’s eight perfumes with their illustrated royal packaging."
                 sizes="(max-width: 600px) 90vw, (max-width: 1232px) 88vw, 1120px" />
@@ -61,7 +62,7 @@ export default function AmodiraView() {
 
         <section id="design" tabIndex={-1} aria-labelledby="concept-title">
           <section className={styles.section} aria-labelledby="concept-title">
-            <h2 id="concept-title">{story.concept.title}</h2>
+            <h2 data-case-reveal="text" id="concept-title">{story.concept.title}</h2>
             <p className={styles.prose}>{story.concept.body}</p>
             <FragranceSoundConcept />
             <section className={local.storytelling} aria-labelledby="vaanan-story-title">
@@ -94,7 +95,7 @@ export default function AmodiraView() {
           </section>
 
           <section id="soundtracks" className={styles.section} aria-labelledby="soundtracks-title">
-            <h2 id="soundtracks-title">{story.soundtracks.title}</h2>
+            <h2 data-case-reveal="text" id="soundtracks-title">{story.soundtracks.title}</h2>
             <p className={styles.prose}>{story.soundtracks.body}</p>
             <figure className={local.fragranceCollection}>
               <ul className={local.fragranceGrid}>
@@ -105,9 +106,9 @@ export default function AmodiraView() {
           </section>
 
           <section className={styles.section} aria-labelledby="sound-profile-title">
-            <h2 id="sound-profile-title">{story.soundProfile.title}</h2>
+            <h2 data-case-reveal="text" id="sound-profile-title">{story.soundProfile.title}</h2>
             <p className={styles.prose}>{story.soundProfile.body}</p>
-            <figure className={local.profileStudy}>
+            <figure data-case-reveal className={local.profileStudy}>
               <div className={local.profileStage}>
                 <Screenshot src={`${ASSETS}/raya-sound-profile-hq.png`} label="Raya sound and scent intensity profile"
                   alt="Early Raya intensity chart. Treble maps to top notes, mids to heart notes and bass to base notes. The curve gives treble the strongest emphasis and bass the subtlest."
@@ -118,10 +119,10 @@ export default function AmodiraView() {
           </section>
 
           <section className={styles.section} aria-labelledby="iteration-title">
-            <h2 id="iteration-title">{story.iteration.title}</h2>
+            <h2 data-case-reveal="text" id="iteration-title">{story.iteration.title}</h2>
             <p className={styles.prose}>{story.iteration.body}</p>
             <div className={local.comparison}>
-              <figure>
+              <figure data-case-reveal>
                 <div className={local.comparisonStage}>
                   <Screenshot src={`${ASSETS}/raya-v1-complex.png`} label="Raya before usability testing"
                     alt="The first Raya widget, with an audio player, a frequency chart mapping treble, mids and bass to top, heart and base notes, and three descriptions."
@@ -131,7 +132,7 @@ export default function AmodiraView() {
                   <strong>Before · Frequency chart</strong>
                 </figcaption>
               </figure>
-              <figure>
+              <figure data-case-reveal>
                 <div className={`${local.comparisonStage} ${local.finalStage}`}>
                   <Screenshot src={`${ASSETS}/raya-sound.png`} label="Raya after usability testing"
                     alt="The revised Raya widget, with an audio player and three short descriptions connecting the music to the fragrance. The frequency chart has been removed."
@@ -147,9 +148,9 @@ export default function AmodiraView() {
 
         <section id="impact" tabIndex={-1} aria-labelledby="impact-title">
           <section className={styles.section} aria-labelledby="impact-title">
-            <h2 id="impact-title">{story.impact.title}</h2>
+            <h2 data-case-reveal="text" id="impact-title">{story.impact.title}</h2>
             <p className={styles.prose}>{story.impact.body}</p>
-            <div className={local.outcome}>
+            <div data-case-reveal className={local.outcome}>
               <div className={local.outcomeMetric}>
                 <span className={styles.resultValue}>2nd</span>
                 <p>Most interacted element<br />after the Back button</p>
@@ -161,10 +162,7 @@ export default function AmodiraView() {
             </div>
           </section>
 
-          <section className={styles.reflectionStory} aria-labelledby="reflection-title">
-            <h2 id="reflection-title">{story.reflection.title}</h2>
-            <p>{story.reflection.body}</p>
-          </section>
+          <CaseStudyLearnings {...story.learnings} />
         </section>
 
         <nav className={styles.next} aria-label="More case studies">

@@ -1081,6 +1081,12 @@ a.proj:active { scale: .995; }
   .work-top-links a:not(.cta) { display: none; }
 }
 
+@media (max-width: 600px) {
+  .work-top { top: 8px; width: calc(100% - 24px); }
+  .work-top-inner { padding: 0 8px 0 14px; }
+  .work-main { padding-top: 92px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .work .reveal { opacity: 1; transform: none; transition: none; }
   .work-back .ar, .proj-go .ar { transition: none; }

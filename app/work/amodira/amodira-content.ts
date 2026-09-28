@@ -102,8 +102,9 @@ export const story = {
     title: 'The second-most interacted element',
     body: 'On Amodira’s perfume product pages, Sound of the Scent ranked just behind the Back button.',
   },
-  reflection: {
-    title: 'Test the explanation, too',
+  learnings: {
+    title: 'Key learnings',
     body: 'The mapping guided my creative choices, but the graph needed too much explanation. I learned to make the emotional connection clear and test the concept before adding detail.',
+    emphasis: 'make the emotional connection clear',
   },
 };

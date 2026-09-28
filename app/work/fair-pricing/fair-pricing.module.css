@@ -2,7 +2,7 @@
 .page section[id] { scroll-margin-top: 108px; }
 .page section.design[id] { scroll-margin-top: 0; }
 .page .hero { padding-bottom: 0; }
-.page .intro { max-width: 700px; margin-top: 22px; color: var(--checkout-muted); font-size: 20px; line-height: 1.6; text-wrap: pretty; }
+.page .intro { margin-top: 22px; color: var(--checkout-muted); font-size: 20px; line-height: 1.6; text-wrap: pretty; }
 /* Two evidence panels follow the original study's image-and-story rhythm. */
 .openingProof { display: grid; gap: 24px; margin-top: 44px; }
 .evidencePanel { display: grid; grid-template-columns: minmax(0,330px) minmax(0,1fr); align-items: center; gap: clamp(30px,5vw,64px); padding: 36px; border: 1px solid rgba(255,255,255,.92); border-radius: 24px; background: linear-gradient(125deg, rgba(255,255,255,.48), rgba(247,252,255,.72)); box-shadow: inset 0 1px 0 #fff, 0 18px 45px -38px rgba(49,84,112,.3); }
@@ -12,7 +12,7 @@
 .proofCopy { min-width: 0; }
 .page .evidenceLabel { margin-bottom: 18px; font-size: 12px; color: var(--checkout-muted); }
 .page .proofCopy blockquote { max-width: 570px; font-family: var(--display); font-size: clamp(28px,3vw,39px); font-weight: 400; line-height: 1.3; letter-spacing: -.01em; text-wrap: balance; }
-.page .postContext { max-width: 450px; margin-top: 18px; font-size: 16px; color: var(--checkout-muted); line-height: 1.65; }
+.page .postContext { margin-top: 18px; font-size: 16px; color: var(--checkout-muted); line-height: 1.65; }
 .reach { display: flex; align-items: center; gap: 24px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--checkout-rule); }
 .reach > span { font-size: clamp(46px,4.7vw,62px); font-weight: 400; line-height: 1; letter-spacing: -.045em; font-variant-numeric: tabular-nums; }
 .page .reach p { max-width: 190px; color: var(--checkout-muted); font-size: 14px; line-height: 1.5; }
@@ -22,14 +22,13 @@
 .page .awardValue { font-family: var(--display); font-size: clamp(48px,5vw,64px); line-height: 1.1; }
 .page .award h2 { font-size: 24px; line-height: 1.35; letter-spacing: -.025em; margin-top: 12px; }
 .page .awardCategory { font-size: 14px; color: var(--checkout-muted); line-height: 1.65; margin-top: 10px; }
-.page .ipCopy { max-width: 570px; margin-top: 24px; font-size: 17px; line-height: 1.7; color: var(--checkout-muted); }
+.page .ipCopy { margin-top: 24px; font-size: 17px; line-height: 1.7; color: var(--checkout-muted); }
 .ipCopy strong { font-weight: 600; }
 .ipCopy a { color: var(--checkout-ink); }
 .page .context { grid-template-columns: 190px minmax(0, 1fr); gap: 44px; padding-top: 80px; }
-.page .metadata { grid-template-columns: 1fr .7fr 1.7fr .6fr; margin-top: 28px !important; }
-.page .metadata dd { line-height: 1.6; }
+.page .metadata { grid-template-columns: 1fr .7fr 1.7fr .6fr; }
 .designQuestion { margin-top: 40px; padding: 32px 36px; border: 1px solid #dce8f1; border-radius: 20px; background: #eaf2f8; }
-.page .designQuestion h2 { max-width: 900px; font-size: clamp(24px,2.3vw,29px); font-weight: 400; line-height: 1.4; letter-spacing: -.025em; text-wrap: pretty; }
+.page .designQuestion h2 { font-size: clamp(24px,2.3vw,29px); font-weight: 400; line-height: 1.4; letter-spacing: -.025em; text-wrap: pretty; }
 .page .designQuestion strong { font-weight: 700; }
 .collage { margin-top: 30px; padding: 30px; border-radius: 24px; background: #eaf2f8; border: 1px solid #dce8f1; }
 .referenceMasonry { columns: 2; column-gap: 28px; }
@@ -40,7 +39,7 @@
 .referenceImage { padding: 12px; background: #fff; border: 1px solid rgba(110,142,164,.12); border-radius: 12px; box-shadow: 0 12px 24px -24px rgba(40,70,93,.5); }
 .referenceImage button img { border-radius: 5px; box-shadow: none; }
 .page .collageHint { padding-top: 18px; border-top: 1px solid #cfdfe9; color: var(--checkout-muted); font-size: 11px; line-height: 1.5; }
-.page .decision { max-width: 760px; margin-top: 24px; font-size: 20px; line-height: 1.6; letter-spacing: -.015em; }
+.page .decision { margin-top: 24px; font-size: 20px; line-height: 1.6; letter-spacing: -.015em; }
 .decision strong { font-weight: 600; }
 .iterations { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 30px; }
 .iterationStage { display: flex; align-items: center; justify-content: center; min-height: 490px; padding: 30px; background: #eaf2f8; border: 1px solid #e0ebf3; border-radius: 20px; }
@@ -51,7 +50,7 @@
 .iterations figcaption strong { display: block; font-size: 17px; line-height: 1.5; margin-top: 4px; }
 .writingNote { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 44px; align-items: baseline; margin-top: 34px; padding-top: 26px; border-top: 1px solid var(--checkout-rule); }
 .page .writingNote h3 { font-size: 18px; letter-spacing: -.02em; }
-.page .writingNote p { max-width: 710px; font-size: 17px; line-height: 1.7; color: var(--checkout-muted); }
+.page .writingNote p { font-size: 17px; line-height: 1.7; color: var(--checkout-muted); }
 .writingNote strong { font-weight: 600; }
 .finalDesign { display: grid; grid-template-columns: 1.25fr 1fr; align-items: center; gap: 60px; margin-top: 30px; }
 .finalDesign figure { min-width: 0; }
@@ -59,9 +58,7 @@
 .finalStage img { border-radius: 8px; }
 .page .notes { grid-template-columns: 1fr; gap: 38px; margin: 0; }
 .notes strong { font-size: 18px; letter-spacing: -.015em; }
-.notes p { max-width: 300px; font-size: 16px; }
-.page .reflection { padding: 36px 40px; }
-.page .reflection p { font-size: 18px; max-width: 810px; }
+.notes p { font-size: 16px; }
 @media (max-width: 1000px) {
   .evidencePanel { grid-template-columns: minmax(0,280px) minmax(0,1fr); gap: 30px; padding: 28px; }
   .page .proofCopy blockquote { font-size: 30px; }
@@ -72,6 +69,9 @@
   .iterationStage { min-height: 0; padding: 28px; }
   .finalDesign { gap: 32px; }
   .page .context, .writingNote { grid-template-columns: 160px minmax(0, 1fr); gap: 30px; }
+}
+@media (max-width: 900px) {
+  .page .metadata { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 760px) {
   .evidencePanel { grid-template-columns: 1fr; gap: 28px; }
@@ -84,7 +84,6 @@
   .page .ipCopy { font-size: 16px; }
   .page .context, .writingNote { grid-template-columns: 1fr; gap: 16px; }
   .page .context { padding-top: 64px; }
-  .page .metadata { grid-template-columns: 1fr 1fr; }
   .referenceImage { padding: 10px; }
   .finalDesign { grid-template-columns: 1fr; gap: 24px; }
   .finalDesign > figure { width: 100%; max-width: 520px; justify-self: center; }
@@ -123,6 +122,4 @@
   .finalStage { padding: 18px; border-radius: 16px; }
   .notes strong { font-size: 17px; }
   .notes p { font-size: 15px; }
-  .page .reflection { padding: 28px 24px; }
-  .page .reflection p { font-size: 17px; }
 }

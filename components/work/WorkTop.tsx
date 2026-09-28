@@ -1,6 +1,7 @@
 'use client';
 
 import HomeLink from '@/components/HomeTransition';
+import { scrollToPosition } from '@/components/SmoothScroll';
 
 type NavLink = { href: string; label: string; cta?: boolean };
 
@@ -32,10 +33,7 @@ export default function WorkTop({
                 className="cta"
                 onClick={(e) => {
                   e.preventDefault();
-                  window.scrollTo({
-                    top: document.documentElement.scrollHeight,
-                    behavior: 'smooth',
-                  });
+                  scrollToPosition(document.documentElement.scrollHeight, e.detail === 0);
                 }}
               >
                 {l.label}

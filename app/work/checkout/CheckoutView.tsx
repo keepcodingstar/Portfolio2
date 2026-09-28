@@ -1,9 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { CheckoutArrival } from '@/components/work/CheckoutTransition';
+import CaseStudyLearnings from '@/components/work/CaseStudyLearnings';
 import { CheckoutHeader, EconicMention, Screenshot } from './CheckoutInteractions';
 import { econicTitle } from '../econic/econic-content';
-import { checkoutOutcomes, checkoutTitle, checkoutTitleAccent, combinedScreens, desktopAnnotations, explorations, finalScreens, scope, story, type ScreenAnnotation, type StudyScreen } from './checkout-content';
+import { checkoutOutcomes, checkoutTitle, checkoutTitleAccent, combinedScreens, explorations, finalAnnotations, finalScreens, scope, story, type ScreenAnnotation, type StudyScreen } from './checkout-content';
 import styles from './checkout.module.css';
 
 const ASSETS = '/work/checkout/redesign';
@@ -23,9 +24,9 @@ function AnnotationNotes({ annotations }: { annotations: ScreenAnnotation[] }) {
 
 function ScreenGallery({ screens, label, four = false, showSwipeHint = false }: { screens: StudyScreen[]; label: string; four?: boolean; showSwipeHint?: boolean }) {
   return (
-    <div className={styles.galleryBlock}>
+    <div data-case-reveal className={styles.galleryBlock}>
       {showSwipeHint && <p className={styles.swipeHint}>Swipe to explore.</p>}
-      <div className={`${styles.screenGallery} ${four ? styles.fourScreens : ''}`} role="group" aria-label={label} tabIndex={0}>
+      <div className={`${styles.screenGallery} ${four ? styles.fourScreens : ''} ${screens.length === 2 ? styles.twoScreens : ''}`} role="group" aria-label={label} tabIndex={0}>
         {screens.map((screen) => (
           <figure key={screen.file} className={styles.screenItem}>
             <div className={styles.screenMat}>
@@ -43,9 +44,10 @@ function ScreenGallery({ screens, label, four = false, showSwipeHint = false }: 
 export default function CheckoutCase() {
   const [contextBefore, contextAfter] = story.context.body.split('Econic 25');
   const [problemBefore, problemAfter] = story.before.body.split('UI felt disconnected');
+  const [primaryFinalScreen, ...supportingFinalScreens] = finalScreens;
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ${styles.checkoutStudy}`}>
       <CheckoutArrival />
       <CheckoutHeader />
       <main id="case-study" tabIndex={-1} className={styles.main}>
@@ -77,9 +79,9 @@ export default function CheckoutCase() {
           </div>
 
           <section className={styles.section} aria-labelledby="before-title">
-            <h2 id="before-title">{story.before.title}</h2>
+            <h2 data-case-reveal="text" id="before-title">{story.before.title}</h2>
             <p className={styles.prose}>{problemBefore}<strong>UI felt disconnected</strong>{problemAfter}</p>
-            <figure>
+            <figure data-case-reveal>
               <div className={`${styles.mediaStage} ${styles.beforeStage}`}>
                 <Screenshot src={`${ASSETS}/shopify-checkout.webp`} label="Original Shopify checkout"
                   width={3024} height={2300} alt="VIRGIO’s original Shopify checkout, with shipping and payment on the left and the order summary on the right. Personal account details are hidden." />
@@ -87,9 +89,9 @@ export default function CheckoutCase() {
               <figcaption className={styles.mediaCaption}>Before · Shopify checkout</figcaption>
             </figure>
             <div className={styles.critiqueGrid}>
-              <div><p className={styles.issueLabel}>Migration trigger</p><h3>Capacity we couldn’t directly scale</h3><p>The sale exposed a dependency on Shopify checkout capacity, even when our other systems could handle the traffic. This prompted the move in-house.</p></div>
-              <div><p className={styles.issueLabel}>UX issue</p><h3>Limited control over the experience</h3><p>The Shopify checkout gave us less flexibility to tailor address entry, payment choices and checkout behaviour to VIRGIO’s needs.</p></div>
-              <div><p className={styles.issueLabel}>UX issue</p><h3>Inconsistent with VIRGIO’s design system</h3><p>Checkout didn’t fully align with VIRGIO’s new design system, making the final step feel separate from the rest of the shopping journey.</p></div>
+              <div><p className={styles.issueLabel}>Migration trigger</p><h3>Capacity we couldn’t directly scale</h3><p>Shopify checkout became a bottleneck even when our other systems handled the traffic, prompting the move in-house.</p></div>
+              <div><p className={styles.issueLabel}>UX issue</p><h3>Limited control over the experience</h3><p>Shopify limited how we could tailor address entry, payment choices and checkout behaviour to VIRGIO.</p></div>
+              <div><p className={styles.issueLabel}>UX issue</p><h3>Inconsistent with VIRGIO’s design system</h3><p>Checkout didn’t match VIRGIO’s new design system, making the final step feel disconnected.</p></div>
             </div>
           </section>
 
@@ -99,7 +101,7 @@ export default function CheckoutCase() {
           </aside>
 
           <section className={`${styles.section} ${styles.goalsSection}`} aria-labelledby="goals-title">
-            <h2 id="goals-title">{story.goals.title}</h2>
+            <h2 data-case-reveal="text" id="goals-title">{story.goals.title}</h2>
             <p className={styles.prose}>{story.goals.description}</p>
             <div className={styles.tableWrap}>
               <table className={styles.scopeTable}>
@@ -114,17 +116,17 @@ export default function CheckoutCase() {
         <section id="design" tabIndex={-1} aria-labelledby="concept-title">
           <section className={styles.section} aria-labelledby="concept-title">
             <p className={styles.statusLabel}>Explored · Not shipped</p>
-            <h2 id="concept-title">{story.concept.title}</h2>
+            <h2 data-case-reveal="text" id="concept-title">{story.concept.title}</h2>
             <p className={styles.prose}>{story.concept.body}</p>
             <ScreenGallery screens={combinedScreens} label="Combined checkout concept: four screens" four showSwipeHint />
-            <p className={styles.conceptNote}>The combined concept was not taken forward. The shipped direction kept checkout focused on verifying delivery details and completing payment.</p>
+            <p className={styles.conceptNote}>The final direction focused on verifying delivery details and completing payment.</p>
           </section>
 
           <section id="explorations" className={`${styles.section} ${styles.explorationSection}`} aria-labelledby="explorations-title">
             <p className={styles.statusLabel}>Further explorations · Not shipped</p>
-            <h2 id="explorations-title">Other directions along the way</h2>
+            <h2 data-case-reveal="text" id="explorations-title">Other directions along the way</h2>
             <p className={styles.prose}>Three alternatives for organising saved cards, payment modes and the order summary.</p>
-            <div className={styles.galleryBlock}>
+            <div data-case-reveal className={styles.galleryBlock}>
               <div className={styles.explorationGrid}>
                 {explorations.map((screen) => (
                   <article key={screen.file}>
@@ -145,26 +147,25 @@ export default function CheckoutCase() {
 
           <section className={styles.section} aria-labelledby="final-title">
             <p className={styles.statusLabel}>Final design</p>
-            <h2 id="final-title">{story.final.title}</h2>
+            <h2 data-case-reveal="text" id="final-title">{story.final.title}</h2>
             <p className={styles.prose}>{story.final.body}</p>
-            <figure>
-              <div className={styles.mediaStage}>
-                <Screenshot src="/work/checkout/payment-desktop.png" label="Final desktop checkout" width={2560} height={1788}
-                  annotations={desktopAnnotations}
-                  alt="Final desktop checkout with a selected delivery address, credits and gift cards, payment options and a visible order summary." />
+            <figure data-case-reveal className={styles.finalShowcase}>
+              <div className={`${styles.mediaStage} ${styles.finalPhone}`}>
+                <Screenshot src={`${ASSETS}/${primaryFinalScreen.file}.webp`} label={primaryFinalScreen.label}
+                  width={primaryFinalScreen.width} height={primaryFinalScreen.height} phone
+                  annotations={finalAnnotations} alt={primaryFinalScreen.alt} />
               </div>
-              <figcaption>
-                <p className={styles.mediaCaption}>Final checkout · Desktop</p>
-                <AnnotationNotes annotations={desktopAnnotations} />
+              <figcaption className={styles.finalNotes}>
+                <AnnotationNotes annotations={finalAnnotations} />
               </figcaption>
             </figure>
-            <ScreenGallery screens={finalScreens} label="Final mobile checkout: saved address, empty address and editing states" />
+            <ScreenGallery screens={supportingFinalScreens} label="Final mobile checkout: empty address and editing states" showSwipeHint />
           </section>
 
           <section className={styles.section} aria-labelledby="address-title">
-            <h2 id="address-title">{story.address.title}</h2>
+            <h2 data-case-reveal="text" id="address-title">{story.address.title}</h2>
             <p className={styles.prose}>{story.address.body}</p>
-            <figure>
+            <figure data-case-reveal>
               <div className={`${styles.mediaStage} ${styles.phoneStage}`}>
                 <Screenshot src={`${ASSETS}/final-map-location.webp`} label="Final map location screen" width={804} height={1787} phone
                   alt="Map search and a draggable delivery pin, with a located address and a Confirm and Proceed action." />
@@ -176,34 +177,18 @@ export default function CheckoutCase() {
           </section>
         </section>
 
-        <section id="impact" tabIndex={-1} aria-labelledby="measurement-title">
-          <section className={`${styles.section} ${styles.measurementLayout}`} aria-labelledby="measurement-title">
-            <div>
-              <h2 id="measurement-title">{story.measurement.title}</h2>
-              <p className={styles.prose}>{story.measurement.body}</p>
-            </div>
-            <aside className={styles.insight} aria-label="Post-launch finding">
-              <Image className={styles.heatmap} src={`${ASSETS}/dead-click-detail.webp`}
-                alt="Heatmap detail showing clicks clustered near the close button."
-                width={206} height={188} sizes="52px" />
-              <p><strong>Caught within days of launch.</strong> Microsoft Clarity heatmaps and session recordings revealed a close button’s tiny click target.</p>
-            </aside>
-          </section>
-
+        <section id="impact" tabIndex={-1} aria-labelledby="results-title">
           <section className={styles.section} aria-labelledby="results-title">
-            <h2 id="results-title">{story.results.title}</h2>
+            <h2 data-case-reveal="text" id="results-title">{story.results.title}</h2>
             <p className={styles.prose}>{story.results.body}</p>
-            <div className={styles.resultPair}>
+            <div data-case-reveal="group" className={styles.resultPair}>
               {checkoutOutcomes.map(({ value, label }) => (
                 <div key={label}><span className={styles.resultValue}>{value}</span><p>{label}</p></div>
               ))}
             </div>
           </section>
 
-          <section className={styles.reflectionStory} aria-labelledby="reflection-title">
-            <h2 id="reflection-title">{story.reflection.title}</h2>
-            <p>{story.reflection.body}</p>
-          </section>
+          <CaseStudyLearnings {...story.learnings} />
         </section>
 
         <nav className={styles.next} aria-label="More case studies">

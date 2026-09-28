@@ -3,7 +3,11 @@
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
-import LinkedInCarousel from '@/components/LinkedInCarousel';
+import { Draggable } from 'gsap/Draggable';
+import { InertiaPlugin } from 'gsap/InertiaPlugin';
+import LinkedInCarousel, { type LinkedInPost } from '@/components/LinkedInCarousel';
+
+gsap.registerPlugin(Draggable, InertiaPlugin);
 
 /**
  * The apex of the journey — reached by scrolling UP from the sky. This is the
@@ -13,12 +17,12 @@ import LinkedInCarousel from '@/components/LinkedInCarousel';
  *
  * This zone is a SCRAPBOOK. It abandons the centred .zone scaffold and lays the
  * field out like a hand-made collage page on warm grey paper: a dense, deliberately
- * OVERLAPPING cluster of photo prints on the left (each a tilted white-matte print
- * pinned with tape, threaded by hand-drawn red marker), and a clean manifesto
- * column on the right with generous negative space. The charm is the human layer —
- * red handwritten captions and scribble doodles, true to a real pasted-up page.
+ * OVERLAPPING cluster of photo prints on the right (each a tilted white-matte print
+ * pinned with tape, threaded by hand-drawn marker), and a clean manifesto
+ * column on the left with generous negative space. The charm is the human layer —
+ * sky-blue handwritten captions and scribble doodles.
  *
- * Two parallax depths react to the pointer; each print drifts on its own slow loop.
+ * The copy stays anchored; prints float gently and coast when dragged and released.
  * Reduced motion / small screens collapse the scatter into a plain readable column.
  *
  * Everything here is REAL: the Virgio hackathon (won), a design session, FONTOBER
@@ -32,7 +36,7 @@ type Print = {
   iw: number;
   /** intrinsic pixel height of the source image */
   ih: number;
-  /** red handwritten note pinned to the print */
+  /** handwritten note pinned to the print */
   note: string;
   /** mono kicker under the note */
   kind: string;
@@ -62,7 +66,7 @@ const PRINTS: Print[] = [
     w: 'clamp(12rem, 16vw, 15rem)',
     rot: -2.5,
     top: '6%',
-    left: '33%',
+    left: '71%',
     z: 3,
     tape: 'br',
     notePos: 'below',
@@ -77,7 +81,7 @@ const PRINTS: Print[] = [
     w: 'clamp(12rem, 17vw, 15.5rem)',
     rot: 3.5,
     top: '52%',
-    left: '3%',
+    left: '41%',
     z: 2,
     tape: 'tl',
     notePos: 'right',
@@ -92,7 +96,7 @@ const PRINTS: Print[] = [
     w: 'clamp(10rem, 13vw, 12.5rem)',
     rot: 5,
     top: '58%',
-    left: '34%',
+    left: '72%',
     z: 5,
     tape: 'tr',
     notePos: 'below',
@@ -107,21 +111,21 @@ const PRINTS: Print[] = [
     w: 'clamp(11rem, 15vw, 14.5rem)',
     rot: -3,
     top: '88%',
-    left: '20%',
+    left: '58%',
     z: 1,
     tape: 'tl',
     notePos: 'below',
   },
 ];
 
-/* small red marker doodles, hand-placed across the page (top/left %, base tilt) */
+/* small marker doodles, hand-placed across the page (top/left %, base tilt) */
 type Doodle = { kind: 'star' | 'flower' | 'arrow' | 'squiggle'; top: string; left: string; rot: number; size: string };
 const DOODLES: Doodle[] = [
-  { kind: 'star', top: '3%', left: '25%', rot: -8, size: '2.2rem' },
-  { kind: 'flower', top: '36%', left: '21%', rot: 6, size: '2.7rem' },
-  { kind: 'arrow', top: '44%', left: '46%', rot: 26, size: '2.8rem' },
-  { kind: 'squiggle', top: '64%', left: '58%', rot: -3, size: '3.4rem' },
-  { kind: 'star', top: '72%', left: '45%', rot: 12, size: '1.6rem' },
+  { kind: 'star', top: '3%', left: '63%', rot: -8, size: '2.2rem' },
+  { kind: 'flower', top: '36%', left: '59%', rot: 6, size: '2.7rem' },
+  { kind: 'arrow', top: '44%', left: '84%', rot: 26, size: '2.8rem' },
+  { kind: 'squiggle', top: '64%', left: '96%', rot: -3, size: '3.4rem' },
+  { kind: 'star', top: '72%', left: '83%', rot: 12, size: '1.6rem' },
 ];
 
 /* Flip to `false` to hide the LinkedIn carousel. */
@@ -129,14 +133,39 @@ const SHOW_LINKEDIN = true;
 
 /* LinkedIn posts shown in the carousel. `height` is the embed's native height
    (from the iframe snippet LinkedIn gives you) so each card fits its post
-   exactly — no inner scrollbar. Add more entries as they come in. */
-type LinkedInPost = { src: string; height: number };
+   exactly — no inner scrollbar. Each entry also has a local preview so the
+   content remains readable when LinkedIn is slow or blocks an embed. */
 const LINKEDIN_POSTS: LinkedInPost[] = [
-  { src: 'https://www.linkedin.com/embed/feed/update/urn:li:share:7443376111138471937?collapsed=1', height: 670 },
-  { src: 'https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7446922702390738944?collapsed=1', height: 550 }, // trophy
-  { src: 'https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7469722987051630593?collapsed=1', height: 550 },
-  { src: 'https://www.linkedin.com/embed/feed/update/urn:li:share:7389905231989485568?collapsed=1', height: 670 },
-  { src: 'https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7434941930649763840?collapsed=1', height: 874 }, // drawing
+  {
+    src: 'https://www.linkedin.com/embed/feed/update/urn:li:share:7443376111138471937?collapsed=1', height: 670,
+    url: 'https://www.linkedin.com/feed/update/urn:li:activity:7443376112241451008',
+    preview: '/assets/linkedin/7443376111138471937.webp',
+    description: 'Sameer Kapil on the DIGIES award for transparent pricing at VIRGIO',
+  },
+  {
+    src: 'https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7446922702390738944?collapsed=1', height: 550,
+    url: 'https://www.linkedin.com/feed/update/urn:li:activity:7446923010168561664',
+    preview: '/assets/linkedin/7446922702390738944.webp',
+    description: 'Sameer Kapil on building the Econic Fair recap landing page with Claude Code',
+  },
+  {
+    src: 'https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7469722987051630593?collapsed=1', height: 550,
+    url: 'https://www.linkedin.com/feed/update/urn:li:activity:7469723101371678720',
+    preview: '/assets/linkedin/7469722987051630593.webp',
+    description: 'Sameer Kapil on building a Figma plugin to automate repetitive work',
+  },
+  {
+    src: 'https://www.linkedin.com/embed/feed/update/urn:li:share:7389905231989485568?collapsed=1', height: 670,
+    url: 'https://www.linkedin.com/feed/update/urn:li:activity:7389905233264599058',
+    preview: '/assets/linkedin/7389905231989485568.webp',
+    description: 'Sameer Kapil on receiving the High Ownership Award at VIRGIO',
+  },
+  {
+    src: 'https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7434941930649763840?collapsed=1', height: 874,
+    url: 'https://www.linkedin.com/feed/update/urn:li:activity:7434941958986526720',
+    preview: '/assets/linkedin/7434941930649763840.webp',
+    description: 'Sameer Kapil on making time for art alongside engineering and design',
+  },
 ];
 
 function DoodleSvg({ kind }: { kind: Doodle['kind'] }) {
@@ -181,7 +210,7 @@ export default function SpaceZone() {
         wide: '(min-width: 1025px)',
       },
       (ctx) => {
-        const frags = gsap.utils.toArray<HTMLElement>('.frag');
+        const frags = gsap.utils.toArray<HTMLElement>('.frag:not(.scrap-copy)');
         const cond = ctx.conditions!;
 
         // lock each fragment's base tilt through GSAP so drift can add to it
@@ -226,44 +255,76 @@ export default function SpaceZone() {
           .from(frags, {
             autoAlpha: 0,
             scale: 0.9,
-            yPercent: 6,
             duration: 0.9,
             stagger: { each: 0.05, from: 'random' },
           })
           .to('.thread', { autoAlpha: 1, duration: 1.2 }, 0.4);
 
-        // perpetual weightless drift — tiny, varied, never enough to hurt reading
+        const draggables: Draggable[] = [];
+        const scrap = root.current!.querySelector<HTMLElement>('.scrap')!;
+        const copy = root.current!.querySelector<HTMLElement>('.scrap-copy')!;
+
+        // Keep the whole print (including its caption) in the collage's half of
+        // the page. Allow the existing lower prints to spill into the hero.
+        const boundsFor = (el: HTMLElement) => {
+          const note = el.querySelector<HTMLElement>('.print-note');
+          const width = Math.max(el.offsetWidth, note ? note.offsetLeft + note.offsetWidth : 0);
+          const height = Math.max(el.offsetHeight, note ? note.offsetTop + note.offsetHeight : 0);
+          const margin = 24; // room for the tilt and a few pixels of ambient float
+          return {
+            minX: Math.min(0, copy.offsetLeft + copy.offsetWidth + margin - el.offsetLeft),
+            maxX: Math.max(0, scrap.clientWidth - el.offsetLeft - width - margin),
+            minY: Math.min(0, margin - el.offsetTop),
+            maxY: Math.max(0, scrap.clientHeight - el.offsetTop - height - margin),
+          };
+        };
+
+        // Float uses percentages and tilt; dragging/inertia owns x/y. Keeping
+        // these separate lets each print coast without snapping to its old pin.
         frags.forEach((el, i) => {
-          gsap.to(el, {
-            yPercent: i % 2 === 0 ? -3 : 2.4,
-            xPercent: i % 3 === 0 ? -2 : 1.6,
-            rotation: `+=${i % 2 === 0 ? 0.6 : -0.5}`,
-            duration: 7 + (i % 5) * 0.9,
+          const float = gsap.to(el, {
+            yPercent: i % 2 === 0 ? -1.5 : 1.2,
+            xPercent: i % 3 === 0 ? -1 : 0.8,
+            rotation: `+=${i % 2 === 0 ? 0.45 : -0.4}`,
+            duration: 11 + (i % 5) * 1.2,
             ease: 'sine.inOut',
             repeat: -1,
             yoyo: true,
           });
+
+          if (cond.fine && el.matches('.print, .scrap-moon')) {
+            draggables.push(...Draggable.create(el, {
+              type: 'x,y',
+              bounds: boundsFor(el),
+              inertia: true,
+              throwResistance: 180,
+              minDuration: 1.8,
+              maxDuration: 6,
+              edgeResistance: 1,
+              overshootTolerance: 0,
+              minimumMovement: 4,
+              cursor: 'grab',
+              activeCursor: 'grabbing',
+              zIndexBoost: false,
+              onPressInit(this: Draggable) {
+                float.pause();
+                this.applyBounds(boundsFor(el));
+              },
+              onRelease() {
+                float.play();
+              },
+            }));
+          }
         });
 
-        // two-depth pointer parallax (only on a fine pointer)
-        if (cond.fine) {
-          const far = root.current?.querySelector('.par-far');
-          const near = root.current?.querySelector('.par-near');
-          if (far && near) {
-            const fx = gsap.quickTo(far, 'xPercent', { duration: 1, ease: 'power3' });
-            const fy = gsap.quickTo(far, 'yPercent', { duration: 1, ease: 'power3' });
-            const nx = gsap.quickTo(near, 'xPercent', { duration: 0.7, ease: 'power3' });
-            const ny = gsap.quickTo(near, 'yPercent', { duration: 0.7, ease: 'power3' });
-            const onMove = (e: PointerEvent) => {
-              const rx = e.clientX / window.innerWidth - 0.5;
-              const ry = e.clientY / window.innerHeight - 0.5;
-              fx(-rx * 1.1); fy(-ry * 1.1);
-              nx(-rx * 2.4); ny(-ry * 2.4);
-            };
-            window.addEventListener('pointermove', onMove);
-            return () => window.removeEventListener('pointermove', onMove);
-          }
-        }
+        const updateBounds = () => draggables.forEach((drag) => {
+          drag.applyBounds(boundsFor(drag.target as HTMLElement));
+        });
+        window.addEventListener('resize', updateBounds);
+        return () => {
+          window.removeEventListener('resize', updateBounds);
+          draggables.forEach((drag) => drag.kill());
+        };
       },
       root,
     );
@@ -312,9 +373,9 @@ export default function SpaceZone() {
           </div>
         </div>
 
-        {/* hand-drawn red thread that loosely strings the cluster together */}
+        {/* hand-drawn thread that loosely strings the cluster together */}
         <svg className="thread" viewBox="0 0 1000 1400" preserveAspectRatio="none" aria-hidden>
-          <path d="M120,120 C300,90 360,300 300,420 C250,520 90,640 150,760 C210,880 520,820 640,900" />
+          <path transform="translate(380 0)" d="M120,120 C300,90 360,300 300,420 C250,520 90,640 150,760 C210,880 520,820 640,900" />
         </svg>
 
         {/* FAR depth — the doodle layer drifts behind the prints */}
@@ -332,11 +393,11 @@ export default function SpaceZone() {
           ))}
         </div>
 
-        {/* NEAR depth — the read: prints cluster left, manifesto column right */}
+        {/* Prints cluster right; the stationary manifesto stays on the left. */}
         <div className="par-near">
           {/* the moon — a self-portrait framed in the lunar surface, floating in
               the cosmos (no print frame/tape; it IS the sky). Anchors the cluster. */}
-          <figure className="frag scrap-moon" data-rot="-2" style={{ top: '4%', left: '1%' }}>
+          <figure className="frag scrap-moon" data-rot="-2" style={{ top: '4%', left: '39%' }}>
             <Image
               src="/hero/moon-window.png"
               alt="Sameer leaning out of a window cut into the moon"
@@ -344,6 +405,7 @@ export default function SpaceZone() {
               height={1626}
               sizes="(min-width: 1025px) 19vw, 78vw"
               loading="lazy"
+              draggable={false}
             />
             <figcaption className="print-note">
               <span className="note-hand">this is me, mid-idea</span>
@@ -367,6 +429,7 @@ export default function SpaceZone() {
                   height={p.ih}
                   sizes="(min-width: 1025px) 17vw, 40vw"
                   loading="lazy"
+                  draggable={false}
                 />
               </span>
               <figcaption className="print-note">
@@ -376,8 +439,8 @@ export default function SpaceZone() {
             </figure>
           ))}
 
-          {/* THE MANIFESTO — clean column, right side, lots of air */}
-          <div className="scrap-copy frag" data-rot="0" style={{ top: '6%', left: '62%' }}>
+          {/* THE MANIFESTO — clean column, left side, lots of air */}
+          <div className="scrap-copy frag" data-rot="0" style={{ top: '6%', left: '0%' }}>
             <p className="space-eyebrow">
               <span aria-hidden>&#8627;</span> Beyond the product work
             </p>

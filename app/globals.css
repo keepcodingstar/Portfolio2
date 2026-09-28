@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Scroll locks are owned by the intro and dialogs. Keep the native document
+   height/scrollbar while Lenis pauses so the centre-anchored hero cannot jump. */
+html.lenis.lenis-stopped { overflow: visible; }
+
 /* A short atmospheric dissolve while the home scene becomes ready. */
 .home-transition-cover {
   position: fixed; inset: 0; z-index: 2147483646;
@@ -598,12 +602,12 @@ body.preloading .navbar {
 .band-space .band-head { text-shadow: 0 2px 20px rgba(0, 0, 8, 0.45); }
 
 /* the apex. a scrapbook pinned across the DARK COSMOS: the fixed space gradient
-   + starfield show straight through. light ink + a single red marker accent. */
+   + starfield show straight through. light ink + a sky-blue marker accent. */
 .zone-space {
   --ink: #f4f7ff;
   --ink-soft: #c9d2e8;
   --ink-dim: #98a4c4;
-  --marker: #f5483a;       /* the one red, hand-drawn accent (lifted for dark) */
+  --marker: #8ec8f1;       /* sky-blue accent, shared with the hero gradient */
   --tape: rgba(244, 240, 230, 0.5);
 
   justify-content: flex-start;
@@ -623,8 +627,8 @@ body.preloading .navbar {
 body.preloading .zone-space { overflow-y: clip; }
 
 /* THE SCRAPBOOK PAGE — a tall field you scroll up through; prints are pinned
-   across it by top/left %, loosely strung by the red thread. Two nested layers
-   (.par-far / .par-near) take the pointer-parallax; pieces take the drift. */
+   across it by top/left %, loosely strung by the thread. The copy stays anchored;
+   individual pieces float and the photos can be dragged through the field. */
 .scrap {
   position: relative;
   width: 100%; max-width: var(--maxw); margin-inline: auto;
@@ -635,7 +639,7 @@ body.preloading .zone-space { overflow-y: clip; }
 .par-near { z-index: 2; }
 .par-far { z-index: 1; }
 
-/* the hand-drawn red thread that loosely strings the cluster */
+/* the hand-drawn thread that loosely strings the cluster */
 .thread {
   position: absolute; inset: 0; width: 100%; height: 100%;
   z-index: 0; pointer-events: none; overflow: visible;
@@ -683,7 +687,7 @@ body.preloading .zone-space { overflow-y: clip; }
 @media (max-width: 1024px) { .sat-field { display: none; } }
 
 /* every pinned piece. position owns top/left; transform is OWNED BY GSAP
-   (base tilt + drift + parallax), so we never set transform here. */
+   (base tilt + drift + dragging), so we never set transform here. */
 .frag {
   position: absolute;
   will-change: transform, opacity;
@@ -698,8 +702,8 @@ body.preloading .zone-space { overflow-y: clip; }
   border-radius: 3px;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.8) inset,
-    0 18px 30px -16px rgba(40, 36, 30, 0.55),
-    0 3px 8px -4px rgba(40, 36, 30, 0.35);
+    0 12px 40px -8px rgba(0, 0, 0, 0.35),
+    0 4px 14px rgba(0, 0, 0, 0.18);
 }
 .print img {
   display: block; width: 100%; height: auto; border-radius: 1px;
@@ -717,10 +721,12 @@ body.preloading .zone-space { overflow-y: clip; }
 .print[data-tape='bl'] .print-frame::before { bottom: -0.55rem; left: -0.4rem; transform: rotate(36deg); }
 .print[data-tape='br'] .print-frame::before { bottom: -0.55rem; right: -0.4rem; transform: rotate(-38deg); }
 
-/* the red handwritten note + mono kicker pinned to each print */
+/* the handwritten note + mono kicker pinned to each print */
 .print-note {
   position: absolute; display: flex; flex-direction: column; gap: 0.05rem;
   max-width: 13rem; pointer-events: none;
+  /* Keep both caption lines distinct when the prints spill over the bright sky. */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 3px 12px rgba(0, 0, 0, 0.4), 0 0 24px rgba(0, 0, 0, 0.25);
 }
 .note-below .print-note { top: calc(100% + 0.5rem); left: 0.6rem; }
 .note-above .print-note { bottom: calc(100% + 0.5rem); left: 0.6rem; }
@@ -741,8 +747,8 @@ body.preloading .zone-space { overflow-y: clip; }
     transform: translateY(-3px);
     box-shadow:
       0 1px 0 rgba(255, 255, 255, 0.8) inset,
-      0 26px 40px -18px rgba(40, 36, 30, 0.6),
-      0 4px 10px -4px rgba(40, 36, 30, 0.4);
+      0 18px 46px -10px rgba(0, 0, 0, 0.4),
+      0 5px 18px rgba(0, 0, 0, 0.22);
   }
 }
 
@@ -754,6 +760,7 @@ body.preloading .zone-space { overflow-y: clip; }
 }
 .scrap-moon img {
   display: block; width: 100%; height: auto;
+  filter: drop-shadow(0 8px 26px rgba(0, 0, 0, 0.3));
 }
 .scrap-moon .print-note {
   position: absolute; top: calc(100% - 1.5rem); left: 8%;
@@ -761,8 +768,9 @@ body.preloading .zone-space { overflow-y: clip; }
   max-width: 12rem; pointer-events: none;
 }
 
-/* THE MANIFESTO — clean column, right side, plenty of air */
+/* THE MANIFESTO — anchored column, left side, plenty of air */
 .scrap-copy {
+  will-change: auto;
   width: clamp(18rem, 30vw, 26rem);
   display: flex; flex-direction: column; gap: clamp(1.1rem, 2.4vw, 1.7rem);
 }
@@ -1382,6 +1390,7 @@ body.preloading .zone-space { overflow-y: clip; }
 .zone-work .section-head {
   position: sticky;
   top: clamp(0.75rem, 3vh, 1.75rem);
+  padding-top: clamp(1rem, 3vh, 2rem);
   z-index: 0;
 }
 .section-head h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); }

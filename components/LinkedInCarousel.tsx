@@ -2,17 +2,17 @@
 
 /**
  * LinkedInCarousel — a horizontal, drag-to-scroll rail of embedded LinkedIn
- * posts. Each card is the official LinkedIn embed <iframe>. Unlike the WebGL
- * CircularGallery, this is plain DOM so it can host live iframes.
+ * posts. Local post previews stay visible until the official embed loads.
  *
  *  - Pointer drag scrolls the rail; the click-vs-drag threshold lets links
  *    inside the embeds still work on a clean click.
  *  - Wheel and keyboard (←/→) nudge the rail without hijacking the page's
  *    vertical scroll journey.
- *  - Iframes are lazy-loaded so off-screen posts cost nothing until scrolled to.
+ *  - Mount embeds explicitly as the rail approaches the viewport, independently
+ *    of the browser's native iframe lazy-loading schedule.
  */
 
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import './LinkedInCarousel.css';
 
@@ -21,16 +21,114 @@ import './LinkedInCarousel.css';
  *  CSS-scale the whole thing down to a uniform card height. */
 const EMBED_WIDTH = 504;
 const CARD_HEIGHT = 480;
+const LOAD_TIMEOUT = 12_000;
 
-type LinkedInPost = { src: string; height: number };
+export type LinkedInPost = {
+  src: string;
+  height: number;
+  url: string;
+  preview: string;
+  description: string;
+};
 
 type LinkedInCarouselProps = {
   posts: LinkedInPost[];
 };
 
+function LinkedInCard({ post, index, active }: { post: LinkedInPost; index: number; active: boolean }) {
+  const [attempt, setAttempt] = useState(0);
+  const [status, setStatus] = useState<'loading' | 'loaded' | 'unavailable'>('loading');
+  const frame = useRef<HTMLIFrameElement>(null);
+  const scale = CARD_HEIGHT / post.height;
+
+  useEffect(() => {
+    if (!active || status !== 'loading') return;
+    const timeout = window.setTimeout(() => {
+      // Retry a stalled request once, then leave an actionable fallback.
+      if (attempt === 0) setAttempt(1);
+      else setStatus('unavailable');
+    }, LOAD_TIMEOUT);
+    return () => window.clearTimeout(timeout);
+  }, [active, attempt, status]);
+
+  const retry = () => {
+    setStatus('loading');
+    setAttempt((value) => value + 1);
+  };
+
+  const onLoad = () => {
+    // An iframe's initial about:blank document can also fire load. It does not
+    // mean LinkedIn has responded. The loaded post itself is cross-origin.
+    try {
+      const doc = frame.current?.contentDocument;
+      if (doc && (doc.URL === 'about:blank' || !doc.body?.childElementCount)) return;
+    } catch {
+      // Cross-origin access is expected after navigating to LinkedIn.
+    }
+    setStatus('loaded');
+  };
+
+  return (
+    <article className="li-card" style={{ width: EMBED_WIDTH * scale }}>
+      <div className="li-embed" style={{ height: CARD_HEIGHT }}>
+        {status !== 'loaded' && (
+          <a className="li-preview" href={post.url} target="_blank" rel="noopener noreferrer"
+            aria-label={`${post.description}. Open post on LinkedIn in a new tab`}>
+            {/* Local images deliberately load independently of the third-party iframe. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={post.preview} alt={`Preview: ${post.description}`} width={EMBED_WIDTH} height={post.height} />
+          </a>
+        )}
+        {active && status !== 'unavailable' && (
+          <iframe
+            key={attempt}
+            ref={frame}
+            src={post.src}
+            title={`Embedded LinkedIn post ${index + 1}`}
+            loading="eager"
+            allowFullScreen
+            onLoad={onLoad}
+            onError={() => setStatus('unavailable')}
+            className={status === 'loaded' ? 'li-frame is-loaded' : 'li-frame'}
+            tabIndex={status === 'loaded' ? 0 : -1}
+            aria-hidden={status !== 'loaded'}
+            style={{
+              width: EMBED_WIDTH,
+              height: post.height,
+              transform: `scale(${scale})`,
+              transformOrigin: 'top left',
+            }}
+          />
+        )}
+      </div>
+      <div className="li-post-actions">
+        <a href={post.url} target="_blank" rel="noopener noreferrer" aria-label={`Open LinkedIn post ${index + 1} in a new tab`}>
+          Open on LinkedIn <span aria-hidden="true">↗</span>
+        </a>
+        <button type="button" onClick={retry} aria-label={`Reload LinkedIn post ${index + 1}`}>
+          {status === 'unavailable' ? 'Load live post' : 'Reload'}
+        </button>
+      </div>
+    </article>
+  );
+}
+
 export default function LinkedInCarousel({ posts }: LinkedInCarouselProps) {
   const rail = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(false);
   const drag = useRef({ down: false, startX: 0, startScroll: 0, moved: false });
+
+  useEffect(() => {
+    const el = rail.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setActive(true);
+      observer.disconnect();
+    }, { rootMargin: '800px 0px' });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const onPointerDown = (e: React.PointerEvent) => {
     const el = rail.current;
@@ -94,30 +192,9 @@ export default function LinkedInCarousel({ posts }: LinkedInCarouselProps) {
         onPointerLeave={endDrag}
         onClickCapture={onClickCapture}
       >
-        {posts.map((post, i) => {
-          const scale = CARD_HEIGHT / post.height;
-          return (
-            <article
-              className="li-card"
-              key={`${post.src}-${i}`}
-              style={{ width: EMBED_WIDTH * scale, height: CARD_HEIGHT }}
-            >
-              <iframe
-                src={post.src}
-                title={`Embedded LinkedIn post ${i + 1}`}
-                loading="lazy"
-                allowFullScreen
-                frameBorder={0}
-                style={{
-                  width: EMBED_WIDTH,
-                  height: post.height,
-                  transform: `scale(${scale})`,
-                  transformOrigin: 'top left',
-                }}
-              />
-            </article>
-          );
-        })}
+        {posts.map((post, i) => (
+          <LinkedInCard key={post.src} post={post} index={i} active={active} />
+        ))}
       </div>
 
       <button type="button" className="li-nav li-prev" aria-label="Previous post" onClick={() => nudge(-1)}>

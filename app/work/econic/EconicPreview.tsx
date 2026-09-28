@@ -110,6 +110,11 @@ export default function EconicPreview() {
         </div>
       </div>
       <div className={styles.demoFooter}>
+        {!preview && (
+          <svg className={styles.previewCue} width="72" height="64" viewBox="0 0 72 64" fill="none" aria-hidden="true" focusable="false">
+            <path d="M64 6C68 27 52 38 17 38M29 27L15 38L30 47" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
         <button type="button" className={styles.previewAction} onClick={togglePreview} aria-controls="price-state cost-breakdown bag-preview">
           {preview ? 'End preview' : 'Preview fair prices'}
         </button>
