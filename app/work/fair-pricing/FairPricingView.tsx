@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import CaseStudyLearnings from '@/components/work/CaseStudyLearnings';
 import { CheckoutHeader as CaseStudyHeader, EconicMention, Screenshot } from '../checkout/CheckoutInteractions';
-import { econicTitle } from '../econic/econic-content';
 import styles from '../checkout/checkout.module.css';
 import local from './fair-pricing.module.css';
 
@@ -48,7 +47,7 @@ export default function FairPricingView() {
       <main id="case-study" tabIndex={-1} className={styles.main}>
         <section id="overview" tabIndex={-1} className={`${styles.hero} ${local.hero}`} aria-labelledby="fair-pricing-title">
           <h1 id="fair-pricing-title">
-            <span className={styles.projectNumber}>Project 3 · Fair Pricing</span>
+            <span className={styles.projectNumber}>Project 2 · Fair Pricing</span>
             <span className={styles.heroAccent}>Clarifying Prices</span> for Fashion Shoppers
           </h1>
           <p className={local.intro}>During my internship at VIRGIO, I designed a price breakdown to help shoppers understand what they were paying for.</p>
@@ -174,8 +173,8 @@ export default function FairPricingView() {
         />
 
         <nav className={styles.next} aria-label="More case studies">
-          <Link href="/work/amodira"><span aria-hidden>←</span><span><small>Previous project</small>Audio Experience for Fragrance Discovery</span></Link>
-          <Link href="/work/econic"><span><small>Next project</small>{econicTitle}</span><span aria-hidden>→</span></Link>
+          <Link href="/work/checkout"><span aria-hidden>←</span><span><small>Previous project</small>Faster Checkout</span></Link>
+          <Link href="/work/amodira"><span><small>Next project</small>Audio Experience for Fragrance Discovery</span><span aria-hidden>→</span></Link>
         </nav>
       </main>
     </div>

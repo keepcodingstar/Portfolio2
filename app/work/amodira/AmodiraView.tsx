@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { CaseStudyArrival } from '@/components/work/CheckoutTransition';
 import CaseStudyLearnings from '@/components/work/CaseStudyLearnings';
 import { CheckoutHeader as CaseStudyHeader, Screenshot } from '../checkout/CheckoutInteractions';
+import { econicTitle } from '../econic/econic-content';
 import styles from '../checkout/checkout.module.css';
 import local from './amodira.module.css';
 import FragranceSoundConcept from './FragranceSoundConcept';
@@ -22,7 +23,7 @@ export default function AmodiraView() {
       <main id="case-study" tabIndex={-1} className={styles.main}>
         <section className={styles.hero} aria-labelledby="amodira-title">
           <h1 id="amodira-title">
-            <span className={styles.projectNumber}>Project 2: </span>
+            <span className={styles.projectNumber}>Project 3: </span>
             <span className={styles.heroAccent}>{amodiraTitleAccent}</span>{amodiraTitle.slice(amodiraTitleAccent.length)}
           </h1>
           <p className={local.heroSkills}>{amodiraSkills}</p>
@@ -166,8 +167,8 @@ export default function AmodiraView() {
         </section>
 
         <nav className={styles.next} aria-label="More case studies">
-          <Link href="/work/checkout"><span aria-hidden>←</span><span><small>Previous project</small>Faster Checkout</span></Link>
-          <Link href="/work/fair-pricing"><span><small>Next project</small>Fair Pricing</span><span aria-hidden>→</span></Link>
+          <Link href="/work/fair-pricing"><span aria-hidden>←</span><span><small>Previous project</small>Fair Pricing</span></Link>
+          <Link href="/work/econic"><span><small>Next project</small>{econicTitle}</span><span aria-hidden>→</span></Link>
         </nav>
       </main>
     </div>

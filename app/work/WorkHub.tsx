@@ -43,16 +43,6 @@ const PROJECTS: Project[] = [
     label: 'conversion',
   },
   {
-    slug: 'amodira',
-    href: '/work/amodira',
-    name: 'Audio Experience for Fragrance Discovery',
-    context:
-      'Sound of the Scent for Amodira. I led concept development and interaction design, and created eight tracks using AI to convey each perfume’s character and mood.',
-    tags: ['Virgio', 'Concept development', 'Fragrance', '2025'],
-    metric: '2nd',
-    label: 'most interacted · after the Back button',
-  },
-  {
     slug: 'fair-pricing',
     href: '/work/fair-pricing',
     name: 'Clarifying Prices for Fashion Shoppers',
@@ -62,6 +52,16 @@ const PROJECTS: Project[] = [
     metric: '500',
     unit: 'K+',
     label: 'organic views · customer’s post',
+  },
+  {
+    slug: 'amodira',
+    href: '/work/amodira',
+    name: 'Audio Experience for Fragrance Discovery',
+    context:
+      'Sound of the Scent for Amodira. I led concept development and interaction design, and created eight tracks using AI to convey each perfume’s character and mood.',
+    tags: ['Virgio', 'Concept development', 'Fragrance', '2025'],
+    metric: '2nd',
+    label: 'most interacted · after the Back button',
   },
   {
     slug: 'econic',

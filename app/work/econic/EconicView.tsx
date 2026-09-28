@@ -147,7 +147,7 @@ export default function EconicView() {
         </section>
 
         <nav className={shared.next} aria-label="More case studies">
-          <Link href="/work/fair-pricing"><span aria-hidden>←</span><span><small>Previous project</small>Fair Pricing</span></Link>
+          <Link href="/work/amodira"><span aria-hidden>←</span><span><small>Previous project</small>Audio Experience for Fragrance Discovery</span></Link>
           <Link href="/work/checkout"><span><small>Next project</small>Faster Checkout</span><span aria-hidden>→</span></Link>
         </nav>
       </main>

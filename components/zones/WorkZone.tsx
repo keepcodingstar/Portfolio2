@@ -42,20 +42,20 @@ const CASES: Case[] = [
     img: { src: '/work/checkout/thumb.jpg', alt: 'Virgio in-house checkout — payment, map address pin, and add-address screens' },
   },
   {
-    name: 'Audio Experience for Fragrance Discovery',
-    context:
-      'Sound of the Scent for Amodira. I led concept development and interaction design, and created eight tracks using AI to convey each perfume’s character and mood.',
-    meta: '2nd most interacted · after the Back button',
-    href: '/work/amodira',
-    img: { src: '/work/amodira/thumb.jpg', alt: 'Amodira fragrance with its sound layers' },
-  },
-  {
     name: 'Clarifying Prices for Fashion Shoppers',
     context:
       'A bill-style price breakdown. Silver at DIGIES for a trust-building element, and company IP behind Econic Fair.',
     meta: '500K+ organic views · customer’s post',
     href: '/work/fair-pricing',
     img: { src: '/work/fair-pricing/thumb-trust.webp', alt: 'Breaking Prices, Building Trust — Fair Pricing widget, pricing sketches, and DIGIES award' },
+  },
+  {
+    name: 'Audio Experience for Fragrance Discovery',
+    context:
+      'Sound of the Scent for Amodira. I led concept development and interaction design, and created eight tracks using AI to convey each perfume’s character and mood.',
+    meta: '2nd most interacted · after the Back button',
+    href: '/work/amodira',
+    img: { src: '/work/amodira/thumb.jpg', alt: 'Amodira fragrance with its sound layers' },
   },
   {
     name: econicTitle,

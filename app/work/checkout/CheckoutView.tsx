@@ -193,7 +193,7 @@ export default function CheckoutCase() {
 
         <nav className={styles.next} aria-label="More case studies">
           <Link href="/work/econic"><span aria-hidden>←</span><span><small>Previous project</small>{econicTitle}</span></Link>
-          <Link href="/work/amodira"><span><small>Next project</small>Audio Experience for Fragrance Discovery</span><span aria-hidden>→</span></Link>
+          <Link href="/work/fair-pricing"><span><small>Next project</small>Fair Pricing</span><span aria-hidden>→</span></Link>
         </nav>
       </main>
     </div>
